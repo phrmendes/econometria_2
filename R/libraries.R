@@ -15,5 +15,7 @@ pacman::p_load(
   collapse,
   pbapply,
   usethis,
-  install = F
+  wooldridge,
+  vtable,
+  estimatr
 )
