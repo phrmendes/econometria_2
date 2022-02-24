@@ -1,0 +1,43 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+<!-- configurações de tema de tabelas -->
+
+```{=html}
+<style type="text/css"> th {     padding:0 30px 0 30px; } </style>
+```
+# AULA 1 - Econometria II
+
+Econometria II - Graduação Economia (UFABC) - Prof. Guilherme Lima\
+Tema: Multicolinearidade
+
+Referências:
+
+1.  Wooldridge J.M. (2012) "Introductory Econometrics".
+2.  Wooldridge J.M. (2002) "Econometric analysis of cross section and panel data".
+3.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R". p. 106
+
+## Bibliotecas e funções
+
+```{r}
+source("R/libraries.R")
+```
+
+## Dados
+
+```{r}
+wage1 <- tibble::as_tibble(wooldridge::wage1)
+```
+
+## Regressão
+
+Modelo: wage = $\beta_0$ + $\beta_1$educ + $\beta_2$exper + u
+
+```{r}
+model <- wage1 |> 
+  estimatr::lm_robust(formula = wage ~ 1 + educ + exper)
+
+summary(model)
+```
