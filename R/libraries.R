@@ -15,7 +15,12 @@ pacman::p_load(
   collapse,
   pbapply,
   usethis,
+  knitr,
   wooldridge,
   vtable,
-  estimatr
+  estimatr,
+  markdown,
+  rmarkdown,
+  car,
+  olsrr
 )

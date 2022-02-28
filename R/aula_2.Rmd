@@ -1,0 +1,153 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+<!-- configurações de tema de tabelas -->
+
+# AULA 2 - Econometria II
+
+Econometria II - Graduação Economia (UFABC) - Prof. Guilherme Lima\
+Tema: Heterocedasticidade
+
+Referências:
+
+1.  Wooldridge J.M. (2012) "Introductory Econometrics".
+2.  Wooldridge J.M. (2002) "Econometric analysis of cross section and panel data".
+3.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R". p. 106
+
+## Bibliotecas e funções
+
+```{r}
+source("R/libraries.R")
+```
+
+## Dados
+
+```{r}
+mroz <- tibble::as_tibble(wooldridge::mroz)
+
+mroz
+```
+
+## Regressões
+
+### Equação de salário para mulheres casadas que trabalham
+
+$\operatorname{ln(wage)} = \beta_{0} + \beta_{1}(\operatorname{exper}) + \beta_{2}(\operatorname{expersq}) + \beta_{3}(\operatorname{educ}) + \beta_{4}(\operatorname{age}) + \beta_{5}(\operatorname{kidslt6}) + \beta_{6}(\operatorname{kidsge6}) + u$
+
+```{r}
+model_1 <- estimatr::lm_robust(
+  formula = lwage ~ exper + expersq + educ + age + kidslt6 + kidsge6,
+  data = mroz,
+  se_type = "classical"
+)
+
+broom::tidy(model1)
+
+broom::glance(model1)
+```
+
+Teste de Breusch-Pagan para heterocedasticidade:
+
+```{r}
+olsrr::ols_test_breusch_pagan(model1)
+```
+
+A uma significância de 5%, não se pode afirmar que as variâncias são iguais.
+
+Modelo com a variância de Eicker-Huber-White[^1]:
+
+[^1]: Lista de estimadores para a variância do pacote `estimatr`: <https://declaredesign.org/r/estimatr/articles/mathematical-notes.html#estimators>
+
+```{r}
+
+model_2 <- estimatr::lm_robust(
+  formula = lwage ~ exper + expersq + educ + age + kidslt6 + kidsge6,
+  data = mroz,
+  se_type = "HC1" # variância de Eicker-Huber-White
+)
+
+broom::tidy(model_2)
+
+broom::glance(model_2)
+```
+
+Comparando os dois modelos:
+
+```{r}
+models <- broom::tidy(model_1) |> 
+  dplyr::select(term, model1_estimate = estimate, model1_std.error = std.error, model1_p.value = p.value) |> 
+  dplyr::bind_cols(
+    broom::tidy(model_2) |> 
+      dplyr::select(model2_estimate = estimate, model2_std.error = std.error, model2_p.value = p.value)
+  )
+```
+
+Os coeficientes continuam os mesmos, pois a ocorrência de heterocedasticidade não enviesa os estimadores:
+
+```{r}
+models |> dplyr::select(tidyselect::ends_with("estimate"))
+```
+
+Existem pequenas mudança nas variâncias:
+
+```{r}
+models |> 
+  dplyr::select(tidyselect::ends_with("std.error")) |> 
+  dplyr::mutate(dif = model1_std.error - model2_std.error)
+```
+
+E pequenas mudanças nos p-valores, porém nenhuma variável se mostrou significante após o ajuste para heterocedasticidade:
+
+```{r}
+models |> 
+  dplyr::select(tidyselect::ends_with("p.value")) |> 
+  dplyr::mutate(
+    dif = model1_p.value - model2_p.value,
+    model1_sig = dplyr::case_when(
+      model1_p.value < 0.05 ~ TRUE,
+      TRUE ~ FALSE
+    ),
+    model2_sig = dplyr::case_when(
+      model2_p.value < 0.05 ~ TRUE,
+      TRUE ~ FALSE
+    ),
+    mudança_de_significancia = dplyr::case_when(
+      model1_sig != model2_sig ~ TRUE,
+      TRUE ~ FALSE
+    ),
+    dplyr::across(
+      1:2,
+      round,
+      5
+    )) |> 
+  dplyr::select(-c(dif, tidyselect::ends_with("sig")))
+```
+
+Logo, pode-se concluir que, apesar da presença de heterocedasticidade, seu grau não foi tão grande ao ponto de afetar os resultados do modelo. Experiência, experiência ao quadrado e nível de educação se mantém significantes em ambos os modelos.
+
+## Teste de significância conjunto robusto de White
+
+-   H~0~: $\beta_{exper} = \beta_{expersq} = \beta_{educ} = 0$
+
+-   H~1~: $\beta_{exper} \ne 0$ ou $\beta_{expersq} \ne 0$ ou $\beta_{educ} \ne 0$
+
+```{r}
+h0 <- c("exper = 0", "expersq = 0", "educ = 0")
+
+# teste do multiplicador de Lagrange
+
+car::linearHypothesis(
+  model = model_2, # modelo não ajustado
+  hypothesis.matrix = h0, 
+  test ="Chisq", # teste do multiplicador de Lagrange
+  white.adjust = "hc0" # ajuste clássico de white, "hc3" é o padrão (ajuste de white para pequenas amostras)
+)
+
+# resultados divergentes do teste de Wald
+
+lmtest::waldtest(model_2, .~. - age - kidslt6 - kidsge6, test = "Chisq")
+```
+
+A um nível de significância de 5%, pode-se afirmar que as variáveis são relevantes para o modelo.

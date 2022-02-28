@@ -5,10 +5,7 @@ output: html_notebook
 
 <!-- configurações de tema de tabelas -->
 
-```{=html}
-<style type="text/css"> th {     padding:0 30px 0 30px; } </style>
-```
-# AULA 1 - Econometria II
+# AULA 2 - Econometria II
 
 Econometria II - Graduação Economia (UFABC) - Prof. Guilherme Lima\
 Tema: Multicolinearidade
@@ -29,6 +26,8 @@ source("R/libraries.R")
 
 ```{r}
 wage1 <- tibble::as_tibble(wooldridge::wage1)
+
+wage1 |> head()
 ```
 
 ## Regressão
@@ -36,8 +35,29 @@ wage1 <- tibble::as_tibble(wooldridge::wage1)
 Modelo: wage = $\beta_0$ + $\beta_1$educ + $\beta_2$exper + u
 
 ```{r}
-model <- wage1 |> 
-  estimatr::lm_robust(formula = wage ~ 1 + educ + exper)
+model <- fixest::feols(
+  fml = wage ~ educ + exper, # -1 para estimar modelo sem intercepto
+  data = wage1,
+)
 
 summary(model)
+```
+
+Modelo com multicolinearidade perfeita: wage = $\beta_0$ + $\beta_1$educ + $\beta_2$exper + $\beta_3$female + $\beta_4$male + u
+
+```{r}
+model <- wage1 |> 
+  dplyr::select(wage, educ, exper, female) |> 
+  dplyr::mutate(male = forcats::as_factor(1 - female)) |> 
+  fixest::feols(fml = wage ~ educ + exper + forcats::as_factor(female) + male)
+
+collin_var <- model$collin.var
+```
+
+Variável retirada por problemas de multicolinearidade: `r collin_var`
+
+Estimando VIF:
+
+```{r}
+car::vif(model) # se GVIF >= 5, alta colinearidade
 ```
