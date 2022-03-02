@@ -1,13 +1,11 @@
 ---
-title: "R Notebook"
+title: "Aula 1"
 output: html_notebook
 ---
 
-<!-- configurações de tema de tabelas -->
+# AULA 1 - Econometria II
 
-# AULA 2 - Econometria II
-
-Econometria II - Graduação Economia (UFABC) - Prof. Guilherme Lima\
+Graduação Economia (UFABC) - Prof. Guilherme Lima  
 Tema: Multicolinearidade
 
 Referências:

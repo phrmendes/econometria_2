@@ -1,13 +1,11 @@
 ---
-title: "R Notebook"
+title: "Aula 2"
 output: html_notebook
 ---
 
-<!-- configurações de tema de tabelas -->
-
 # AULA 2 - Econometria II
 
-Econometria II - Graduação Economia (UFABC) - Prof. Guilherme Lima\
+Graduação Economia (UFABC) - Prof. Guilherme Lima\
 Tema: Heterocedasticidade
 
 Referências:
@@ -37,21 +35,19 @@ mroz
 $\operatorname{ln(wage)} = \beta_{0} + \beta_{1}(\operatorname{exper}) + \beta_{2}(\operatorname{expersq}) + \beta_{3}(\operatorname{educ}) + \beta_{4}(\operatorname{age}) + \beta_{5}(\operatorname{kidslt6}) + \beta_{6}(\operatorname{kidsge6}) + u$
 
 ```{r}
-model_1 <- estimatr::lm_robust(
+model_1 <- lm(
   formula = lwage ~ exper + expersq + educ + age + kidslt6 + kidsge6,
-  data = mroz,
-  se_type = "classical"
+  data = mroz
 )
 
-broom::tidy(model1)
-
-broom::glance(model1)
+broom::tidy(model_1)
+broom::glance(model_1)
 ```
 
 Teste de Breusch-Pagan para heterocedasticidade:
 
 ```{r}
-olsrr::ols_test_breusch_pagan(model1)
+olsrr::ols_test_breusch_pagan(model_1)
 ```
 
 A uma significância de 5%, não se pode afirmar que as variâncias são iguais.
@@ -61,7 +57,6 @@ Modelo com a variância de Eicker-Huber-White[^1]:
 [^1]: Lista de estimadores para a variância do pacote `estimatr`: <https://declaredesign.org/r/estimatr/articles/mathematical-notes.html#estimators>
 
 ```{r}
-
 model_2 <- estimatr::lm_robust(
   formula = lwage ~ exper + expersq + educ + age + kidslt6 + kidsge6,
   data = mroz,
@@ -69,7 +64,6 @@ model_2 <- estimatr::lm_robust(
 )
 
 broom::tidy(model_2)
-
 broom::glance(model_2)
 ```
 
@@ -141,7 +135,7 @@ h0 <- c("exper = 0", "expersq = 0", "educ = 0")
 car::linearHypothesis(
   model = model_2, # modelo não ajustado
   hypothesis.matrix = h0, 
-  test ="Chisq", # teste do multiplicador de Lagrange
+  test = "Chisq", # teste do multiplicador de Lagrange
   white.adjust = "hc0" # ajuste clássico de white, "hc3" é o padrão (ajuste de white para pequenas amostras)
 )
 

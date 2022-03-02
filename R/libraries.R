@@ -22,5 +22,6 @@ pacman::p_load(
   markdown,
   rmarkdown,
   car,
-  olsrr
+  olsrr,
+  equatiomatic
 )

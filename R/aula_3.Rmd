@@ -1,0 +1,223 @@
+---
+title: "Aula 3"
+output: html_notebook
+---
+
+# AULA 3 - Econometria II
+
+Graduação Economia (UFABC) - Prof. Guilherme Lima\
+Tema: Aula prática
+
+Objetivos:
+
+-   Dar continuidade a Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+-   Identificação, Estimação e Inferência sob Hipótese de Multicolinearidade e Heterocedasticidade utilizando exemplos dos livro (1).
+
+Referências:
+
+1.  Wooldridge J.M. (2012) "Introductory Econometrics".
+2.  Wooldridge J.M. (2002) "Econometric analysis of cross section and panel data".
+3.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R". p. 106
+
+## Bibliotecas e funções
+
+```{r}
+source("R/libraries.R")
+```
+
+## Dados
+
+```{r}
+crime1 <- tibble::as_tibble(wooldridge::crime1)
+
+crime1
+
+hprice2 <- tibble::as_tibble(wooldridge::hprice2)
+
+hprice2
+```
+
+## Regressões
+
+### Economic Model of Crime
+
+-   *narr86*: número de vezes que o indivíduo foi preso.
+-   *pcnv*: proporção de prisões anteriores que levaram o condenado (proxy para a probabilidade de ser condenado por um crime);
+-   *avgsen*: sentença média das condenações passadas (medida da severidade dos crimes passados);
+-   *tottime*: tempo total que o indivíduo passou na prisão antes de 1986, desde que completou 18 anos;
+-   *ptime86*: meses de prisão em 1986 (captura os efeitos do encarceramento em 1986 sobre o número de prisões);
+-   *qemp86*: número de trimestres em 1986 em que o indivíduo esteve formalmente empregado.
+
+```{r}
+crime1 |>
+  dplyr::summarise(
+    nao_preso_1986 = 100 * ((crime1 |> dplyr::filter(narr86 == 0) |> dplyr::tally() |> dplyr::pull(n)) / n()), # parcela que não foi presa em 1986
+    preso_1986 = 100 * ((crime1 |> dplyr::filter(narr86 > 0) |> dplyr::tally() |> dplyr::pull(n)) / n()), # parcela que foi presa em 1986
+    preso_n_1986 = 100 * ((crime1 |> dplyr::filter(narr86 > 1) |> dplyr::tally() |> dplyr::pull(n)) / n()) # parcela que foi presa mais de 1 vez em 1986
+  ) |>
+  tidyr::pivot_longer(
+    cols = dplyr::everything(),
+    names_to = "categoria",
+    values_to = "prop"
+  )
+```
+
+$\operatorname{narr86} = \beta_{0} + \beta_{1}(\operatorname{pcnv}) + \beta_{2}(\operatorname{avgsen}) + \beta_{3}(\operatorname{tottime}) + \beta_{4}(\operatorname{ptime86}) + \beta_{5}(\operatorname{qemp86}) + u$
+
+```{r}
+model1_crime <- lm(
+  formula = narr86 ~ pcnv + avgsen + tottime + ptime86 + qemp86,
+  data = crime1
+)
+
+broom::tidy(model1_crime)
+broom::glance(model1_crime)
+```
+
+#### Diagnóstico da Multicolinearidade: VIF
+
+Mede o quanto a variância do coeficiente estimado é inflacionado pela correlação com os outros regressores.
+
+Regras de Bolso para VIF:
+
+-   Se VIF $\approx$ 1 (não existe inflação da variância);
+-   Se 4 \< VIF \< 10 (multicolinearidade "leve");
+-   Se VIF \> 10 (multicolinearidade "grave");
+
+```{r}
+olsrr::ols_vif_tol(model1_crime) # ou car::vif(model1_crime)
+
+model2_crime <- lm(
+  formula = narr86 ~ pcnv + avgsen + ptime86 + qemp86,
+  data = crime1
+)
+
+broom::tidy(model2_crime)
+broom::glance(model2_crime)
+
+model3_crime <- lm(
+  formula = narr86 ~ pcnv + tottime + ptime86 + qemp86,
+  data = crime1
+)
+
+broom::tidy(model3_crime)
+broom::glance(model3_crime)
+```
+
+Variáveis com alto nível de multicolinearidade: *avgsen* e *tottime*.
+
+#### Heterocedasticidade
+
+```{r}
+purrr::map(
+  list(model1_crime, model2_crime, model3_crime),
+  olsrr::ols_test_breusch_pagan
+)
+```
+
+| Modelo   | Heterocedasticidade |
+|----------|---------------------|
+| Modelo 1 | Presente            |
+| Modelo 2 | Presente            |
+| Modelo 3 | Presente            |
+
+#### Inferência robusta
+
+```{r}
+models_crime <- purrr::map(
+  list(
+    narr86 ~ pcnv + avgsen + tottime + ptime86 + qemp86, # modelo 1
+    narr86 ~ pcnv + avgsen + ptime86 + qemp86, # modelo 2
+    narr86 ~ pcnv + tottime + ptime86 + qemp86 # modelo 3
+  ),
+  ~ estimatr::lm_robust(.x, data = crime1)
+)
+
+purrr::map(
+  models_crime,
+  broom::tidy
+)
+```
+
+#### Testes de restrição de exclusão
+
+```{r}
+lmtest::waldtest(models_crime[[1]], .~. - avgsen - tottime)
+
+car::linearHypothesis(
+  model = models_crime[[1]],
+  hypothesis.matrix = c("avgsen = 0", "tottime = 0"), 
+  test = "Chisq"
+)
+```
+
+#### Normalidade dos resíduos
+
+```{r}
+olsrr::ols_plot_resid_qq(model1_crime)
+
+olsrr::ols_test_normality(model1_crime)
+```
+
+### Housing prices and air pollution
+
+-   *price*: preço mediano das casas na comunidade;
+
+-   *nox*:	quantidade de óxido de nitrogênio no ar (partes por milhão);
+
+-   *dist*: distância "ponderada" da comunidade de 5 centros de trabalho (em milhas);
+
+-   *rooms*: número médio de quartos nas casas da comunidade;
+
+-   *stratio*: é a razão (proporção) média de professor/alunos das escolas da comunidade.
+
+$\operatorname{log(price)} = \beta_0 + \beta_{1}(\operatorname{\log(nox)}) + \beta_{2}(\operatorname{\log(dist)}) + \beta_{3}(\operatorname{rooms}) + \beta_{4}(\operatorname{stratio}) + u$
+
+```{r}
+model1_hprice2 <- lm(
+  formula = log(price) ~ log(nox) + log(dist) + rooms + stratio,
+  data = hprice2
+)
+
+broom::tidy(model1_hprice2)
+broom::glance(model1_hprice2)
+```
+#### Diagnóstico da Multicolinearidade: VIF
+
+```{r}
+olsrr::ols_vif_tol(model1_hprice2) # ou car::vif(model1_crime)
+```
+
+Nenhuma variável com multicolinearidade relevante.
+
+#### Heterocedasticidade
+
+```{r}
+olsrr::ols_test_breusch_pagan(model1_hprice2)
+```
+Existe heterocedasticidade nos dados.
+
+#### Inferência robusta
+
+```{r}
+model2_hprice2 <- estimatr::lm_robust(
+  formula = log(price) ~ log(nox) + log(dist) + rooms + stratio,
+  data = hprice2
+)
+
+broom::tidy(model2_hprice2)
+broom::glance(model2_hprice2)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
