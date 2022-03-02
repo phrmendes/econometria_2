@@ -33,21 +33,26 @@ wage1 |> head()
 Modelo: wage = $\beta_0$ + $\beta_1$educ + $\beta_2$exper + u
 
 ```{r}
+formula <- wage ~ educ + exper
+
 model <- fixest::feols(
-  fml = wage ~ educ + exper, # -1 para estimar modelo sem intercepto
+  fml = formula, # -1 para estimar modelo sem intercepto
   data = wage1,
+  vcov = "iid"
 )
 
-summary(model)
+model
 ```
 
 Modelo com multicolinearidade perfeita: wage = $\beta_0$ + $\beta_1$educ + $\beta_2$exper + $\beta_3$female + $\beta_4$male + u
 
 ```{r}
+formula2 <- wage ~ educ + exper + forcats::as_factor(female) + male
+
 model <- wage1 |> 
   dplyr::select(wage, educ, exper, female) |> 
   dplyr::mutate(male = forcats::as_factor(1 - female)) |> 
-  fixest::feols(fml = wage ~ educ + exper + forcats::as_factor(female) + male)
+  fixest::feols(fml = formula2)
 
 collin_var <- model$collin.var
 ```
@@ -57,5 +62,5 @@ Variável retirada por problemas de multicolinearidade: `r collin_var`
 Estimando VIF:
 
 ```{r}
-car::vif(model) # se GVIF >= 5, alta colinearidade
+car::vif(lm(formula, data = wage1)) # car::vif(model) retorna GVIF (Generalized Variance Inflation Factor)
 ```

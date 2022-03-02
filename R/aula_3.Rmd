@@ -65,13 +65,15 @@ crime1 |>
 $\operatorname{narr86} = \beta_{0} + \beta_{1}(\operatorname{pcnv}) + \beta_{2}(\operatorname{avgsen}) + \beta_{3}(\operatorname{tottime}) + \beta_{4}(\operatorname{ptime86}) + \beta_{5}(\operatorname{qemp86}) + u$
 
 ```{r}
-model1_crime <- lm(
-  formula = narr86 ~ pcnv + avgsen + tottime + ptime86 + qemp86,
-  data = crime1
+model1 <- narr86 ~ pcnv + avgsen + tottime + ptime86 + qemp86
+
+model1_crime <- fixest::feols(
+  fml = model1,
+  data = crime1,
+  vcov = "iid"
 )
 
-broom::tidy(model1_crime)
-broom::glance(model1_crime)
+model1_crime
 ```
 
 #### Diagnóstico da Multicolinearidade: VIF
@@ -85,33 +87,39 @@ Regras de Bolso para VIF:
 -   Se VIF \> 10 (multicolinearidade "grave");
 
 ```{r}
-olsrr::ols_vif_tol(model1_crime) # ou car::vif(model1_crime)
+car::vif(lm(model1_crime, data = crime1)) # car::vif(model1_crime) retorna GVIF (Generalized Variance Inflation Factor)
 
-model2_crime <- lm(
-  formula = narr86 ~ pcnv + avgsen + ptime86 + qemp86,
-  data = crime1
+r2 <- cor(crime1$tottime, crime1$avgsen)
+
+model2 <- narr86 ~ pcnv + avgsen + ptime86 + qemp86
+
+model3 <- narr86 ~ pcnv + tottime + ptime86 + qemp86
+
+model2_crime <- fixest::feols(
+  fml = model2,
+  data = crime1,
+  vcov = "iid"
 )
 
-broom::tidy(model2_crime)
-broom::glance(model2_crime)
-
-model3_crime <- lm(
-  formula = narr86 ~ pcnv + tottime + ptime86 + qemp86,
-  data = crime1
+model3_crime <- fixest::feols(
+  fml = model3,
+  data = crime1,
+  vcov = "iid"
 )
 
-broom::tidy(model3_crime)
-broom::glance(model3_crime)
+model2_crime
+
+model3_crime # modelo mais adequado
 ```
 
-Variáveis com alto nível de multicolinearidade: *avgsen* e *tottime*.
+Variáveis com alto nível de colinearidade: *avgsen* e *tottime*. R^2^ entre as duas: `r r2`. O modelo possui um R^2^ baixo de cerca de 4%.
 
 #### Heterocedasticidade
 
 ```{r}
 purrr::map(
-  list(model1_crime, model2_crime, model3_crime),
-  olsrr::ols_test_breusch_pagan
+  list(model1, model2, model3),
+  ~ olsrr::ols_test_breusch_pagan(lm(.x, data = crime1))
 )
 ```
 
@@ -125,19 +133,14 @@ purrr::map(
 
 ```{r}
 models_crime <- purrr::map(
-  list(
-    narr86 ~ pcnv + avgsen + tottime + ptime86 + qemp86, # modelo 1
-    narr86 ~ pcnv + avgsen + ptime86 + qemp86, # modelo 2
-    narr86 ~ pcnv + tottime + ptime86 + qemp86 # modelo 3
-  ),
-  ~ estimatr::lm_robust(.x, data = crime1)
+  list(model1, model2, model3),
+  ~ fixest::feols(.x, data = crime1, vcov = "hetero")
 )
 
-purrr::map(
-  models_crime,
-  broom::tidy
-)
+models_crime
 ```
+
+O ajuste do modelo não melhorou, o que pode indicar a necessidade de um modelo não-linear.
 
 #### Testes de restrição de exclusão
 
@@ -151,19 +154,21 @@ car::linearHypothesis(
 )
 ```
 
+A um nível de significância de 5%, conclui-se que as variáveis *avgsen* e *tottime* não são relevantes para o modelo.
+
 #### Normalidade dos resíduos
 
 ```{r}
-olsrr::ols_plot_resid_qq(model1_crime)
+olsrr::ols_plot_resid_qq(lm(model1, data = crime1))
 
-olsrr::ols_test_normality(model1_crime)
+olsrr::ols_test_normality(lm(model1, data = crime1))
 ```
 
 ### Housing prices and air pollution
 
 -   *price*: preço mediano das casas na comunidade;
 
--   *nox*:	quantidade de óxido de nitrogênio no ar (partes por milhão);
+-   *nox*: quantidade de óxido de nitrogênio no ar (partes por milhão);
 
 -   *dist*: distância "ponderada" da comunidade de 5 centros de trabalho (em milhas);
 
@@ -174,18 +179,21 @@ olsrr::ols_test_normality(model1_crime)
 $\operatorname{log(price)} = \beta_0 + \beta_{1}(\operatorname{\log(nox)}) + \beta_{2}(\operatorname{\log(dist)}) + \beta_{3}(\operatorname{rooms}) + \beta_{4}(\operatorname{stratio}) + u$
 
 ```{r}
-model1_hprice2 <- lm(
-  formula = log(price) ~ log(nox) + log(dist) + rooms + stratio,
-  data = hprice2
+model4 <- log(price) ~ log(nox) + log(dist) + rooms + stratio
+
+model1_hprice2 <- fixest::feols(
+  fml = model4,
+  data = hprice2,
+  vcov = "iid"
 )
 
-broom::tidy(model1_hprice2)
-broom::glance(model1_hprice2)
+model1_hprice2
 ```
+
 #### Diagnóstico da Multicolinearidade: VIF
 
 ```{r}
-olsrr::ols_vif_tol(model1_hprice2) # ou car::vif(model1_crime)
+car::vif(lm(model4, data = hprice2))
 ```
 
 Nenhuma variável com multicolinearidade relevante.
@@ -193,31 +201,74 @@ Nenhuma variável com multicolinearidade relevante.
 #### Heterocedasticidade
 
 ```{r}
-olsrr::ols_test_breusch_pagan(model1_hprice2)
+olsrr::ols_test_breusch_pagan(lm(model4, data = hprice2))
 ```
+
 Existe heterocedasticidade nos dados.
 
 #### Inferência robusta
 
 ```{r}
-model2_hprice2 <- estimatr::lm_robust(
-  formula = log(price) ~ log(nox) + log(dist) + rooms + stratio,
-  data = hprice2
+model2_hprice2 <- fixest::feols(
+  fml = model4,
+  data = hprice2,
+  vcov = "hetero"
 )
 
-broom::tidy(model2_hprice2)
-broom::glance(model2_hprice2)
+model2_hprice2
 ```
 
+Interpretação dos coeficientes do modelo:
 
+-   +1% *nox* $\to$ -0.95% *price*
+-   +1% *dist* $\to$ -0.13% *price*
+-   +1 *room* $\to$ +25.45% *price*
+-   +1 *stratio* $\to$ -5.24% *price*
 
+Correção em semi-elasticidades: quanto maior a medida da variação de preços, considerando o logaritmo, pior será a aproximação. Correção:
 
+$$
+\% \Delta y \approx 100 \cdot \Delta log(\beta_j \cdot \%\Delta x_j) \to \\
+\% \Delta y \approx 100 \cdot \exp(\beta_j \cdot \%\Delta x_j)-1
+$$
+Correções:
 
+```{r}
+broom::tidy(model2_hprice2) |> 
+  dplyr::mutate(
+    estimate = dplyr::case_when(
+      term %in% c("rooms", "stratio") ~ 100 * (exp(estimate) - 1),
+      TRUE ~ estimate
+    )
+  )
+```
+#### Teste de hipótese
 
+Um aumento de 1% em *nox* gera em média queda de 1% no preço mediano das residências?
 
+Teste 1:
 
+- H~0~: $\beta_1 = 1$
+- H~1~: $\beta_1 \ne 1$
 
+Teste 2:
 
+- H~0~: $\beta_1 = 1$
+- H~1~: $\beta_1 < 1$
 
+```{r}
+t0 <- (-0.95353852 + 1) / (0.1282244) # desvio padrão de White
 
+2 * pt(abs(t0), df = 501, lower.tail = FALSE) # Rejeita H0 do teste 1, elasticidade é diferente de 1
+
+pt(t0, df = 501, lower.tail = TRUE) # Rejeita H0 do teste 1, elasticidade é menor que 1
+```
+
+#### Normalidade dos resíduos
+
+```{r}
+olsrr::ols_plot_resid_qq(lm(model4, data = hprice2))
+
+olsrr::ols_test_normality(lm(model4, data = hprice2))
+```
 
