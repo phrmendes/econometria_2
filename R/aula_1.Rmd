@@ -5,7 +5,7 @@ output: html_notebook
 
 # AULA 1 - Econometria II
 
-Graduação Economia (UFABC) - Prof. Guilherme Lima  
+Graduação Economia (UFABC) - Prof. Guilherme Lima\
 Tema: Multicolinearidade
 
 Referências:
