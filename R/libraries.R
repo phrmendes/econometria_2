@@ -23,5 +23,6 @@ pacman::p_load(
   rmarkdown,
   car,
   olsrr,
-  equatiomatic
+  equatiomatic,
+  install = FALSE
 )

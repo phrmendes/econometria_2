@@ -1,0 +1,238 @@
+
+# Econometria II - Graduação Economia (UFABC) -  Prof. Guilherme Lima
+# Rotina para os Alunos - Aula 6
+
+# Objetivos:
+# 1.	Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+# 2.	Estimação e Interpretação des Modelos com "Pooled Cross-Section Data".
+
+# Referências:
+# (1) Wooldridge J.M. (2012) "Introductory Econometrics".  
+# (2) Wooldridge J.M. (2002) "Econometric analysis of cross section and panel data".
+# (3) Kleiber, C. &  Zeileis, A. (2008) "Applied Econometrics with R". p. 106
+
+# Sites que contém material auxiliar:
+# https://justinmshea.github.io/wooldridge/index.html								# Base de dados de (1) e (2)
+# http://eclr.humanities.manchester.ac.uk/index.php/R_robust_se						# White Robust Standard Errors
+# https://www.rdocumentation.org/packages/lmtest/versions/0.9-37/topics/coeftest			# "coeftest"
+
+
+# Pacotes:
+
+# install.packages("wooldridge") 	# O pacote wooldridge para R contém os dados do livro Introductory Econometrics
+library(wooldridge)
+help(package = "wooldridge")
+
+#install.packages("sandwich")	# contém os testes robustos de White
+library(sandwich)
+#help(package = "sandwich")
+
+#install.packages("lmtest")	# contém "coeftest"
+library(lmtest)
+#help(package = "lmtest")
+
+#install.packages("olsrr")	# contém os testes robustos de White
+library(olsrr)
+#help(package = "olsrr")
+
+#####################################################################################################
+# Wooldridge, Introductory Econometrics, 2012, 6th ed. Cap. 13: Example 13.1 & Computer Exercise C1: 
+#####################################################################################################
+
+# The data set in FERTIL1, which is similar to that used by Sander (1992), comes from the National
+# Opinion Research Centers General Social Survey for the seven years from 1972 to 1984, inclusively.
+# We use these data to estimate a model explaining the total number of kids born to a womam.
+#
+# Questão 1: One question of interest is: After controlling for other observable factors, what has 
+# happened to fertility rates over time? 
+
+# The factors we control for are years of education, age, race, region of the country where living 
+# at age 16, and living environment at age 16. The estimates are given in Table 13.1.
+
+data("fertil1")
+attach(fertil1)
+head(fertil1)
+View(fertil1)
+
+M1 <- lm(kids ~ 1 + educ + age + I(age^2) + black + east + northcen + west + farm + othrural + town + smcity + y74 + y76 + y78 + y80 + y82 + y84)
+M1 <- lm(kids ~ 1 + educ + age + I(age^2) + black + east + northcen + west + farm + othrural + smcity + y74 + y76 + y78 + y80 + y82 + y84)
+summary(M1)
+
+ols_test_breusch_pagan(M1)			# Teste de Breusch-Pagan-Godfrey
+het.M1 <- vcovHC(M1, type = "HC0")		# HC0 Wihite (1980) => validade asy.
+
+coeftest(M1, het.M1)
+
+# Note que, adotamos 1972 como ano base, uma vez que foi o ano excluído das dummies.
+# No geral, as dummies de ano mostram uma queda significativa na taxa de natalidade, independentemente dos fatores anos de estudo, ..
+# Considerando o ano de 1982, o coeficiente y82 (-0.52) revela uma queda de "meia criança" por mulher
+# em comparação ao ano de 1972.Isto é, independentemente de idde, anos de estudo, etc, 100 mulheres em 1982 teriam 52 crianças a menos do que em 1972.
+# Os coeficientes de y82 e y84 representam quedas na taxa de natalidade que não são capturadas pelas variáveis explicativas.
+# Essa queda não tem nenhuma relação com o aumento médio na educação, pois esse é um fator controlado.
+
+# Anos de estudo médio em 1972 e em 1984:
+
+mean(subset(educ,(year==72)))
+mean(subset(educ,(year==84)))
+
+
+# Questão 2: Conjuntamente, as dummies de ano são significantes?
+
+waldtest(M1, .~. - y74 - y76- y78 - y80 - y82 - y84, vcov = vcovHC)
+
+
+# Questão 3: Qual a queda na taxa de fertilidade comparada entre mulheres com nível superior e médio?
+
+# Dado que ef. parcial da educ é -0.128 e que as mulheres com nível superior estudam, em média,
+# 4 anos a mais:
+-0.128*4  # -0.512
+# Isto é, mulheres com nível superior terão aprox. 1/2 criança a menos que as mulheres com nível médio,
+# Ou, em média, 100 mulheres com nível superior terão 51,2 filhos a menos que 100 mulheres com nível médio.
+
+# Questão 4: Qual a queda na taxa de fertilidade que é devida aos outros fatores + aumento escolaridade?
+
+# Aumento na média dos anos de estudo:
+mean(subset(educ,(year==84)))-mean(subset(educ,(year==72))) # 1.11 anos
+
+# Efeito parcial da Educação: 
+M1$coefficients[2]  # -0.128
+
+# Efeito (só) do aumento da escolaridade:
+1.11*(-0.128)   # -0.142
+
+# Efeito dos outros fatores + aumento da escolaridade (coef. y84 + Ef. educ)
+
+-0.5430+(-0.142)    # -0.685
+
+# Isto é aproximadamente 2/3 de criança por mulher.
+
+
+# Computer Exercise 1, p. 426:
+#
+# (i) In the equation estimated in Example 13.1, test whether living environment at age 16 has an
+# effect on fertility (the base group is large city). Report the value of the F statistic and the p-value.
+
+waldtest(M1, .~. - farm - othrural - smcity , vcov = vcovHC)
+
+# (ii) Test whether region of the country at age 16 (South is the base group) has an effect on fertility.
+
+waldtest(M1, .~. - east - northcen - west , vcov = vcovHC)
+
+# (iii) Let u be the error term in the population equation. Suppose you think that the variance of u
+# changes over time (but not with educ, age, and so on). A model that captures this is
+# u2 = gamma0 + gamma*y74 + gamma*y76 + gamma*y78 + gamma*y80 + gamma*y82 + gamma*y84 + v.
+# Using this model, test for heteroskedasticity in u.
+# (Hint: Your F test should have 6 and 1,122 degrees of freedom.)
+
+u2 <- (M1$residuals)^2
+M.het <- lm(u2 ~ y74 + y76 + y78 + y80 + y82 + y84)
+
+waldtest(M.het, .~. - y74 - y76 - y78 - y80 - y82 - y84)
+
+#(iv) Add the interaction terms y74*educ, y76*educ,..., y84*educ to the model estimated in
+# Table 13.1. Explain what these terms represent. Are they jointly significant?
+
+M2 <- lm(kids ~ 1 + educ + age + age2 + black + east + northcen + west + farm + othrural + town + smcity + y74 + y76 + y78 + y80 + y82 + y84 + y74educ + y76educ+ y78educ + y80educ + y82educ + y84educ)
+summary(M2)
+
+pt(-0.778, 1128, lower.tail=TRUE)	# y74educ
+pt(-1.299, 1128, lower.tail=TRUE)	# y74educ
+# ...
+pt(-2.519, 1128, lower.tail=TRUE)	# y84educ
+
+# Os coeficientes de y74educ,..., y84educ representam os diferenciais dos efeitos parciais da educação
+# em cada período sobre a fertilidade (# kids) em relação ao ano base 1972.
+# Testar se esses valores são estatisticamente significantes, representa testar mudança nas inclinações.
+
+# Conjuntamente:
+
+waldtest(M3, .~. - y74educ - y76educ - y78educ - y80educ - y82educ - y84educ, vcov = vcovHC)
+
+
+
+### FIM ###
+
+
+
+
+as.integer(year==78)
+
+as.integer(educ > 12)
+
+
+
+A data.frame with 1129 observations on 27 variables:
+
+year: 72 to 84, even
+
+educ: years of schooling
+
+meduc: mother's education
+
+feduc: father's education
+
+age: in years
+
+kids: # children ever born
+
+black: = 1 if black
+
+east: = 1 if lived in east at 16
+
+northcen: = 1 if lived in nc at 16
+
+west: = 1 if lived in west at 16
+
+farm: = 1 if on farm at 16
+
+othrural: = 1 if other rural at 16
+
+town: = 1 if lived in town at 16
+
+smcity: = 1 if in small city at 16
+
+y74: = 1 if year = 74
+
+y76:
+
+y78:
+
+y80:
+
+y82:
+
+y84:
+
+agesq: age^2
+
+y74educ:
+
+y76educ:
+
+y78educ:
+
+y80educ:
+
+y82educ:
+
+y84educ:
+
+
+
+sum(as.integer(narr86==0))/length(narr86)	
+
+
+
+
+Obs:
+# H0: deltai = 0 vs. Ha:deltai > 0
+length(educ)
+pt(1.7187, 1128, lower.tail=FALSE)	# east
+pt(3.1366, 1128, lower.tail=FALSE)	# nortcen
+pt(1.2245, 1128, lower.tail=FALSE)	# west
+
+
+pt(-0.3627, 1128, lower.tail=TRUE)	# farm
+pt(-0.9077, 1128, lower.tail=TRUE)	# othrural
+pt(0.6619, 1128, lower.tail=FALSE)	# town
+pt(1.3873, 1128, lower.tail=FALSE)	# smcity

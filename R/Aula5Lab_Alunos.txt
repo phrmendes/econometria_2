@@ -1,0 +1,91 @@
+
+# Econometria II - Graduação Economia (UFABC) -  Prof. Guilherme Lima
+# Rotina para os Alunos - Aula 5
+
+# Objetivos:
+# 1.	Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+# 2.	Estimação e Interpretação des Modelos com "Pooled Cross-Section Data".
+
+
+# Referências:
+# (1) Wooldridge J.M. (2012) "Introductory Econometrics".  
+# (2) Wooldridge J.M. (2002) "Econometric analysis of cross section and panel data".
+# (3) Kleiber, C. &  Zeileis, A. (2008) "Applied Econometrics with R". p. 106
+
+# Sites que contém material auxiliar:
+# https://justinmshea.github.io/wooldridge/index.html								# Base de dados de (1) e (2)
+# http://eclr.humanities.manchester.ac.uk/index.php/R_robust_se						# White Robust Standard Errors
+# https://www.rdocumentation.org/packages/lmtest/versions/0.9-37/topics/coeftest			# "coeftest"
+
+
+# Pacotes:
+
+# install.packages("wooldridge") 	# O pacote wooldridge para R contém os dados do livro Introductory Econometrics
+library(wooldridge)
+# help(package = "wooldridge")
+
+install.packages("sandwich")	# contém os testes robustos de White
+library(sandwich)
+help(package = "sandwich")
+
+install.packages("lmtest")	# contém "coeftest"
+library(lmtest)
+help(package = "lmtest")
+
+install.packages("olsrr")	# contém os testes robustos de White
+library(olsrr)
+help(package = "olsrr")
+
+
+##################################################################################################
+# Example 13.2: Retorno da Educação sobre os Salários
+##################################################################################################
+
+# A log(wage) equation (where wage is hourly wage) pooled across the years 1978 (base year) and 1985 is
+
+# log(wage)= ß0 + delta0*dy85 +ß1*educ + delta1*dy85*educ + ß2*exper + ß3*exper^2 + ß4*union + delta5*dy85*female + u
+
+# where most explanatory variables should by now be familiar. The variable union is a dummy variable 
+# equal to one if the person belongs to a union, and zero otherwise. The variable y85 is a dummy
+# variable equal to one if the observation comes from 1985 and zero if it comes from 1978. There are
+# 550 people in the sample in 1978 and a different set of 534 people in 1985.
+# The intercept for 1978 is ß0, and the intercept for 1985 is (ß0 + delta0). The return to education in
+# 1978 is ß1, and the return to education in 1985 is (ß1 + delta1). Therefore, d1 measures how the return to
+# another year of education has changed over the seven-year period. Finally, in 1978, the log(wage) 
+# differential between women and men is ß5; the differential in 1985 is (ß5 + delta5). Thus, we can test 
+# the null hypothesis that nothing has happened to the gender differential over this seven-year period 
+# by testing H0: delta5 = 0. The alternative that the gender differential has been reduced is H1: delta5 > 0.
+# For simplicity, we have assumed that experience and union membership have the same effect on wages 
+# in both time periods.
+
+data("cps78_85")
+head(cps78_85)
+attach(cps78_85)
+length(educ)
+
+# Model 1: OLS
+
+expersq <- exper^2
+
+M1 <- lm(lwage ~ 1 + y85 + educ + y85*educ + exper + expersq + union + female + y85*female)
+summary(M1)
+
+ols_test_breusch_pagan(M1)				# Teste de Breusch-Pagan-Godfrey
+het.M1 <- vcovHC(M1, type = "HC0")		# HC0 Wihite (1980) => validade asy.
+coeftest(M1, het.M1)
+
+# Questão 1: Há evidências do aumento no efeito da educação sobre os salários?
+# H0: delta1 = 0 vs. Ha:delta1 > 0
+
+pt(1.9487, 1083, lower.tail=FALSE)
+
+# Questão 2: Há evidências de queda na diferença salarial entre homens e mulheres entre 78-85?
+# H0: delta5 = 0 vs. Ha:delta5 > 0
+
+pt(1.6503, 1083, lower.tail=FALSE)
+
+
+
+
+
+

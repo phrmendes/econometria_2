@@ -1,0 +1,19 @@
+---
+title: "Aula 4"
+output: html_notebook
+---
+
+# AULA 4 - Econometria II
+
+Graduação Economia (UFABC) - Prof. Guilherme Lima\
+Tema: Aula prática
+
+Objetivos:
+1.	Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+2.	Identificação, estimação e inferência sob hipótese de autocorrelação.
+
+Referências:
+
+1.  Wooldridge J.M. (2012) "Introductory Econometrics".
+2.  Wooldridge J.M. (2002) "Econometric analysis of cross section and panel data".
+3.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R". p. 106
