@@ -17,3 +17,111 @@ Referências:
 1.  Wooldridge J.M. (2012) "Introductory Econometrics".
 2.  Wooldridge J.M. (2002) "Econometric analysis of cross section and panel data".
 3.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R". p. 106
+
+## Bibliotecas
+
+```{r}
+source("R/libraries.R")
+```
+
+## Effects of inflation and deficits on interest rates
+
+### Dados
+
+```{r}
+intdef <- tibble::as_tibble(wooldridge::intdef)
+
+intdef |> head()
+```
+
+### Regressões
+
+$\operatorname{i3} = \beta_0 + \beta_{1}(\operatorname{inf}) + \beta_{2}(\operatorname{def}) + u_t$
+
+```{r}
+model_1 <- intdef |> 
+  fixest::feols(
+    fml = i3 ~ inf + def
+  )
+
+summary(model_1)
+
+pacf(model_1$residuals)
+```
+
+Plot de função de autocorrelação parcial: apresenta, dentro de um intervalo de confiança, o grau da autocorrelação. Nesse caso, o modelo aparenta ter autocorrelação de primeiro grau.
+
+```{r}
+car::durbinWatsonTest(lm(i3 ~ inf + def, intdef))
+```
+Usando Feasible Generalized Least Squares (FGLS):
+
+```{r}
+model_1_fgls <- prais::prais_winsten(
+  i3 ~ inf + def, 
+  data = intdef,
+  index = "year"
+)
+
+summary(model_1_fgls)
+
+#' The Prais-Winsten estimator takes into account 
+#' AR(1) serial correlation of the errors in a 
+#' linear regression model. The procedure recur-
+#' sively estimates the coefficients and the er-
+#' ror autocorrelation of the specified model un-
+#' til sufficient convergence of the AR(1) coeffi-
+#' cient is reached. All estimates are obtained 
+#' by OLS.
+```
+Durbin-Watson statistic (transformed) $\approx$ 2 $\to$ sem autocorrelação serial dos erros relevante
+
+## Puerto rican employment and the Minimum Wage
+
+### Dados
+
+```{r}
+prminwge <- tibble::as_tibble(wooldridge::prminwge)
+
+prminwge |> head()
+```
+
+### Regressões
+
+$\operatorname{lprepop} = \beta_0 + \beta_{1}(\operatorname{lmincov}) + \beta_{2}(\operatorname{lusgnp}) + u_t$
+
+```{r}
+model_2 <- prminwge |> 
+  fixest::feols(
+    fml = lprepop ~ lmincov + lusgnp
+  )
+
+summary(model_2)
+
+model_2_fgls <- prais::prais_winsten(
+  lprepop ~ lmincov + lusgnp, 
+  data = prminwge,
+  index = "year"
+)
+
+summary(model_2_fgls)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

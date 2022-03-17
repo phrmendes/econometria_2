@@ -11,7 +11,7 @@
 
 
 
-<title>Aula 4</title>
+<title>Aula 5</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1754,14 +1754,14 @@ pre code {
 
 
 
-<h1 class="title toc-ignore">Aula 4</h1>
+<h1 class="title toc-ignore">Aula 5</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<div id="aula-4---econometria-ii" class="section level1">
-<h1>AULA 4 - Econometria II</h1>
+<div id="aula-5---econometria-ii" class="section level1">
+<h1>AULA 5 - Econometria II</h1>
 <p>Graduação Economia (UFABC) - Prof. Guilherme Lima<br />
 Tema: Aula prática</p>
 <p>Objetivos: 1. Dar continuidade à Introdução ao Software Estatístico R
@@ -1783,176 +1783,10 @@ p. 106</li>
 <pre class="r"><code>source(&quot;R/libraries.R&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="effects-of-inflation-and-deficits-on-interest-rates" class="section level2">
-<h2>Effects of inflation and deficits on interest rates</h2>
-<div id="dados" class="section level3">
-<h3>Dados</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW50ZGVmIDwtIHRpYmJsZTo6YXNfdGliYmxlKHdvb2xkcmlkZ2U6OmludGRlZilcblxuaW50ZGVmIHw+IGhlYWQoKVxuYGBgIn0= -->
-<pre class="r"><code>intdef &lt;- tibble::as_tibble(wooldridge::intdef)
-
-intdef |&gt; head()</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6MTMsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNiDDlyAxMyJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUE0MVVPMi9UVUJTKzhhT2hsbG9vWFlDaFJDd3dOQ2J4YlNsaXlSMFFTR3hVUmVvR3hyR0xSV0pIdGlNb0N5ejhCeXp4S0xDenNHUWlIbGlRd29nUVkwZkVBZ3FxS2tBTzU3NFNNRVZLcEtQdnZMN3p1bGJXTDI1aVk5TkFDS2xJSzZsSTFVRkYrcldOUzlYekNHa0tHQ1drb1ZtS2R5RnBFWlE1SVRNSWxSK0RQQUY1Q3ZJTVpBZmtPY1RtYWJ6eDllVkhXcTd4TFUxM0tBNGZMbVVVOXdjRGhyK3VmbmxBTWQrOVRPT1NSeW9ZRTFENlE0Nk43enlmbkJSMWNzKzdRZkV6dDhlOEdzOG5WZTRreTRKWE84N3lDQlorNnpYTEcvTk9DOTR5cjBmT1NwdjNJVmpnQ2tmSnk0NTZIcDIvL3k1OXhQWWM0aFdLL2R6Yll2WW40ZitKTGZRSDcvNCtWY3N2cHIxUGtUZnRmWXE4YWVmOVo4NVh2UTBXZjlOYlovaGhxY2R3Y0dhUDRkdDd1d2Z4c2xQaW5wcTQrd25lUHp2RzdUN3NmZUIrQzJuSzl0L2pjMldIQnU5cEhsRTRuKzRyK29udjhIKy92ejVnUGJEYmJnektFVWJrVG0zYnRTT2hLejRXbXVvSG5sUWoxNUZxMkUyazJuUmxndWJqNjNYWkFuZ1RBM0xHaHVxTWkydk9wTHJtVEFxcDIydHJoWkZuby9DT0tjZW11eXAwLzlGbzlLT1FhQ1IrMnpYanhHNTN4SUl5c21DdFZxNTBnNHBWcTljckZyNVF3OFd6T0MwN2pnc3NvMmtudHVsRjBCcXN2RUFwaDUzRUR3TWdLZlFQUVMrUVMxSEJjYmdiMENXYVZlZFdON2hkUFVjYnNQRGtFVXZpSWFVK3gxc3FJMUZLRjZWbTNHRExEMXc1ZTh1KzZiYUVNUS9IWXJjeU81RWZ5SmN5d0J1YlNaallNczl3d3BiMHNOMVEvaHRoR0w0Q0J3VUFBQT09In0= -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["year"],"name":[1],"type":["int"],"align":["right"]},{"label":["i3"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["inf"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["rec"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["out"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["def"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["i3_1"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["inf_1"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["def_1"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["ci3"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["cinf"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["cdef"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["y77"],"name":[13],"type":["int"],"align":["right"]}],"data":[{"1":"1948","2":"1.04","3":"8.1","4":"16.2","5":"11.6","6":"-4.6000004","7":"NA","8":"NA","9":"NA","10":"NA","11":"NA","12":"NA","13":"0"},{"1":"1949","2":"1.10","3":"-1.2","4":"14.5","5":"14.3","6":"-0.1999998","7":"1.04","8":"8.1","9":"-4.6000004","10":"0.06000006","11":"-9.3","12":"4.400001","13":"0"},{"1":"1950","2":"1.22","3":"1.3","4":"14.4","5":"15.6","6":"1.2000008","7":"1.10","8":"-1.2","9":"-0.1999998","10":"0.12000000","11":"2.5","12":"1.400001","13":"0"},{"1":"1951","2":"1.55","3":"7.9","4":"16.1","5":"14.2","6":"-1.9000006","7":"1.22","8":"1.3","9":"1.2000008","10":"0.32999992","11":"6.6","12":"-3.100001","13":"0"},{"1":"1952","2":"1.77","3":"1.9","4":"19.0","5":"19.4","6":"0.3999996","7":"1.55","8":"7.9","9":"-1.9000006","10":"0.22000003","11":"-6.0","12":"2.300000","13":"0"},{"1":"1953","2":"1.93","3":"0.8","4":"18.7","5":"20.4","6":"1.6999989","7":"1.77","8":"1.9","9":"0.3999996","10":"0.15999997","11":"-1.1","12":"1.299999","13":"0"}],"options":{"columns":{"min":{},"max":[10],"total":[13]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="regressões" class="section level3">
-<h3>Regressões</h3>
-<p><span class="math inline">\(\operatorname{i3} = \beta_0 +
-\beta_{1}(\operatorname{inf}) + \beta_{2}(\operatorname{def}) +
-u_t\)</span></p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShtb2RlbF8xKVxuXG5gYGAifQ== -->
-<pre class="r"><code>summary(model_1)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiT0xTIGVzdGltYXRpb24sIERlcC4gVmFyLjogaTNcbk9ic2VydmF0aW9uczogNTYgXG5TdGFuZGFyZC1lcnJvcnM6IElJRCBcbiJ9 -->
-<pre><code>OLS estimation, Dep. Var.: i3
-Observations: 56 
-Standard-errors: IID </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6NSwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZiBbMyDDlyA1XSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUF3dHlpVERtaXVCaVlHQmdabUJoWkdaZ1pnVXlHVmhEUTl4MExSZ1lXSmlBSEVZR0ZnWk9FRjBCVkNRTWtnVmlQcEFPKzkrN1N4VkZmUGJaUDA1MkZQL2g0bVgvSU92SG5MajhIM0Q1MjBzalh0VTgrR08vbGUzTW90dUp1KzMzK1dWK2lGdmtDNU4zRU9BNUF3Um5IV1FibTMvS3BlUTdDSWJlVXRkSStnYVVFNEM0Q0d3eGw2R2VoYVc1YWFxdWdRbEN4TkRRM0JJb1lna1RNZE16TlRjeUFZcVlBalh5Z25XRG5BN0hLRjVoeTBrdFM4MHBodHJEQ2hWbDF0TFNRakFWNEV3Rk9GTVB6bVJBTTVFMU9TZXhHR1lnM0pxMHhPU1MvQ0lnNngrNjhyekUzRlIwK3psY2kwc3ljeE5MVW1GK0NpNUowVk53TFNvQ0dnRVJZUzlSS0V2TUtZVXA0QWdvMHJDckthblJ4T0VvenFMOGNqMWttMkFoeXEzaG1WZVNXcFNjV2xBQzA4dWNtWmNHWTZha3BrRk1ZdjZQNWlPdWxNU1NSTDIwSXFDWldIekZubDlRa3BtZkI3U05DWlpPa0RVekZxRUo4SmZtZ1Z5WG9wdWNVWnFYcldzQ3NnQXAxbmloTkRNU214VmlKUXZNWWJDd1kwdk5TOC9NZ3dVTWEwNWlVbW9PbE1NSERBVndJT2dWRkdYbWxjQjhBaFF0MWl2SkwwbUVxZU5LenMrQmlZRDl4dkFQQU9NM3Zpd2VBd0FBIn0= -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Std. Error"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["t value"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>|t|)"],"name":[4],"type":["chr"],"align":["left"]},{"label":[""],"name":[5],"type":["fctr"],"align":["left"]}],"data":[{"1":"1.733266","2":"0.431967","3":"4.01250","4":"1.8975e-04","5":"***","_rn_":"(Intercept)"},{"1":"0.605866","2":"0.082135","3":"7.37648","4":"1.1179e-09","5":"***","_rn_":"inf"},{"1":"0.513058","2":"0.118384","3":"4.33384","4":"6.5724e-05","5":"***","_rn_":"def"}],"options":{"columns":{"min":{},"max":[10],"total":[5]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tXG5TaWduaWYuIGNvZGVzOiAgMCAnKioqJyAwLjAwMSAnKionIDAuMDEgJyonIDAuMDUgJy4nIDAuMSAnICcgMVxuUk1TRTogMS43OTMxMSAgIEFkai4gUjI6IDAuNTg3MDUxXG4ifQ== -->
-<pre><code>---
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-RMSE: 1.79311   Adj. R2: 0.587051</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Plot de função de autocorrelação parcial: apresenta, dentro de um
-intervalo de confiança, o grau da autocorrelação. Nesse caso, o modelo
-aparenta ter autocorrelação de primeiro grau.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2FyOjpkdXJiaW5XYXRzb25UZXN0KGxtKGkzIH4gaW5mICsgZGVmLCBpbnRkZWYpKVxuYGBgIn0= -->
-<pre class="r"><code>car::durbinWatsonTest(lm(i3 ~ inf + def, intdef))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIGxhZyBBdXRvY29ycmVsYXRpb24gRC1XIFN0YXRpc3RpYyBwLXZhbHVlXG4gICAxICAgICAgIDAuNTcxNTczNyAgICAgMC43MTYxNTI3ICAgICAgIDBcbiBBbHRlcm5hdGl2ZSBoeXBvdGhlc2lzOiByaG8gIT0gMFxuIn0= -->
-<pre><code> lag Autocorrelation D-W Statistic p-value
-   1       0.5715737     0.7161527       0
- Alternative hypothesis: rho != 0</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Usando Feasible Generalized Least Squares (FGLS):</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShtb2RlbF8xX2ZnbHMpXG5cbmBgYCJ9 -->
-<pre class="r"><code>summary(model_1_fgls)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxucHJhaXM6OnByYWlzX3dpbnN0ZW4oZm9ybXVsYSA9IGkzIH4gaW5mICsgZGVmLCBkYXRhID0gaW50ZGVmLCBcbiAgICBpbmRleCA9IFwieWVhclwiKVxuXG5SZXNpZHVhbHM6XG4gICAgTWluICAgICAgMVEgIE1lZGlhbiAgICAgIDNRICAgICBNYXggXG4tNC4zMzU4IC0wLjc5NTMgIDAuODE5NCAgMi4yODgyICA4Ljk3NDIgXG5cbkFSKDEpIGNvZWZmaWNpZW50IHJobyBhZnRlciAxNiBpdGVyYXRpb25zOiAwLjg4NjJcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciB0IHZhbHVlXG4oSW50ZXJjZXB0KSAgIDMuNDAxNiAgICAgMS4zOTAyICAgMi40NDdcbmluZiAgICAgICAgICAgMC4xODYyICAgICAwLjA5MzQgICAxLjk5M1xuZGVmICAgICAgICAgIC0wLjEwMTMgICAgIDAuMTQ2NyAgLTAuNjkxXG4gICAgICAgICAgICBQcig+fHR8KSAgXG4oSW50ZXJjZXB0KSAgIDAuMDE3OCAqXG5pbmYgICAgICAgICAgIDAuMDUxNCAuXG5kZWYgICAgICAgICAgIDAuNDkyNiAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICBcbjAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5SZXNpZHVhbCBzdGFuZGFyZCBlcnJvcjogMS4yNDYgb24gNTMgZGVncmVlcyBvZiBmcmVlZG9tXG5NdWx0aXBsZSBSLXNxdWFyZWQ6ICAwLjEzNTcsXHRBZGp1c3RlZCBSLXNxdWFyZWQ6ICAwLjEwMyBcbkYtc3RhdGlzdGljOiA0LjE1OSBvbiAyIGFuZCA1MyBERiwgIHAtdmFsdWU6IDAuMDIxXG5cbkR1cmJpbi1XYXRzb24gc3RhdGlzdGljIChvcmlnaW5hbCk6IDAuNzE2MiBcbkR1cmJpbi1XYXRzb24gc3RhdGlzdGljICh0cmFuc2Zvcm1lZCk6ICAgMS44XG4ifQ== -->
-<pre><code>
-Call:
-prais::prais_winsten(formula = i3 ~ inf + def, data = intdef, 
-    index = &quot;year&quot;)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--4.3358 -0.7953  0.8194  2.2882  8.9742 
-
-AR(1) coefficient rho after 16 iterations: 0.8862
-
-Coefficients:
-            Estimate Std. Error t value
-(Intercept)   3.4016     1.3902   2.447
-inf           0.1862     0.0934   1.993
-def          -0.1013     0.1467  -0.691
-            Pr(&gt;|t|)  
-(Intercept)   0.0178 *
-inf           0.0514 .
-def           0.4926  
----
-Signif. codes:  
-0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 1.246 on 53 degrees of freedom
-Multiple R-squared:  0.1357,    Adjusted R-squared:  0.103 
-F-statistic: 4.159 on 2 and 53 DF,  p-value: 0.021
-
-Durbin-Watson statistic (original): 0.7162 
-Durbin-Watson statistic (transformed):   1.8</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Durbin-Watson statistic (transformed) <span class="math inline">\(\approx\)</span> 2 <span class="math inline">\(\to\)</span> sem autocorrelação serial dos erros
-relevante</p>
-</div>
-</div>
-<div id="puerto-rican-employment-and-the-minimum-wage" class="section level2">
-<h2>Puerto rican employment and the Minimum Wage</h2>
-<div id="dados-1" class="section level3">
-<h3>Dados</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJtaW53Z2UgPC0gdGliYmxlOjphc190aWJibGUod29vbGRyaWRnZTo6cHJtaW53Z2UpXG5cbnBybWlud2dlIHw+IGhlYWQoKVxuYGBgIn0= -->
-<pre class="r"><code>prminwge &lt;- tibble::as_tibble(wooldridge::prminwge)
-
-prminwge |&gt; head()</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6MjUsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNiDDlyAyNSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUE2MVZiV3hUVlJnKy9iaTNXL2tRZzRhUWJhWS9GSVdremJwSk5DVEx2WXNmOGVPSEFUVlpVR0RYOW5iVTNkN2J0TGNEQ2NFWnd3K2pFV3JZb0Q4VVpDU1NoUVF4V2Z5QWNJc3NHbVpaRUlIRkRVYzFMZ3pMK0k1alNsdk9lYys5M2JrTkp2eHd5Y2x6bnZkOW4vTituTnV6VmMrMk5YdmJ2QWdoRjNJN1hNakY0UzNpWG4vdGVmL1RDTG1kbURpUUc5VVMzSWlERnVMTllyem00Y1VqNVBrTXI5MTQ3Y0hyYzd6MjR0V0hmZk9KWHpqUnRxQWRiNFNoN1BzK2dybGNMa3Z3bDR0S044RXpOVUd3ajN6NkZjR0s3dGVOWndrUlJsdmlld0N2OXdNZi8yWmxubUMrOVFPUjRPL3Y4VGJkOFJFdjJBZUxOeUhQajk0V3lIUHlsUXRnLzhrNUYvQmtlbjAzcXp2eDNWcXdEMjJaZ2ZOelUrbDJKazdJSGFnQi8vQnl3YVk3dmUxTnFQOCtzYUliMi9vSTFIZmVuRWVsTHhvazVQdEdBUCtnL1ZkMGhjMVRNSS9Md1NVUWY4V3M5NnJaNXpWVGYyM3VpMWxXTi83UUpvZzdmK1J0aUJ2NzRRdmdZK0hWVU4rb1dlZm9xWW4yLzBFbmZwaktrRHJGanliQktHNHptc244eE8wVEZOT3QxSjhlUW9qVkJlZzh4RVpxRlAwWkd1YzNlU0NUSVhXSXl5SVJXNzVQaHFsdVI1Wml6M1lhM3h1aitYcDkxTDd6all3NVQvUDd4UjgzUXVRamQrSGx4b3N6N1piL3YvNW9YdTdDSGNqREI1NEI1RDdlQlhtNDhIN0tUKytEZXQzN1hzaXl1cm9HSDlSVnQzSUEvSFdIRHVVQnIrOEFyUGVzOEFFdVdXUFQxYThMVS91Z0gzVDFoZFVRMzdDd0YrYlV3STFEL29ZV2thM1RLSjU1bWNRWmQ2YnFBZi9WVHBINUdkTTlmY0J2LzNtTDhnVEg1bnYzTnRsNjlockZLOFBFYmhSWHRSS0xVVXIzZEFOT2RJRytWTHZGbG05eTZXT2tUdVBTYnJndjQ2K0JtM0IrNGZFUzhNdVBIZ0FzbkZ0MHozejNxYmQwd3JlWjU0aGZPT3g2bFp3bkhDMThTZVloSEgraWpjUUp4L29oWEJocy96N1A2TExPemh3aFdVY1IzcGNzbXB3V29aL1FmcUkzeWdmN2FkK1JBYlpPWStZU3ZGL0d6Snkvb2YvcDMzNEdmdVBnRE5SNW8rZHIwRis5K0RETlozdElPVldLeVVtOFdZRElZMHFON25ka0tXSHVlYW1ySXhaVlRlYkJiSVBVSVZ2cVRpbXFiMklpUTFxWGRRYmU2cFlxRnJHcDRvbXdITEZVOFlRYzErSldKR1dSMmNnT2xmR2xWRGxtVVM2Vm5QVTU5TXB4V2xKLzZrbVQxU2gyRGErd0IvSUtld1N2c00xNFFMa3V5RkMyVEtBVkw0OEhOTnU1UjZtaTVnVHRnNjlOYUJzQzF2REpMOXhKYnExY0x2OVRGZWpWb3pFNWtOUWwzQVc5SnN2ellOTnkzMHNwMWRmVUdBejZtcHBYTkRaWFgyNUlrWkxKS3BVM0xPbFNJSkxBcVRFclZVazhXbHlQYWlvV09jbS9WNjVLN0VoVUdSNUlxYVNKc0QrMFBxVjIrcHRJQWtTZk1tUTJSdlk4czE5TVV6ckw1bEdjTlVWWjdZaXFsWTlFa2Q2U0ZaUE14OE9DV1FYaWlhaHEzYlVYVzVNQlhkTWxLODRiMGhUTEFyMmgwbDFCL1hKeFZRZ0FBQT09In0= -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["year"],"name":[1],"type":["int"],"align":["right"]},{"label":["avgmin"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["avgwage"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["kaitz"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["avgcov"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["covt"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["mfgwage"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["prdef"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["prepop"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["prepopf"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["prgnp"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["prunemp"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["usgnp"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["t"],"name":[14],"type":["int"],"align":["right"]},{"label":["post74"],"name":[15],"type":["int"],"align":["right"]},{"label":["lprunemp"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["lprgnp"],"name":[17],"type":["dbl"],"align":["right"]},{"label":["lusgnp"],"name":[18],"type":["dbl"],"align":["right"]},{"label":["lkaitz"],"name":[19],"type":["dbl"],"align":["right"]},{"label":["lprun_1"],"name":[20],"type":["dbl"],"align":["right"]},{"label":["lprepop"],"name":[21],"type":["dbl"],"align":["right"]},{"label":["lprep_1"],"name":[22],"type":["dbl"],"align":["right"]},{"label":["mincov"],"name":[23],"type":["dbl"],"align":["right"]},{"label":["lmincov"],"name":[24],"type":["dbl"],"align":["right"]},{"label":["lavgmin"],"name":[25],"type":["dbl"],"align":["right"]}],"data":[{"1":"1950","2":"0.198","3":"0.398","4":"0.155","5":"0.201","6":"0.29","7":"0.43","8":"0.859","9":"0.470","10":"0.470","11":"878.7","12":"15.4","13":"1203.7","14":"1","15":"0","16":"2.734367","17":"6.778443","18":"7.093155","19":"-1.864330","20":"NA","21":"-0.7550226","22":"NA","23":"0.09999498","24":"-2.302635","25":"-1.6194882"},{"1":"1951","2":"0.209","3":"0.410","4":"0.164","5":"0.207","6":"0.29","7":"0.45","8":"0.881","9":"0.449","10":"0.449","11":"925.0","12":"16.0","13":"1328.2","14":"2","15":"0","16":"2.772589","17":"6.829794","18":"7.191580","19":"-1.807889","20":"-1.870803","21":"-0.8007324","22":"-0.7550226","23":"0.10551952","24":"-2.248859","25":"-1.5654210"},{"1":"1952","2":"0.225","3":"0.421","4":"0.180","5":"0.226","6":"0.29","7":"0.48","8":"0.953","9":"0.434","10":"0.434","11":"1015.9","12":"14.8","13":"1380.0","14":"3","15":"0","16":"2.694627","17":"6.923530","18":"7.229839","19":"-1.714798","20":"-1.832582","21":"-0.8347108","22":"-0.8007324","23":"0.12078384","24":"-2.113753","25":"-1.4916549"},{"1":"1953","2":"0.311","3":"0.480","4":"0.229","5":"0.231","6":"0.29","7":"0.50","8":"0.970","9":"0.428","10":"0.428","11":"1081.3","12":"14.5","13":"1435.3","14":"4","15":"0","16":"2.674149","17":"6.985919","18":"7.269129","19":"-1.474033","20":"-1.910543","21":"-0.8486321","22":"-0.8347108","23":"0.14966875","24":"-1.899331","25":"-1.1679624"},{"1":"1954","2":"0.313","3":"0.508","4":"0.211","5":"0.224","6":"0.29","7":"0.52","8":"1.000","9":"0.415","10":"0.415","11":"1104.4","12":"15.3","13":"1416.2","14":"5","15":"0","16":"2.727853","17":"7.007058","18":"7.255733","19":"-1.555897","20":"-1.931022","21":"-0.8794768","22":"-0.8486321","23":"0.13801575","24":"-1.980387","25":"-1.1615521"},{"1":"1955","2":"0.369","3":"0.547","4":"0.231","5":"0.236","6":"0.29","7":"0.57","8":"1.003","9":"0.419","10":"0.419","11":"1138.5","12":"13.2","13":"1494.9","14":"6","15":"0","16":"2.580217","17":"7.037467","18":"7.309814","19":"-1.465338","20":"-1.877317","21":"-0.8698844","22":"-0.8794768","23":"0.15920292","24":"-1.837576","25":"-0.9969587"}],"options":{"columns":{"min":{},"max":[10],"total":[25]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="regressões-1" class="section level3">
-<h3>Regressões</h3>
-<p><span class="math inline">\(\operatorname{lprepop} = \beta_0 +
-\beta_{1}(\operatorname{lmincov}) + \beta_{2}(\operatorname{lusgnp}) +
-u_t\)</span></p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShtb2RlbF8yKVxuXG5gYGAifQ== -->
-<pre class="r"><code>summary(model_2)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiT0xTIGVzdGltYXRpb24sIERlcC4gVmFyLjogbHByZXBvcFxuT2JzZXJ2YXRpb25zOiAzOCBcblN0YW5kYXJkLWVycm9yczogSUlEIFxuIn0= -->
-<pre><code>OLS estimation, Dep. Var.: lprepop
-Observations: 38 
-Standard-errors: IID </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MywibmNvbCI6NSwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZiBbMyDDlyA1XSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUF3dHlpVERtaXVCaVlHQmdabUJoWkdaZ1pnVXlHVmhEUTl4MExSZ1lXSmlBSEVZR0ZnWk9FRjBCVkNRTWtnVmlQcENPL1IvdXZWcDJLZDF4LytFamwzUTY1TnozZDN6cmZ2UjlZeTFNM3Y1Rm5jbE9WNE1lK3cxem95U3F2RHp0dDYwNHVjTTF6QnV1L3h2WEV1T0EvdFFEekp3VFBqTysyclAvNElKQTUvMUZoVUE1QVlpTHdCYXpHK2dabXBzYm1DTzRCa1pHbG9ZSXJvV2xvWkVaVUQwdldCUEVnVkFheFFkc09hbGxxVG5GVU9OWm9hTE1XbHBhQ0tZQ25La0FaK3JCbVF4b0pySW01eVFXd3d5RVc1T1dtRnlTWHdSay9VTlhucGVZbTRwdVA0ZHJjVWxtYm1KSktwVFBGVnlTb3FmZ1dsUUVOQUxxeFJLRnNzU2NVcGdDam9BaURidWFraHBOSEk3aUxNb3YxME8yQ1JhUTNCcWVlU1dwUmNtcEJTVXd2ZXc1dVpsNXlmbGw4QkFxTFU3UEs0QVl5UHdmeldOY0tZa2xpWHBwUlVDanNYaU9QYitnSkRNL0QyZ3BFeXlWSUd0bUxFSVQ0Qy9OQXpreVJUYzVvelF2VzljSVpBRllHb0o1b1RRekVoc2FvU3d3aDhHQ2tDMDFMejB6RHhZK3JEbUpTYWs1VUE0Zk1EREFZYUZYVUpTWlZ3THpDVkMwV0s4a3Z5UVJwbzRyT1Q4SEpnTDJHOE0vQUxtNUJUSWNBd0FBIn0= -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Std. Error"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["t value"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>|t|)"],"name":[4],"type":["chr"],"align":["left"]},{"label":[""],"name":[5],"type":["fctr"],"align":["left"]}],"data":[{"1":"-1.054423","2":"0.765406","3":"-1.377598","4":"0.17707","5":"","_rn_":"(Intercept)"},{"1":"-0.154444","2":"0.064901","3":"-2.379671","4":"0.02291","5":"*","_rn_":"lmincov"},{"1":"-0.012189","2":"0.088513","3":"-0.137705","4":"0.89126","5":"","_rn_":"lusgnp"}],"options":{"columns":{"min":{},"max":[10],"total":[5]},"rows":{"min":[10],"max":[10],"total":[3]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tXG5TaWduaWYuIGNvZGVzOiAgMCAnKioqJyAwLjAwMSAnKionIDAuMDEgJyonIDAuMDUgJy4nIDAuMSAnICcgMVxuUk1TRTogMC4wNTM0NTkgICBBZGouIFIyOiAwLjY0MTA3M1xuIn0= -->
-<pre><code>---
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-RMSE: 0.053459   Adj. R2: 0.641073</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-</div>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiQXVsYSA0IgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIEFVTEEgNCAtIEVjb25vbWV0cmlhIElJCgpHcmFkdWHDp8OjbyBFY29ub21pYSAoVUZBQkMpIC0gUHJvZi4gR3VpbGhlcm1lIExpbWFcClRlbWE6IEF1bGEgcHLDoXRpY2EKCk9iamV0aXZvczoKMS4JRGFyIGNvbnRpbnVpZGFkZSDDoCBJbnRyb2R1w6fDo28gYW8gU29mdHdhcmUgRXN0YXTDrXN0aWNvIFIgZSBwYWNvdGVzIGVjb25vbcOpdHJpY29zIGRpc3BvbsOtdmVpcy4KMi4JSWRlbnRpZmljYcOnw6NvLCBlc3RpbWHDp8OjbyBlIGluZmVyw6puY2lhIHNvYiBoaXDDs3Rlc2UgZGUgYXV0b2NvcnJlbGHDp8Ojby4KClJlZmVyw6puY2lhczoKCjEuICBXb29sZHJpZGdlIEouTS4gKDIwMTIpICJJbnRyb2R1Y3RvcnkgRWNvbm9tZXRyaWNzIi4KMi4gIFdvb2xkcmlkZ2UgSi5NLiAoMjAwMikgIkVjb25vbWV0cmljIGFuYWx5c2lzIG9mIGNyb3NzIHNlY3Rpb24gYW5kIHBhbmVsIGRhdGEiLgozLiAgS2xlaWJlciwgQy4gJiBaZWlsZWlzLCBBLiAoMjAwOCkgIkFwcGxpZWQgRWNvbm9tZXRyaWNzIHdpdGggUiIuIHAuIDEwNgoKIyMgQmlibGlvdGVjYXMKCmBgYHtyfQpzb3VyY2UoIlIvbGlicmFyaWVzLlIiKQpgYGAKCiMjIEVmZmVjdHMgb2YgaW5mbGF0aW9uIGFuZCBkZWZpY2l0cyBvbiBpbnRlcmVzdCByYXRlcwoKIyMjIERhZG9zCgpgYGB7cn0KaW50ZGVmIDwtIHRpYmJsZTo6YXNfdGliYmxlKHdvb2xkcmlkZ2U6OmludGRlZikKCmludGRlZiB8PiBoZWFkKCkKYGBgCgojIyMgUmVncmVzc8O1ZXMKCiRcb3BlcmF0b3JuYW1le2kzfSA9IFxiZXRhXzAgKyBcYmV0YV97MX0oXG9wZXJhdG9ybmFtZXtpbmZ9KSArIFxiZXRhX3syfShcb3BlcmF0b3JuYW1le2RlZn0pICsgdV90JAoKYGBge3J9Cm1vZGVsXzEgPC0gaW50ZGVmIHw+IAogIGZpeGVzdDo6ZmVvbHMoCiAgICBmbWwgPSBpMyB+IGluZiArIGRlZgogICkKCnN1bW1hcnkobW9kZWxfMSkKCnBhY2YobW9kZWxfMSRyZXNpZHVhbHMpCmBgYAoKUGxvdCBkZSBmdW7Dp8OjbyBkZSBhdXRvY29ycmVsYcOnw6NvIHBhcmNpYWw6IGFwcmVzZW50YSwgZGVudHJvIGRlIHVtIGludGVydmFsbyBkZSBjb25maWFuw6dhLCBvIGdyYXUgZGEgYXV0b2NvcnJlbGHDp8Ojby4gTmVzc2UgY2FzbywgbyBtb2RlbG8gYXBhcmVudGEgdGVyIGF1dG9jb3JyZWxhw6fDo28gZGUgcHJpbWVpcm8gZ3JhdS4KCmBgYHtyfQpjYXI6OmR1cmJpbldhdHNvblRlc3QobG0oaTMgfiBpbmYgKyBkZWYsIGludGRlZikpCmBgYApVc2FuZG8gRmVhc2libGUgR2VuZXJhbGl6ZWQgTGVhc3QgU3F1YXJlcyAoRkdMUyk6CgpgYGB7cn0KbW9kZWxfMV9mZ2xzIDwtIHByYWlzOjpwcmFpc193aW5zdGVuKAogIGkzIH4gaW5mICsgZGVmLCAKICBkYXRhID0gaW50ZGVmLAogIGluZGV4ID0gInllYXIiCikKCnN1bW1hcnkobW9kZWxfMV9mZ2xzKQoKIycgVGhlIFByYWlzLVdpbnN0ZW4gZXN0aW1hdG9yIHRha2VzIGludG8gYWNjb3VudCAKIycgQVIoMSkgc2VyaWFsIGNvcnJlbGF0aW9uIG9mIHRoZSBlcnJvcnMgaW4gYSAKIycgbGluZWFyIHJlZ3Jlc3Npb24gbW9kZWwuIFRoZSBwcm9jZWR1cmUgcmVjdXItCiMnIHNpdmVseSBlc3RpbWF0ZXMgdGhlIGNvZWZmaWNpZW50cyBhbmQgdGhlIGVyLQojJyByb3IgYXV0b2NvcnJlbGF0aW9uIG9mIHRoZSBzcGVjaWZpZWQgbW9kZWwgdW4tCiMnIHRpbCBzdWZmaWNpZW50IGNvbnZlcmdlbmNlIG9mIHRoZSBBUigxKSBjb2VmZmktCiMnIGNpZW50IGlzIHJlYWNoZWQuIEFsbCBlc3RpbWF0ZXMgYXJlIG9idGFpbmVkIAojJyBieSBPTFMuCmBgYApEdXJiaW4tV2F0c29uIHN0YXRpc3RpYyAodHJhbnNmb3JtZWQpICRcYXBwcm94JCAyICRcdG8kIHNlbSBhdXRvY29ycmVsYcOnw6NvIHNlcmlhbCBkb3MgZXJyb3MgcmVsZXZhbnRlCgojIyBQdWVydG8gcmljYW4gZW1wbG95bWVudCBhbmQgdGhlIE1pbmltdW0gV2FnZQoKIyMjIERhZG9zCgpgYGB7cn0KcHJtaW53Z2UgPC0gdGliYmxlOjphc190aWJibGUod29vbGRyaWRnZTo6cHJtaW53Z2UpCgpwcm1pbndnZSB8PiBoZWFkKCkKYGBgCgojIyMgUmVncmVzc8O1ZXMKCiRcb3BlcmF0b3JuYW1le2xwcmVwb3B9ID0gXGJldGFfMCArIFxiZXRhX3sxfShcb3BlcmF0b3JuYW1le2xtaW5jb3Z9KSArIFxiZXRhX3syfShcb3BlcmF0b3JuYW1le2x1c2ducH0pICsgdV90JAoKYGBge3J9Cm1vZGVsXzIgPC0gcHJtaW53Z2UgfD4gCiAgZml4ZXN0OjpmZW9scygKICAgIGZtbCA9IGxwcmVwb3AgfiBsbWluY292ICsgbHVzZ25wCiAgKQoKc3VtbWFyeShtb2RlbF8yKQoKbW9kZWxfMl9mZ2xzIDwtIHByYWlzOjpwcmFpc193aW5zdGVuKAogIGxwcmVwb3AgfiBsbWluY292ICsgbHVzZ25wLCAKICBkYXRhID0gcHJtaW53Z2UsCiAgaW5kZXggPSAieWVhciIKKQoKc3VtbWFyeShtb2RlbF8yX2ZnbHMpCmBgYAoKCgoKCgoKCgoKCgoKCgoKCgoK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQXVsYSA1IgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIEFVTEEgNSAtIEVjb25vbWV0cmlhIElJCgpHcmFkdWHDp8OjbyBFY29ub21pYSAoVUZBQkMpIC0gUHJvZi4gR3VpbGhlcm1lIExpbWFcClRlbWE6IEF1bGEgcHLDoXRpY2EKCk9iamV0aXZvczoKMS4JRGFyIGNvbnRpbnVpZGFkZSDDoCBJbnRyb2R1w6fDo28gYW8gU29mdHdhcmUgRXN0YXTDrXN0aWNvIFIgZSBwYWNvdGVzIGVjb25vbcOpdHJpY29zIGRpc3BvbsOtdmVpcy4KMi4JSWRlbnRpZmljYcOnw6NvLCBlc3RpbWHDp8OjbyBlIGluZmVyw6puY2lhIHNvYiBoaXDDs3Rlc2UgZGUgYXV0b2NvcnJlbGHDp8Ojby4KClJlZmVyw6puY2lhczoKCjEuICBXb29sZHJpZGdlIEouTS4gKDIwMTIpICJJbnRyb2R1Y3RvcnkgRWNvbm9tZXRyaWNzIi4KMi4gIFdvb2xkcmlkZ2UgSi5NLiAoMjAwMikgIkVjb25vbWV0cmljIGFuYWx5c2lzIG9mIGNyb3NzIHNlY3Rpb24gYW5kIHBhbmVsIGRhdGEiLgozLiAgS2xlaWJlciwgQy4gJiBaZWlsZWlzLCBBLiAoMjAwOCkgIkFwcGxpZWQgRWNvbm9tZXRyaWNzIHdpdGggUiIuIHAuIDEwNgoKIyMgQmlibGlvdGVjYXMKCmBgYHtyfQpzb3VyY2UoIlIvbGlicmFyaWVzLlIiKQpgYGAK</div>
 
 
 
@@ -1999,7 +1833,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("aula_4.Rmd");
+  window.initializeSourceEmbed("aula_5.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
