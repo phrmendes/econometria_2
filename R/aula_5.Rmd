@@ -23,3 +23,47 @@ Referências:
 ```{r}
 source("R/libraries.R")
 ```
+
+## Retorno da Educação sobre os salários
+
+### Dados
+
+```{r}
+cps78_85 <- wooldridge::cps78_85 |> 
+  dplyr::mutate(expersq = exper^2)
+
+head(cps78_85)
+```
+
+### Regressão
+
+$\operatorname{lwage} = \beta_0 + \beta_{1}(\operatorname{y85}) + \beta_{2}(\operatorname{educ}) + \beta_{3}(\operatorname{\exper}) + \beta_{4}(\operatorname{\expersq}) + \beta_{5}(\operatorname{union}) + \beta_{6}(\operatorname{female}) + \beta_{7}(\operatorname{y85} \times \operatorname{educ}) + \beta_{8}(\operatorname{y85} \times \operatorname{female}) + u$
+
+```{r}
+model_1 <- cps78_85 |> 
+  fixest::feols(lwage ~ 1 + y85 + educ + (y85 * educ) + exper + expersq + union + female + (y85 * female))
+
+summary(model_1)
+
+olsrr::ols_test_breusch_pagan(lm(lwage ~ 1 + y85 + educ + (y85 * educ) + exper + expersq + union + female + (y85 * female), cps78_85)) # heterocedasticidade
+
+model_1_het <- cps78_85 |> 
+  fixest::feols(lwage ~ 1 + y85 + educ + (y85 * educ) + exper + expersq + union + female + (y85 * female), se = "hetero")
+
+summary(model_1_het)
+```
+Questão 1: Há evidências do aumento no efeito da educação sobre os salários?
+
+$$H_0: \delta_1 = 0,\ H_1: \delta_1 > 0$$
+
+```{r}
+pt(1.9487, 1083, lower.tail = FALSE) # H_0 rejeitada
+```
+
+Questão 2: Há evidências de queda na diferenças salarial entre homens e mulheres entre 78-85?
+
+$$H_0: \delta_5 = 0,\ H_1: \delta_5 > 0$$
+
+```{r}
+pt(1.6503, 1083, lower.tail = FALSE) # H_0 rejeitada
+```

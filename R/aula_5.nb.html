@@ -1783,10 +1783,142 @@ p. 106</li>
 <pre class="r"><code>source(&quot;R/libraries.R&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="retorno-da-educação-sobre-os-salários" class="section level2">
+<h2>Retorno da Educação sobre os salários</h2>
+<div id="dados" class="section level3">
+<h3>Dados</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3BzNzhfODUgPC0gd29vbGRyaWRnZTo6Y3BzNzhfODUgfD4gXG4gIGRwbHlyOjptdXRhdGUoZXhwZXJzcSA9IGV4cGVyXjIpXG5cbmhlYWQoY3BzNzhfODUpXG5gYGAifQ== -->
+<pre class="r"><code>cps78_85 &lt;- wooldridge::cps78_85 |&gt; 
+  dplyr::mutate(expersq = exper^2)
+
+head(cps78_85)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6MTUsInN1bW1hcnkiOnsiRGVzY3JpcHRpb24iOlsiZGYgWzYgw5cgMTVdIl19fSwicmRmIjoiSDRzSUFBQUFBQUFBQTYxVHpVN2JRQkJleDNZUzBwWVVjV3FGa0Erb0Z4U1hKSW9VY1NFSDFFTWxLb1JBNG9TMHNSZGkxVjRiZTkzQWpRZmcwRXM1OWRZWDRSbDRBZzVjS25IcnFTQUJzL1pPY0N5aC9naExuMmErK1habWRzYjIxdnB1dDdIYklJVG94TkIwb3B2Z0VuTm4rME9yVDRoUkFhSVJnOHhJZXdTSDVzRnBBbDRCcW9DWENrVy9YdENmZXY1RjEvNUNMd04xZVpkRndEdUF2UHNMd0RKZ1Z1cUR6YnpBNE5USzdkblgzSDVSZG0rUTIrOVhmK3FMVDFaMzdWZjA0eEtjdGQvbmIyV0ZnYlo0ZlM0dCtmWXppOThNTnpKN0cxNVkwM1hmQU40RDJvQWx3QUtnWDlBL1BZSG4zUGQvNkZNZlNrTjRBYk1UUVlNSTJPdUNNdGZwV1I5VGJuVlcybTJyMDExZDZaWlNUVTREbHFpc3Bnb2F6RTBkUEpDRXFSZ3BVdWNoSDQ4OHdSU3Y3ck9BK3NocUFZMWpqN21ZeVk0aUZxT1drZVFRdFpSN0lVZmlqK2tCRnRFZlhlT1lVY3pYai9zOWJBb3U5TVhDd0FyWHJRUE5hMC9QT1JPSFl4dG5sYnV0bk9TTHJKWVg0dmcwd1lWTUZ1eFNRZTM5R1BLQjNaVlNhbUVrb0NNa1ZlUVhiNWFTdGJnVWFLWmMzc1J0T2FPVWYyNTFaQU15L1NkcDZ1MmozOHhiNnZlcWxJbTdZUHpBNDJ5eVNEcGt2aUt6TUhFMnNCM0ZIaGM0Q1VRVFc0U0M0cm1HRS9vWXlXWWpkdy9ZTzFEU3BBUUFBQT09In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["educ"],"name":[1],"type":["int"],"align":["right"]},{"label":["south"],"name":[2],"type":["int"],"align":["right"]},{"label":["nonwhite"],"name":[3],"type":["int"],"align":["right"]},{"label":["female"],"name":[4],"type":["int"],"align":["right"]},{"label":["married"],"name":[5],"type":["int"],"align":["right"]},{"label":["exper"],"name":[6],"type":["int"],"align":["right"]},{"label":["expersq"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["union"],"name":[8],"type":["int"],"align":["right"]},{"label":["lwage"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["age"],"name":[10],"type":["int"],"align":["right"]},{"label":["year"],"name":[11],"type":["int"],"align":["right"]},{"label":["y85"],"name":[12],"type":["int"],"align":["right"]},{"label":["y85fem"],"name":[13],"type":["int"],"align":["right"]},{"label":["y85educ"],"name":[14],"type":["int"],"align":["right"]},{"label":["y85union"],"name":[15],"type":["int"],"align":["right"]}],"data":[{"1":"12","2":"0","3":"0","4":"0","5":"0","6":"8","7":"64","8":"0","9":"1.2150","10":"25","11":"78","12":"0","13":"0","14":"0","15":"0","_rn_":"1"},{"1":"12","2":"0","3":"0","4":"1","5":"1","6":"30","7":"900","8":"1","9":"1.6094","10":"47","11":"78","12":"0","13":"0","14":"0","15":"0","_rn_":"2"},{"1":"6","2":"0","3":"0","4":"0","5":"1","6":"38","7":"1444","8":"1","9":"2.1401","10":"49","11":"78","12":"0","13":"0","14":"0","15":"0","_rn_":"3"},{"1":"12","2":"0","3":"0","4":"0","5":"1","6":"19","7":"361","8":"1","9":"2.0732","10":"36","11":"78","12":"0","13":"0","14":"0","15":"0","_rn_":"4"},{"1":"12","2":"0","3":"0","4":"0","5":"1","6":"11","7":"121","8":"0","9":"1.6490","10":"28","11":"78","12":"0","13":"0","14":"0","15":"0","_rn_":"5"},{"1":"8","2":"0","3":"0","4":"0","5":"1","6":"43","7":"1849","8":"0","9":"1.7148","10":"56","11":"78","12":"0","13":"0","14":"0","15":"0","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10],"total":[15]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="regressão" class="section level3">
+<h3>Regressão</h3>
+<p><span class="math inline">\(\operatorname{lwage} = \beta_0 +
+\beta_{1}(\operatorname{y85}) + \beta_{2}(\operatorname{educ}) +
+\beta_{3}(\operatorname{\exper}) + \beta_{4}(\operatorname{\expersq}) +
+\beta_{5}(\operatorname{union}) + \beta_{6}(\operatorname{female}) +
+\beta_{7}(\operatorname{y85} \times \operatorname{educ}) +
+\beta_{8}(\operatorname{y85} \times \operatorname{female}) +
+u\)</span></p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kZWxfMSA8LSBjcHM3OF84NSB8PiBcbiAgZml4ZXN0OjpmZW9scyhsd2FnZSB+IDEgKyB5ODUgKyBlZHVjICsgKHk4NSAqIGVkdWMpICsgZXhwZXIgKyBleHBlcnNxICsgdW5pb24gKyBmZW1hbGUgKyAoeTg1ICogZmVtYWxlKSlcblxuc3VtbWFyeShtb2RlbF8xKVxuYGBgIn0= -->
+<pre class="r"><code>model_1 &lt;- cps78_85 |&gt; 
+  fixest::feols(lwage ~ 1 + y85 + educ + (y85 * educ) + exper + expersq + union + female + (y85 * female))
+
+summary(model_1)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiT0xTIGVzdGltYXRpb24sIERlcC4gVmFyLjogbHdhZ2Vcbk9ic2VydmF0aW9uczogMSwwODQgXG5TdGFuZGFyZC1lcnJvcnM6IElJRCBcbiJ9 -->
+<pre><code>OLS estimation, Dep. Var.: lwage
+Observations: 1,084 
+Standard-errors: IID </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6OSwibmNvbCI6NSwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZiBbOSDDlyA1XSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUF3dHlpVERtaXVCaVlHQmdabUJoWkdaZ1pnVXlHVmhEUTl4MExSZ1lXSmlBSEVZR0ZnWk9FRjBCVkNRTWtnVmlQaURtdEw4YnI5SFMzSDdmZnA5R3gxYlg0MTMybXhWZVJRZnp2TFdmNSsyeThFT0R3WDRyTmVuUDFiMzI5aWZ2bDhuc09hKzUvNHJMMTh0aHdhZnNKejB2Mk10WXU5NSs2OUh2eDBwbmJZZWJ0LzJORzk4TkxnbjcvUnQwSTYvRzVkaFhSM2hMYldqTnM4KzE2T3JtdUN0bkwxSlVlL3J1emhiNythekpiL21UU3V3WDdmOXphK1BFZS9iTkdnWUxOdTQrYjcvS1ZTZnl0NXdrekR3SDRTVWZGODdJbm1QL3JxVDl6MDdseFE1cVNUcXVUQmtUSEJTbVNlN2tXL244Z01pc0R4YVA1czkxa05vUWUrT24xcThEaXQ1M1EyNzV2TEQvUDdsVy9wbC9xUDJ2MXEzYjJTYStBcG9sQURJUEdoQmNobm9HSm1iR3Fib0daakFSWXowVFF4TlRvSWdoVklUVFJzRkl6eWhWMXhCSmlaR1p1UUdxaUlHNXFUbFFremxNeEVUUHdNalVES2dHdHpFbWVoWm1saUM3aldBaWxucm1aaGFHWUJFR1psNndPMEdSQm9rblJpeVlHWWhaMENLWExTZTFMRFduR09wVFZxZ29zNWFXRm9LcEFHY3F3Smw2Y0NZRG1vbXN5VG1KeFRBRDRkYWtKU2FYNUJjQldmL1FsZWNsNXFhaTI4L2hXbHlTbVp0WWtncnphM0JKaXA2Q2ExRVIwQWlJQ0h1SlFsbGlUaWxNQVVkQWtZWmRUVW1OSmc1SGNSYmxsK3NoMndTTFUyNE56N3lTMUtMazFJSVNtRjdtU2d0VEtKTWxOYVUwR2ViUTFJcUNWTGoxWUU1eElVeXVOQzh6UHcvdTE5VGN4Qnk0eTRDbVdTRVp3d1hpUTFXQTNjajhIeTJzdUZJU1N4TDEwb3FBcnNVU1h1ejVCU1ZBdTREK1lJTGxTV1ROakVWb0F2eWxlU0IvcCtnbVo1VG1aZXNhZ1N4QVNoTzhVSm9UaWMwS3NaSUY1akJZckxDbDVxVm41c0U4eHBxVG1KU2FBK1h3QWNNWEhMeDZCVVdaZVNVd253QkZpL1ZLOGtzU1llcTRrdk56WUNKZ3Z6SDhBd0JvbldDT2lnUUFBQT09In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Std. Error"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["t value"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>|t|)"],"name":[4],"type":["chr"],"align":["left"]},{"label":[""],"name":[5],"type":["fctr"],"align":["left"]}],"data":[{"1":"0.458933","2":"0.093449","3":"4.911078","4":"1.0463e-06","5":"***","_rn_":"(Intercept)"},{"1":"0.117806","2":"0.123782","3":"0.951725","4":"3.4145e-01","5":"","_rn_":"y85"},{"1":"0.074721","2":"0.006676","3":"11.191744","4":"< 2.2e-16","5":"***","_rn_":"educ"},{"1":"0.029584","2":"0.003567","3":"8.293165","4":"3.2670e-16","5":"***","_rn_":"exper"},{"1":"-0.000399","2":"0.000078","3":"-5.151307","4":"3.0757e-07","5":"***","_rn_":"expersq"},{"1":"0.202132","2":"0.030294","3":"6.672233","4":"4.0256e-11","5":"***","_rn_":"union"},{"1":"-0.316709","2":"0.036621","3":"-8.648173","4":"< 2.2e-16","5":"***","_rn_":"female"},{"1":"0.018461","2":"0.009354","3":"1.973508","4":"4.8693e-02","5":"*","_rn_":"y85:educ"},{"1":"0.085052","2":"0.051309","3":"1.657644","4":"9.7681e-02","5":".","_rn_":"y85:female"}],"options":{"columns":{"min":{},"max":[10],"total":[5]},"rows":{"min":[10],"max":[10],"total":[9]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiLS0tXG5TaWduaWYuIGNvZGVzOiAgMCAnKioqJyAwLjAwMSAnKionIDAuMDEgJyonIDAuMDUgJy4nIDAuMSAnICcgMVxuUk1TRTogMC40MTA5ODcgICBBZGouIFIyOiAwLjQyMTkxNVxuIn0= -->
+<pre><code>---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+RMSE: 0.410987   Adj. R2: 0.421915</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxub2xzcnI6Om9sc190ZXN0X2JyZXVzY2hfcGFnYW4obG0obHdhZ2UgfiAxICsgeTg1ICsgZWR1YyArICh5ODUgKiBlZHVjKSArIGV4cGVyICsgZXhwZXJzcSArIHVuaW9uICsgZmVtYWxlICsgKHk4NSAqIGZlbWFsZSksIGNwczc4Xzg1KSkgIyBoZXRlcm9jZWRhc3RpY2lkYWRlXG5gYGAifQ== -->
+<pre class="r"><code>olsrr::ols_test_breusch_pagan(lm(lwage ~ 1 + y85 + educ + (y85 * educ) + exper + expersq + union + female + (y85 * female), cps78_85)) # heterocedasticidade</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG4gQnJldXNjaCBQYWdhbiBUZXN0IGZvciBIZXRlcm9za2VkYXN0aWNpdHlcbiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuIEhvOiB0aGUgdmFyaWFuY2UgaXMgY29uc3RhbnQgICAgICAgICAgICBcbiBIYTogdGhlIHZhcmlhbmNlIGlzIG5vdCBjb25zdGFudCAgICAgICAgXG5cbiAgICAgICAgICAgICAgRGF0YSAgICAgICAgICAgICAgICBcbiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbiBSZXNwb25zZSA6IGx3YWdlIFxuIFZhcmlhYmxlczogZml0dGVkIHZhbHVlcyBvZiBsd2FnZSBcblxuICAgICAgICAgVGVzdCBTdW1tYXJ5ICAgICAgICAgICBcbiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4gREYgICAgICAgICAgICA9ICAgIDEgXG4gQ2hpMiAgICAgICAgICA9ICAgIDIxLjk1NDUzIFxuIFByb2IgPiBDaGkyICAgPSAgICAyLjc5MTg3NmUtMDYgXG4ifQ== -->
+<pre><code>
+ Breusch Pagan Test for Heteroskedasticity
+ -----------------------------------------
+ Ho: the variance is constant            
+ Ha: the variance is not constant        
+
+              Data                
+ ---------------------------------
+ Response : lwage 
+ Variables: fitted values of lwage 
+
+         Test Summary           
+ -------------------------------
+ DF            =    1 
+ Chi2          =    21.95453 
+ Prob &gt; Chi2   =    2.791876e-06 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kZWxfMV9oZXQgPC0gY3BzNzhfODUgfD4gXG4gIGZpeGVzdDo6ZmVvbHMobHdhZ2UgfiAxICsgeTg1ICsgZWR1YyArICh5ODUgKiBlZHVjKSArIGV4cGVyICsgZXhwZXJzcSArIHVuaW9uICsgZmVtYWxlICsgKHk4NSAqIGZlbWFsZSksIHNlID0gXCJoZXRlcm9cIilcblxuc3VtbWFyeShtb2RlbF8xX2hldClcbmBgYCJ9 -->
+<pre class="r"><code>model_1_het &lt;- cps78_85 |&gt; 
+  fixest::feols(lwage ~ 1 + y85 + educ + (y85 * educ) + exper + expersq + union + female + (y85 * female), se = &quot;hetero&quot;)
+
+summary(model_1_het)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiT0xTIGVzdGltYXRpb24sIERlcC4gVmFyLjogbHdhZ2Vcbk9ic2VydmF0aW9uczogMSwwODQgXG5TdGFuZGFyZC1lcnJvcnM6IEhldGVyb3NrZWRhc3RpY2l0eS1yb2J1c3QgXG4ifQ== -->
+<pre><code>OLS estimation, Dep. Var.: lwage
+Observations: 1,084 
+Standard-errors: Heteroskedasticity-robust </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6OSwibmNvbCI6NSwic3VtbWFyeSI6eyJEZXNjcmlwdGlvbiI6WyJkZiBbOSDDlyA1XSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUF3dHlpVERtaXVCaVlHQmdabUJoWkdaZ1pnVXlHVmhEUTl4MExSZ1lXSmlBSEVZR0ZnWk9FRjBCVkNRTWtnVmlQaURtdEw4YnI5SFMzSDdmZnA5R3gxYlg0MTMybXhWZVJRZnp2TFdmNSsyeThFT0R3WDRyTmVuUDFiMzI5aWZ2bDhuc09hKzUvNHJMMTh0aHdhZnNKejB2Mk10WXU5NSs2OUh2eDBwbmJZZWJ0L1hKcy9tc3IxVHQ5Mi9uKzVybXlXVmZzV2ErL3UzK2UvYTU3Lzc1LzVrK3pWNmtxUGIwM1owdDl2TzQvUVJ2bjVwdXYvQm9VK2dHMDczMnpVQkxKSnlQMksrcXQvbk9HTHdYWnA2RGFObWpGUXdwcSt6ZjVUNDJ5cncvdzBIalhBM2J3OWtUSFJRTUo1ckpuclEvSUZLd1h5cG0wUXdINmI2V0QxTTFQaDFRc3Q5NGdKRW4zLzQvejYyODB2K0o5cis4VzVkODRQc0lORXNBWkI0MElMZ3M5U3hNRGMxU2RRMHNZQ0xHZWlhR0ZpQVJRNmdJcDQyQ2taNVJxcTZoR1V5Sm9aNnBvWVVKVU1RVW9jbkNBQ1JpWUk0dzJOVFl6QnlveGdpbk1hWjZScVpteGtCTlJnaUREUXhNTGNCMk16RHpndDBKaWpSSVBERml3U3dRT1pUSVpjdEpMVXZOS1liNmxCVXF5cXlscFlWZ0tzQ1pDbkNtSHB6SmdHWWlhM0pPWWpITVFMZzFhWW5KSmZsRlFOWS9kT1Y1aWJtcDZQWnp1QmFYWk9ZbWxxVEMvQnBja3FLbjRGcFVCRFFDSXNKZW9sQ1dtRk1LVThBUlVLUmhWMU5TbzRuRFVaeEYrZVY2eURiQjRwUmJ3ek92SkxVb09iV2dCS2FYdWRJQ0ZsVXNxU21seVRDSHBsWVVwTUt0QjNPS0MyRnlwWG1aK1hsd3Y2Ym1KdWJBWFFZMHpRckpHQzRRSDZvQzdFYm0vMmhoeFpXU1dKS29sMVlFZEMyVzhHTFBMeWdCMmdYMEJ4TXNUeUpyWml4Q0UrQXZ6UVA1TzBVM09hTTBMMXZYQ0dRQlVwcmdoZEtjU0d4b0dtR0JPUXdXSzJ5cGVlbVplVENQc2VZa0pxWG1RRGw4d1BBRkI2OWVRVkZtWGduTUowRFJZcjJTL0pKRW1EcXU1UHdjbUFqWWJ3ei9BRmpNWWNpS0JBQUEifQ== -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Std. Error"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["t value"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>|t|)"],"name":[4],"type":["chr"],"align":["left"]},{"label":[""],"name":[5],"type":["fctr"],"align":["left"]}],"data":[{"1":"0.458933","2":"0.085524","3":"5.366099","4":"9.8516e-08","5":"***","_rn_":"(Intercept)"},{"1":"0.117806","2":"0.123887","3":"0.950914","4":"3.4186e-01","5":"","_rn_":"y85"},{"1":"0.074721","2":"0.006024","3":"12.403290","4":"< 2.2e-16","5":"***","_rn_":"educ"},{"1":"0.029584","2":"0.003654","3":"8.096811","4":"1.5184e-15","5":"***","_rn_":"exper"},{"1":"-0.000399","2":"0.000078","3":"-5.110104","4":"3.8084e-07","5":"***","_rn_":"expersq"},{"1":"0.202132","2":"0.029340","3":"6.889179","4":"9.5367e-12","5":"***","_rn_":"union"},{"1":"-0.316709","2":"0.034710","3":"-9.124403","4":"< 2.2e-16","5":"***","_rn_":"female"},{"1":"0.018461","2":"0.009513","3":"1.940638","4":"5.2563e-02","5":".","_rn_":"y85:educ"},{"1":"0.085052","2":"0.051752","3":"1.643438","4":"1.0058e-01","5":"","_rn_":"y85:female"}],"options":{"columns":{"min":{},"max":[10],"total":[5]},"rows":{"min":[10],"max":[10],"total":[9]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiLS0tXG5TaWduaWYuIGNvZGVzOiAgMCAnKioqJyAwLjAwMSAnKionIDAuMDEgJyonIDAuMDUgJy4nIDAuMSAnICcgMVxuUk1TRTogMC40MTA5ODcgICBBZGouIFIyOiAwLjQyMTkxNVxuIn0= -->
+<pre><code>---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+RMSE: 0.410987   Adj. R2: 0.421915</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Questão 1: Há evidências do aumento no efeito da educação sobre os
+salários?</p>
+<p><span class="math display">\[H_0: \delta_1 = 0,\ H_1: \delta_1 &gt;
+0\]</span></p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHQoMS45NDg3LCAxMDgzLCBsb3dlci50YWlsID0gRkFMU0UpXG5gYGAifQ== -->
+<pre class="r"><code>pt(1.9487, 1083, lower.tail = FALSE)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDI1Nzk0NjFcbiJ9 -->
+<pre><code>[1] 0.02579461</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Questão 2: Há evidências de queda na diferenças salarial entre homens
+e mulheres entre 78-85?</p>
+<p><span class="math display">\[H_0: \delta_5 = 0,\ H_1: \delta_5 &gt;
+0\]</span></p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHQoMS42NTAzLCAxMDgzLCBsb3dlci50YWlsID0gRkFMU0UpICMgSF8wIHJlamVpdGFkYVxuYGBgIn0= -->
+<pre class="r"><code>pt(1.6503, 1083, lower.tail = FALSE) # H_0 rejeitada</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDQ5NTg1NzdcbiJ9 -->
+<pre><code>[1] 0.04958577</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+</div>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiQXVsYSA1IgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIEFVTEEgNSAtIEVjb25vbWV0cmlhIElJCgpHcmFkdWHDp8OjbyBFY29ub21pYSAoVUZBQkMpIC0gUHJvZi4gR3VpbGhlcm1lIExpbWFcClRlbWE6IEF1bGEgcHLDoXRpY2EKCk9iamV0aXZvczoKMS4JRGFyIGNvbnRpbnVpZGFkZSDDoCBJbnRyb2R1w6fDo28gYW8gU29mdHdhcmUgRXN0YXTDrXN0aWNvIFIgZSBwYWNvdGVzIGVjb25vbcOpdHJpY29zIGRpc3BvbsOtdmVpcy4KMi4JSWRlbnRpZmljYcOnw6NvLCBlc3RpbWHDp8OjbyBlIGluZmVyw6puY2lhIHNvYiBoaXDDs3Rlc2UgZGUgYXV0b2NvcnJlbGHDp8Ojby4KClJlZmVyw6puY2lhczoKCjEuICBXb29sZHJpZGdlIEouTS4gKDIwMTIpICJJbnRyb2R1Y3RvcnkgRWNvbm9tZXRyaWNzIi4KMi4gIFdvb2xkcmlkZ2UgSi5NLiAoMjAwMikgIkVjb25vbWV0cmljIGFuYWx5c2lzIG9mIGNyb3NzIHNlY3Rpb24gYW5kIHBhbmVsIGRhdGEiLgozLiAgS2xlaWJlciwgQy4gJiBaZWlsZWlzLCBBLiAoMjAwOCkgIkFwcGxpZWQgRWNvbm9tZXRyaWNzIHdpdGggUiIuIHAuIDEwNgoKIyMgQmlibGlvdGVjYXMKCmBgYHtyfQpzb3VyY2UoIlIvbGlicmFyaWVzLlIiKQpgYGAK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQXVsYSA1IgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIEFVTEEgNSAtIEVjb25vbWV0cmlhIElJCgpHcmFkdWHDp8OjbyBFY29ub21pYSAoVUZBQkMpIC0gUHJvZi4gR3VpbGhlcm1lIExpbWFcClRlbWE6IEF1bGEgcHLDoXRpY2EKCk9iamV0aXZvczoKMS4JRGFyIGNvbnRpbnVpZGFkZSDDoCBJbnRyb2R1w6fDo28gYW8gU29mdHdhcmUgRXN0YXTDrXN0aWNvIFIgZSBwYWNvdGVzIGVjb25vbcOpdHJpY29zIGRpc3BvbsOtdmVpcy4KMi4JSWRlbnRpZmljYcOnw6NvLCBlc3RpbWHDp8OjbyBlIGluZmVyw6puY2lhIHNvYiBoaXDDs3Rlc2UgZGUgYXV0b2NvcnJlbGHDp8Ojby4KClJlZmVyw6puY2lhczoKCjEuICBXb29sZHJpZGdlIEouTS4gKDIwMTIpICJJbnRyb2R1Y3RvcnkgRWNvbm9tZXRyaWNzIi4KMi4gIFdvb2xkcmlkZ2UgSi5NLiAoMjAwMikgIkVjb25vbWV0cmljIGFuYWx5c2lzIG9mIGNyb3NzIHNlY3Rpb24gYW5kIHBhbmVsIGRhdGEiLgozLiAgS2xlaWJlciwgQy4gJiBaZWlsZWlzLCBBLiAoMjAwOCkgIkFwcGxpZWQgRWNvbm9tZXRyaWNzIHdpdGggUiIuIHAuIDEwNgoKIyMgQmlibGlvdGVjYXMKCmBgYHtyfQpzb3VyY2UoIlIvbGlicmFyaWVzLlIiKQpgYGAKCiMjIFJldG9ybm8gZGEgRWR1Y2HDp8OjbyBzb2JyZSBvcyBzYWzDoXJpb3MKCiMjIyBEYWRvcwoKYGBge3J9CmNwczc4Xzg1IDwtIHdvb2xkcmlkZ2U6OmNwczc4Xzg1IHw+IAogIGRwbHlyOjptdXRhdGUoZXhwZXJzcSA9IGV4cGVyXjIpCgpoZWFkKGNwczc4Xzg1KQpgYGAKCiMjIyBSZWdyZXNzw6NvCgokXG9wZXJhdG9ybmFtZXtsd2FnZX0gPSBcYmV0YV8wICsgXGJldGFfezF9KFxvcGVyYXRvcm5hbWV7eTg1fSkgKyBcYmV0YV97Mn0oXG9wZXJhdG9ybmFtZXtlZHVjfSkgKyBcYmV0YV97M30oXG9wZXJhdG9ybmFtZXtcZXhwZXJ9KSArIFxiZXRhX3s0fShcb3BlcmF0b3JuYW1le1xleHBlcnNxfSkgKyBcYmV0YV97NX0oXG9wZXJhdG9ybmFtZXt1bmlvbn0pICsgXGJldGFfezZ9KFxvcGVyYXRvcm5hbWV7ZmVtYWxlfSkgKyBcYmV0YV97N30oXG9wZXJhdG9ybmFtZXt5ODV9IFx0aW1lcyBcb3BlcmF0b3JuYW1le2VkdWN9KSArIFxiZXRhX3s4fShcb3BlcmF0b3JuYW1le3k4NX0gXHRpbWVzIFxvcGVyYXRvcm5hbWV7ZmVtYWxlfSkgKyB1JAoKYGBge3J9Cm1vZGVsXzEgPC0gY3BzNzhfODUgfD4gCiAgZml4ZXN0OjpmZW9scyhsd2FnZSB+IDEgKyB5ODUgKyBlZHVjICsgKHk4NSAqIGVkdWMpICsgZXhwZXIgKyBleHBlcnNxICsgdW5pb24gKyBmZW1hbGUgKyAoeTg1ICogZmVtYWxlKSkKCnN1bW1hcnkobW9kZWxfMSkKCm9sc3JyOjpvbHNfdGVzdF9icmV1c2NoX3BhZ2FuKGxtKGx3YWdlIH4gMSArIHk4NSArIGVkdWMgKyAoeTg1ICogZWR1YykgKyBleHBlciArIGV4cGVyc3EgKyB1bmlvbiArIGZlbWFsZSArICh5ODUgKiBmZW1hbGUpLCBjcHM3OF84NSkpICMgaGV0ZXJvY2VkYXN0aWNpZGFkZQoKbW9kZWxfMV9oZXQgPC0gY3BzNzhfODUgfD4gCiAgZml4ZXN0OjpmZW9scyhsd2FnZSB+IDEgKyB5ODUgKyBlZHVjICsgKHk4NSAqIGVkdWMpICsgZXhwZXIgKyBleHBlcnNxICsgdW5pb24gKyBmZW1hbGUgKyAoeTg1ICogZmVtYWxlKSwgc2UgPSAiaGV0ZXJvIikKCnN1bW1hcnkobW9kZWxfMV9oZXQpCmBgYApRdWVzdMOjbyAxOiBIw6EgZXZpZMOqbmNpYXMgZG8gYXVtZW50byBubyBlZmVpdG8gZGEgZWR1Y2HDp8OjbyBzb2JyZSBvcyBzYWzDoXJpb3M/CgokJEhfMDogXGRlbHRhXzEgPSAwLFwgSF8xOiBcZGVsdGFfMSA+IDAkJAoKYGBge3J9CnB0KDEuOTQ4NywgMTA4MywgbG93ZXIudGFpbCA9IEZBTFNFKSAjIEhfMCByZWplaXRhZGEKYGBgCgpRdWVzdMOjbyAyOiBIw6EgZXZpZMOqbmNpYXMgZGUgcXVlZGEgbmEgZGlmZXJlbsOnYXMgc2FsYXJpYWwgZW50cmUgaG9tZW5zIGUgbXVsaGVyZXMgZW50cmUgNzgtODU/CgokJEhfMDogXGRlbHRhXzUgPSAwLFwgSF8xOiBcZGVsdGFfNSA+IDAkJAoKYGBge3J9CnB0KDEuNjUwMywgMTA4MywgbG93ZXIudGFpbCA9IEZBTFNFKSAjIEhfMCByZWplaXRhZGEKYGBgCg==</div>
 
 
 
