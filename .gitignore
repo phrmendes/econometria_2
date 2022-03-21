@@ -3,3 +3,5 @@
 .Rdata
 .httr-oauth
 .DS_Store
+p_1/p_1_cache
+*.log

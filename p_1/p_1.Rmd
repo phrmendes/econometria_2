@@ -1,0 +1,194 @@
+---
+output:   
+  pdf_document:
+    fig_caption: yes
+    number_sections: no
+title: |
+  \Large
+  
+  P1 - Econometria III
+author: "Pedro Mendes [^1]"
+documentclass: scrartcl
+fontfamily: times
+fontsize: 12pt
+geometry:
+- top=1cm
+- bottom=1cm
+- left=1cm
+- right=1cm
+nocite: null
+lang: pt-BR
+header-includes:
+- \usepackage{setspace}
+- \usepackage{ragged2e}
+- \usepackage{indentfirst}
+- \usepackage{abstract}
+- \usepackage{microtype}
+- \usepackage{chngcntr}
+- \usepackage[justification=centering]{caption}
+- \usepackage{float}
+- \usepackage{booktabs}
+- \usepackage{multirow}
+- \usepackage{placeins}
+- \renewcommand{\abstractname}{Resumo}
+- \setkomafont{disposition}{\bfseries}
+---
+
+<!-- Parágrafos e espaçamento --->
+
+```{=tex}
+\onehalfspacing
+\justifying
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+\FloatBarrier
+```
+```{r message=FALSE, warning=FALSE, include=FALSE}
+source("R/libraries.R")
+```
+
+# Dados
+
+\footnotesize
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, cache=TRUE}
+flights <- list(
+  flightsbr::read_flights(date = 2016),
+  flightsbr::read_flights(date = 2018)
+) |>
+  data.table::rbindlist()
+
+flights <- flights[
+  nm_pais_destino == "BRASIL" & ds_servico_tipo_linha == "PASSAGEIRO",
+  .(
+    data = dt_referencia,
+    passag_pagos = nr_passag_pagos,
+    kg_bagagem_excesso, kg_payload, km_distancia
+  )
+][
+  ,
+  data := lubridate::ymd(data)
+][
+  ,
+  purrr::map(.SD, collapse::fsum),
+  .SDcols = passag_pagos:km_distancia,
+  by = "data"
+] |>
+  tibble::as_tibble()
+
+head(flights)
+```
+
+\normalsize
+
+# Modelo
+
+Pretende testar o efeito da cobrança por bagagem no avião no número de passageiros pagantes em vôos comerciais domésticos no Brasil[^1]. Para isso, o estudo utiliza dados do pacote `flighsbr`[^2].
+
+[^1]: Fonte: <https://www.bbc.com/portuguese/brasil-39226346>
+
+[^2]: Fonte: <https://github.com/ipeaGIT/flightsbr>
+
+Variáveis utilizadas[^3]:
+
+[^3]: Fonte: <https://www.anac.gov.br/assuntos/setor-regulado/empresas/envio-de-informacoes/descricao-de-variaveis>
+
+-   *passag_pagos*: Número de passageiros que ocupam assentos comercializados ao público e que geram receita, com a compra de assentos, para a empresa de transporte aéreo. A variável será usada como proxy para o volume de vendas.
+-   *kg_bagagem_excesso*: Excesso de bagagem. É a quantidade total de bagagem que excede o limite de peso acordado entre a empresa aérea e o passageiro (adquirido antes ou depois da compra do bilhete), verificada no momento do despacho, expressa em quilogramas. É esperado que a variável tenha um efeito negativo sobre o número de passageiros pagos pois, segundo a hipótese do setor, o pagamento adicional por bagagens em excesso elevava o custo da passagem. Espera-se também que o efeito do volume de bagagens em excesso sobre o número de passageiros pagantes diminua após a implementação da política.
+-   *kg_payload*: Capacidade Payload, expressa em quilogramas, usada como variável de controle.
+-   *km_distancia*: Distância, expressa em quilômetros, entre os aeródromos de origem e destino da etapa, considerando a curvatura do planeta terra. É usada como variável de controle.
+
+# Dummies de período
+
+\footnotesize
+
+```{r}
+set.seed(55871)
+
+data_model <- flights |>
+  dplyr::mutate(
+    d_ano = dplyr::case_when(
+      lubridate::year(data) == "2016" ~ 0,
+      TRUE ~ 1
+    )
+  ) |>
+  dplyr::group_by(d_ano) |>
+  dplyr::slice_sample(n = 80) |> # sem cálculo de tamanho de amostra
+  dplyr::ungroup()
+
+head(data_model)
+```
+
+\normalsize
+
+# Regressão
+
+$\operatorname{passag\_pagos} = \beta_0 + \delta_0(\operatorname{d\_ano}) + \beta_1(\operatorname{kg\_bagagem\_excesso})+\delta_1(\operatorname{kg\_bagagem\_excesso} \cdot \operatorname{d\_ano}) + \beta_{2}(\operatorname{kg\_payload}) + \beta_{3}(\operatorname{kg\_distancia})$
+
+\footnotesize
+
+```{r}
+model_1 <- data_model |>
+  fixest::feols(
+    passag_pagos ~ d_ano + (d_ano * kg_bagagem_excesso) + kg_payload + km_distancia
+  )
+
+summary(model_1)
+```
+
+\normalsize
+
+Teste para heterocedasticidade:
+
+\footnotesize
+
+```{r}
+olsrr::ols_test_breusch_pagan(
+  lm(
+    passag_pagos ~ d_ano + (d_ano * kg_bagagem_excesso) + kg_payload + km_distancia,
+    data_model
+  )
+)
+```
+
+\normalsize
+
+Baseado no teste de Breusch Pagan, não se pode afirmar que as variâncias são diferentes.
+
+Teste de Chow para quebras estruturais no tempo:
+
+\footnotesize
+
+```{r warning=FALSE}
+car::linearHypothesis(
+  lm(
+    passag_pagos ~ d_ano + (d_ano * kg_bagagem_excesso) + kg_payload + km_distancia,
+    data_model
+  ),
+  hypothesis.matrix = c("d_ano = 0", "d_ano:kg_bagagem_excesso = 0"),
+  test = "F"
+)
+
+car::linearHypothesis(
+  lm(
+    passag_pagos ~ d_ano + (d_ano * kg_bagagem_excesso) + kg_payload + km_distancia,
+    data_model
+  ),
+  hypothesis.matrix = c("d_ano:kg_bagagem_excesso = 0"),
+  test = "F"
+)
+```
+
+\normalsize
+
+Baseado nos testes acima, não existe uma diferença de nível significativo. Porém, existe uma diferença de inclinação significativa.
+
+## Conclusões a partir do modelo
+
+-   Não existiu uma alteração relevante para o número de passageiros pagantes ao se comparar os períodos de 2016 e 2018.
+
+-   Neste período, o efeito do volume de bagagens em excesso em vôos comerciais domésticos se tornou significante e aumentou. Isso pode ser interpretado da seguinte forma: após a implementação do pagamento a parte por bagagem excedente em 2017, um aumento no volume de tais itens afeta mais o número de pagantes em vôos, se tornando um parâmetro mais sensível na escolha do consumidor.
+
+## Limitações do modelo
+
+-   O modelo se baseia em variáveis-proxy para tentar captar um efeito do aumento da cobrança por bagagens excedentes por parte de passageiros. Apesar do bom ajuste do modelo, o ideal seria utilizar variáveis que tratassem explicitamente de questões monetárias.

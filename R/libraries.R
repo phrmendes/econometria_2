@@ -24,5 +24,6 @@ pacman::p_load(
   car,
   olsrr,
   equatiomatic,
+  flightsbr,
   install = FALSE
 )

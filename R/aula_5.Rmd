@@ -8,9 +8,7 @@ output: html_notebook
 Graduação Economia (UFABC) - Prof. Guilherme Lima\
 Tema: Aula prática
 
-Objetivos:
-1.	Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
-2.	Identificação, estimação e inferência sob hipótese de autocorrelação.
+Objetivos: 1. Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis. 2. Identificação, estimação e inferência sob hipótese de autocorrelação.
 
 Referências:
 
@@ -37,7 +35,9 @@ head(cps78_85)
 
 ### Regressão
 
-$\operatorname{lwage} = \beta_0 + \beta_{1}(\operatorname{y85}) + \beta_{2}(\operatorname{educ}) + \beta_{3}(\operatorname{\exper}) + \beta_{4}(\operatorname{\expersq}) + \beta_{5}(\operatorname{union}) + \beta_{6}(\operatorname{female}) + \beta_{7}(\operatorname{y85} \times \operatorname{educ}) + \beta_{8}(\operatorname{y85} \times \operatorname{female}) + u$
+$$
+\operatorname{lwage} = \beta_0 + \beta_{1}(\operatorname{y85}) + \beta_{2}(\operatorname{educ}) + \beta_{3}(\operatorname{\exper}) + \beta_{4}(\operatorname{\expersq}) + \\ \beta_{5}(\operatorname{union}) + \beta_{6}(\operatorname{female}) + \beta_{7}(\operatorname{y85} \times \operatorname{educ}) + \beta_{8}(\operatorname{y85} \times \operatorname{female}) + u
+$$
 
 ```{r}
 model_1 <- cps78_85 |> 
@@ -52,6 +52,7 @@ model_1_het <- cps78_85 |>
 
 summary(model_1_het)
 ```
+
 Questão 1: Há evidências do aumento no efeito da educação sobre os salários?
 
 $$H_0: \delta_1 = 0,\ H_1: \delta_1 > 0$$
