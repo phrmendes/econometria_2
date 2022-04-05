@@ -70,7 +70,7 @@ Logo, as variáveis são não nulas e significantes.
 
 ### Queda na taxa de fertilidade comparada entre mulheres com nível superior e médio
 
-Dado que ef. parcial da educ é -0.128 e que as mulheres com nível superior estudam, em média, 4 anos a mais: `r -0.128 * 4`. Isto é, mulheres com nível superior terão aprox. 1/2 criança a menos que as mulheres com nível médio. Ou, em média, 100 mulheres com nível superior terão 51,2 filhos a menos que 100 mulheres com nível médio.
+Dado que ef. parcial da `educ` é -0.128 e que as mulheres com nível superior estudam, em média, 4 anos a mais: `r -0.128 * 4`. Isto é, mulheres com nível superior terão aprox. 1/2 criança a menos que as mulheres com nível médio. Ou, em média, 100 mulheres com nível superior terão 51,2 filhos a menos que 100 mulheres com nível médio.
 
 ### Queda na taxa de fertilidade que é devida aos outros fatores + aumento escolaridade
 
@@ -99,7 +99,7 @@ Efeito do aumento da escolaridade + outros fatores: `r partial_edu_others`. Isto
 
 ### Exercícios
 
-*Computer Exercise 1, p. 426:* 
+**Computer Exercise 1, p. 426:** 
 
 *(i)* In the equation estimated in Example 13.1, test whether living environment at age 16 has an effect on fertility (the base group is large city). Report the value of the F statistic and the p-value.
 
@@ -131,8 +131,9 @@ As variáveis são relevantes.
 u2 <- tibble::tibble(u2 = model_1$residuals^2)
 
 error <- fertil1 |> 
-  dplyr::select(year) |> 
-  dplyr::bind_cols(u2) |> 
+  dplyr::select(year) |>
+  dplyr::bind_cols(u2) |>
+  dplyr::filter(year > 72) |> 
   dplyr::mutate(year = forcats::as_factor(year))
 
 error_model <- lm(u2 ~ year, error)
@@ -141,8 +142,25 @@ summary(error_model)
 
 car::linearHypothesis(
   error_model,
-  hypothesis.matrix = c("year74 = 0", "northcen = 0", "west = 0"),
+  hypothesis.matrix = c("year76 = 0", "year78 = 0", "year80 = 0", "year82 = 0", "year84 = 0"),
   test = "F"
 )
 ```
 
+A variância é igual através dos anos.
+
+*(iv)* Add the interaction terms $y74\cdot educ$, $y76\cdot educ$,..., $y84\cdot educ$ to the model estimated in Table 13.1. Explain what these terms represent. Are they jointly significant?
+
+```{r}
+model_2_het <- fixest::feols(kids ~ 1 + educ + age + I(age^2) + black + east + northcen + west + farm + othrural + smcity + y74 + y76 + y78 + y80 + y82 + y84 + y74 * educ + y76 * educ + y78 * educ + y80 * educ + y82 * educ + y84 * educ, fertil1, "white")
+
+summary(model_2_het)
+
+car::linearHypothesis(
+  model_2_het,
+  hypothesis.matrix = c("educ:y76 = 0", "educ:y78 = 0", "educ:y80 = 0", "educ:y82 = 0", "educ:y84 = 0"),
+  test = "F"
+)
+```
+
+Estes termos representam o efeito do ano e da educação conjuntamente, ou seja, o diferencial da educação durante os anos.
