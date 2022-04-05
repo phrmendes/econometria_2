@@ -27,7 +27,7 @@ source("R/libraries.R")
 ### Dados
 
 ```{r}
-cps78_85 <- wooldridge::cps78_85 |> 
+cps78_85 <- tibble::as_tibble(wooldridge::cps78_85) |> 
   dplyr::mutate(expersq = exper^2)
 
 head(cps78_85)

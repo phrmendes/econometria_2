@@ -1,0 +1,148 @@
+---
+title: "Aula 6"
+output: html_notebook
+---
+
+# AULA 6 - Econometria II
+
+Objetivos:
+1.	Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+2.	Estimação e Interpretação des Modelos com "Pooled Cross-Section Data".
+
+Referências:
+(1) Wooldridge J.M. (2012) "Introductory Econometrics".  
+(2) Wooldridge J.M. (2002) "Econometric analysis of cross section and panel data".
+(3) Kleiber, C. &  Zeileis, A. (2008) "Applied Econometrics with R". p. 106
+
+## Bibliotecas
+
+```{r}
+source("R/libraries.R")
+```
+
+## A model explaining the total number of kids born to a woman
+
+### Dados
+
+```{r}
+fertil1 <- tibble::as_tibble(wooldridge::fertil1)
+
+head(fertil1)
+```
+
+### Modelo
+
+```{r}
+model_1 <- lm(kids ~ 1 + educ + age + I(age^2) + black + east + northcen + west + farm + othrural + smcity + y74 + y76 + y78 + y80 + y82 + y84, fertil1)
+
+summary(model_1)
+```
+
+```{r}
+olsrr::ols_test_breusch_pagan(model_1)
+
+model_1_het <- fixest::feols(kids ~ 1 + educ + age + I(age^2) + black + east + northcen + west + farm + othrural + smcity + y74 + y76 + y78 + y80 + y82 + y84, fertil1, "white")
+
+summary(model_1_het)
+```
+
+Note que adotamos 1972 como ano base, uma vez que foi o ano excluído das dummies. No geral, as dummies de ano mostram uma queda significativa na taxa de natalidade, independentemente dos fatores anos de estudo. Considerando o ano de 1982, o coeficiente `y82` (-0.52) revela uma queda de "meia criança" por mulher
+em comparação ao ano de 1972. Isto é, independentemente de idade, anos de estudo, etc, 100 mulheres em 1982 teriam 52 crianças a menos do que em 1972. Os coeficientes de `y82` e `y84` representam quedas na taxa de natalidade que não são capturadas pelas variáveis explicativas. Essa queda não tem nenhuma relação com o aumento médio na educação, pois esse é um fator controlado.
+
+```{r}
+fertil1 |> 
+  dplyr::filter(year == 72 | year == 84) |> 
+  dplyr::group_by(year) |> 
+  dplyr::summarise(mean(educ))
+```
+
+### Significância das dummies
+
+```{r}
+car::linearHypothesis(
+  model_1_het,
+  hypothesis.matrix = c("y74 = 0", "y76 = 0", "y78 = 0", "y80 = 0", "y82 = 0", "y84 = 0"),
+  test = "F"
+)
+```
+
+Logo, as variáveis são não nulas e significantes.
+
+### Queda na taxa de fertilidade comparada entre mulheres com nível superior e médio
+
+Dado que ef. parcial da educ é -0.128 e que as mulheres com nível superior estudam, em média, 4 anos a mais: `r -0.128 * 4`. Isto é, mulheres com nível superior terão aprox. 1/2 criança a menos que as mulheres com nível médio. Ou, em média, 100 mulheres com nível superior terão 51,2 filhos a menos que 100 mulheres com nível médio.
+
+### Queda na taxa de fertilidade que é devida aos outros fatores + aumento escolaridade
+
+```{r}
+educ_diff <- fertil1 |> 
+  dplyr::filter(year == 72 | year == 84) |> 
+  dplyr::group_by(year) |> 
+  dplyr::summarise(mean(educ)) |> 
+  tidyr::pivot_wider(names_from = year, values_from = `mean(educ)`) |> 
+  dplyr::mutate(diff = `84` - `72`) |> 
+  dplyr::pull()
+```
+
+Aumento de `r educ_diff` anos na escolaridade média.
+
+```{r}
+partial_edu <- model_1_het$coefficients[2] * educ_diff
+```
+Efeito do aumento da escolaridade: `r partial_edu`
+
+```{r}
+partial_edu_others <- model_1_het$coefficients[length(model_1_het$coefficients)] + partial_edu
+```
+
+Efeito do aumento da escolaridade + outros fatores: `r partial_edu_others`. Isto é aproximadamente 2/3 de criança por mulher.
+
+### Exercícios
+
+*Computer Exercise 1, p. 426:* 
+
+*(i)* In the equation estimated in Example 13.1, test whether living environment at age 16 has an effect on fertility (the base group is large city). Report the value of the F statistic and the p-value.
+
+```{r}
+car::linearHypothesis(
+  model_1_het,
+  hypothesis.matrix = c("farm = 0", "othrural = 0", "smcity = 0"),
+  test = "F"
+)
+```
+
+As variáveis não são relevantes.
+
+*(ii)* Test whether region of the country at age 16 (South is the base group) has an effect on fertility.
+
+```{r}
+car::linearHypothesis(
+  model_1_het,
+  hypothesis.matrix = c("east = 0", "northcen = 0", "west = 0"),
+  test = "F"
+)
+```
+
+As variáveis são relevantes.
+
+*(iii)* Let $u$ be the error term in the population equation. Suppose you think that the variance of $u$ changes over time (but not with educ, age, and so on). A model that captures this is $u^2 = \gamma _0 + \gamma_1 y74 + \gamma_2 y76 + \gamma_3 y78 + \gamma_4 y80 + \gamma_5 y82 + \gamma_6 y84 + v$. Using this model, test for heteroskedasticity in $u$. (Hint: Your F test should have 6 and 1,122 degrees of freedom.)
+
+```{r}
+u2 <- tibble::tibble(u2 = model_1$residuals^2)
+
+error <- fertil1 |> 
+  dplyr::select(year) |> 
+  dplyr::bind_cols(u2) |> 
+  dplyr::mutate(year = forcats::as_factor(year))
+
+error_model <- lm(u2 ~ year, error)
+
+summary(error_model)
+
+car::linearHypothesis(
+  error_model,
+  hypothesis.matrix = c("year74 = 0", "northcen = 0", "west = 0"),
+  test = "F"
+)
+```
+
