@@ -1,0 +1,23 @@
+---
+title: "Aula 7"
+output: html_notebook
+---
+
+# AULA 7 - Econometria II
+
+Objetivos:
+
+1.  Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+2.  Estimação e interpretação dos modelos com dados em Painel restritos a 2 períodos.
+
+Referências:
+
+1.  Wooldridge J.M. (2012) "Introductory Econometrics", p. 412.
+2.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R", p. 84.
+3.  Croissant, Y. & Millo, G. (2019) "Panel Data Econometrics with R by", p. 1.
+
+## Bibliotecas
+
+```{r}
+source("R/libraries.R")
+```

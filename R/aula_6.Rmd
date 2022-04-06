@@ -6,13 +6,15 @@ output: html_notebook
 # AULA 6 - Econometria II
 
 Objetivos:
-1.	Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
-2.	Estimação e Interpretação des Modelos com "Pooled Cross-Section Data".
+
+1.  Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+2.  Estimação e Interpretação des Modelos com "Pooled Cross-Section Data".
 
 Referências:
-(1) Wooldridge J.M. (2012) "Introductory Econometrics".  
-(2) Wooldridge J.M. (2002) "Econometric analysis of cross section and panel data".
-(3) Kleiber, C. &  Zeileis, A. (2008) "Applied Econometrics with R". p. 106
+
+1.  Wooldridge J.M. (2012) "Introductory Econometrics".
+2.  Wooldridge J.M. (2002) "Econometric analysis of cross section and panel data".
+3.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R". p. 106
 
 ## Bibliotecas
 
@@ -46,8 +48,7 @@ model_1_het <- fixest::feols(kids ~ 1 + educ + age + I(age^2) + black + east + n
 summary(model_1_het)
 ```
 
-Note que adotamos 1972 como ano base, uma vez que foi o ano excluído das dummies. No geral, as dummies de ano mostram uma queda significativa na taxa de natalidade, independentemente dos fatores anos de estudo. Considerando o ano de 1982, o coeficiente `y82` (-0.52) revela uma queda de "meia criança" por mulher
-em comparação ao ano de 1972. Isto é, independentemente de idade, anos de estudo, etc, 100 mulheres em 1982 teriam 52 crianças a menos do que em 1972. Os coeficientes de `y82` e `y84` representam quedas na taxa de natalidade que não são capturadas pelas variáveis explicativas. Essa queda não tem nenhuma relação com o aumento médio na educação, pois esse é um fator controlado.
+Note que adotamos 1972 como ano base, uma vez que foi o ano excluído das dummies. No geral, as dummies de ano mostram uma queda significativa na taxa de natalidade, independentemente dos fatores anos de estudo. Considerando o ano de 1982, o coeficiente `y82` (-0.52) revela uma queda de "meia criança" por mulher em comparação ao ano de 1972. Isto é, independentemente de idade, anos de estudo, etc, 100 mulheres em 1982 teriam 52 crianças a menos do que em 1972. Os coeficientes de `y82` e `y84` representam quedas na taxa de natalidade que não são capturadas pelas variáveis explicativas. Essa queda não tem nenhuma relação com o aumento médio na educação, pois esse é um fator controlado.
 
 ```{r}
 fertil1 |> 
@@ -89,6 +90,7 @@ Aumento de `r educ_diff` anos na escolaridade média.
 ```{r}
 partial_edu <- model_1_het$coefficients[2] * educ_diff
 ```
+
 Efeito do aumento da escolaridade: `r partial_edu`
 
 ```{r}
@@ -99,7 +101,7 @@ Efeito do aumento da escolaridade + outros fatores: `r partial_edu_others`. Isto
 
 ### Exercícios
 
-**Computer Exercise 1, p. 426:** 
+**Computer Exercise 1, p. 426:**
 
 *(i)* In the equation estimated in Example 13.1, test whether living environment at age 16 has an effect on fertility (the base group is large city). Report the value of the F statistic and the p-value.
 
@@ -163,4 +165,4 @@ car::linearHypothesis(
 )
 ```
 
-Estes termos representam o efeito do ano e da educação conjuntamente, ou seja, o diferencial da educação durante os anos.
+Estes termos representam o efeito do ano e da educação conjuntamente, ou seja, o diferencial da educação durante os anos e seu efeito sobre as taxas de fertilidade. Conjuntamente, as variáveis não são significantes.

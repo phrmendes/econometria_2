@@ -11,7 +11,7 @@
 
 
 
-<title>Aula 6</title>
+<title>Aula 7</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1754,28 +1754,28 @@ pre code {
 
 
 
-<h1 class="title toc-ignore">Aula 6</h1>
+<h1 class="title toc-ignore">Aula 7</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<div id="aula-6---econometria-ii" class="section level1">
-<h1>AULA 6 - Econometria II</h1>
+<div id="aula-7---econometria-ii" class="section level1">
+<h1>AULA 7 - Econometria II</h1>
 <p>Objetivos:</p>
 <ol style="list-style-type: decimal">
 <li>Dar continuidade à Introdução ao Software Estatístico R e pacotes
 econométricos disponíveis.</li>
-<li>Estimação e Interpretação des Modelos com “Pooled Cross-Section
-Data”.</li>
+<li>Estimação e interpretação dos modelos com dados em Painel restritos
+a 2 períodos.</li>
 </ol>
 <p>Referências:</p>
 <ol style="list-style-type: decimal">
-<li>Wooldridge J.M. (2012) “Introductory Econometrics”.</li>
-<li>Wooldridge J.M. (2002) “Econometric analysis of cross section and
-panel data”.</li>
-<li>Kleiber, C. &amp; Zeileis, A. (2008) “Applied Econometrics with R”.
-p. 106</li>
+<li>Wooldridge J.M. (2012) “Introductory Econometrics”, p. 412.</li>
+<li>Kleiber, C. &amp; Zeileis, A. (2008) “Applied Econometrics with R”,
+p. 84.</li>
+<li>Croissant, Y. &amp; Millo, G. (2019) “Panel Data Econometrics with R
+by”, p. 1.</li>
 </ol>
 <div id="bibliotecas" class="section level2">
 <h2>Bibliotecas</h2>
@@ -1784,300 +1784,11 @@ p. 106</li>
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc291cmNlKFwiUi9saWJyYXJpZXMuUlwiKVxuYGBgIn0= -->
 <pre class="r"><code>source(&quot;R/libraries.R&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQ2FycmVnYW5kbyBwYWNvdGVzIGV4aWdpZG9zOiBwYWNtYW5cbiJ9 -->
-<pre><code>Carregando pacotes exigidos: pacman</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="a-model-explaining-the-total-number-of-kids-born-to-a-woman" class="section level2">
-<h2>A model explaining the total number of kids born to a woman</h2>
-<div id="dados" class="section level3">
-<h3>Dados</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZmVydGlsMSA8LSB0aWJibGU6OmFzX3RpYmJsZSh3b29sZHJpZGdlOjpmZXJ0aWwxKVxuXG5oZWFkKGZlcnRpbDEpXG5gYGAifQ== -->
-<pre class="r"><code>fertil1 &lt;- tibble::as_tibble(wooldridge::fertil1)
-
-head(fertil1)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6MjcsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNiDDlyAyNyJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUE5VlV5VzdiTUJDbE50c1JzclpIWDN4dEFBdUtuRVhJT1NpS0hvc1d5SldSNlZpd1JEa2tCZGUzZmx3K0pUL1JIdUtNYkk1RkNVa2E1TlFLZU9KN2ZETkRjUkcvWFYyUC9HdWZFT0lRMTNLSTR3RWwzby92bjRjeElhNE53aUl1MmFuYW54RDBFVWdmc0Fmb0FMNjhBUFIzQVVlNlJmUU12NmZSMVo3empQOUJ0NzRSajM0SUNBQm5nR1BBQ0JBWnZxdHIyZ1pjdzMvcGVhdHZhVzIxK0h2cll4M1ROMnUvbG0vOXhYL0wrUCtaWDUzTDNoVWNqZDhnSDZEOUJIMzMvODczdmRkdi9IZ2Vwem1UUUE1SjlmTnRPdDBsb3dJNUc1Y0pCdWVtbUJqQ29iY01FMmJwV0dMTVRVYVQyYllTbFVyekhpK0VtaWFNbzdkZ1c4K2RVSkZqWEtHbW9oUTBRMDhWQzh6cHlEeEoxUksvWUhseFd0UHptc1piR29jMWpXcUthUjdNUWQ1cDBZVnl4dnhBbmpkbDNKQngySlJSVTI1S05WZCtSeFNMQUZlLzJqTDdGN3hXcTlXZlZxQ3YwcHdGVXRGOHJ2Y0puYVBvYlBDMTVJTW9QRGtaUktQTGNOVGUzU1NqVXJheS9ERlZOSmdJR0JyVVl5dWxXOHhWV25CSXNxdjcyR3NsVzZMVmNWRHlhaExqWVRJdCtXeFkzWTgrcWUrTFBjMDdCdTl2aHJSWHVwU0hHOHI0YmNyeEhIa1p2V0c0Ny91d1dPdTFDdVlpNVhoU2ZPaVZnU3JVOW56NFNaRmh6M3B1NVBFSlBiN1B0b1lHQUFBPSJ9 -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["year"],"name":[1],"type":["int"],"align":["right"]},{"label":["educ"],"name":[2],"type":["int"],"align":["right"]},{"label":["meduc"],"name":[3],"type":["int"],"align":["right"]},{"label":["feduc"],"name":[4],"type":["int"],"align":["right"]},{"label":["age"],"name":[5],"type":["int"],"align":["right"]},{"label":["kids"],"name":[6],"type":["int"],"align":["right"]},{"label":["black"],"name":[7],"type":["int"],"align":["right"]},{"label":["east"],"name":[8],"type":["int"],"align":["right"]},{"label":["northcen"],"name":[9],"type":["int"],"align":["right"]},{"label":["west"],"name":[10],"type":["int"],"align":["right"]},{"label":["farm"],"name":[11],"type":["int"],"align":["right"]},{"label":["othrural"],"name":[12],"type":["int"],"align":["right"]},{"label":["town"],"name":[13],"type":["int"],"align":["right"]},{"label":["smcity"],"name":[14],"type":["int"],"align":["right"]},{"label":["y74"],"name":[15],"type":["int"],"align":["right"]},{"label":["y76"],"name":[16],"type":["int"],"align":["right"]},{"label":["y78"],"name":[17],"type":["int"],"align":["right"]},{"label":["y80"],"name":[18],"type":["int"],"align":["right"]},{"label":["y82"],"name":[19],"type":["int"],"align":["right"]},{"label":["y84"],"name":[20],"type":["int"],"align":["right"]},{"label":["agesq"],"name":[21],"type":["int"],"align":["right"]},{"label":["y74educ"],"name":[22],"type":["int"],"align":["right"]},{"label":["y76educ"],"name":[23],"type":["int"],"align":["right"]},{"label":["y78educ"],"name":[24],"type":["int"],"align":["right"]},{"label":["y80educ"],"name":[25],"type":["int"],"align":["right"]},{"label":["y82educ"],"name":[26],"type":["int"],"align":["right"]},{"label":["y84educ"],"name":[27],"type":["int"],"align":["right"]}],"data":[{"1":"72","2":"12","3":"8","4":"8","5":"48","6":"4","7":"0","8":"0","9":"1","10":"0","11":"0","12":"0","13":"0","14":"0","15":"0","16":"0","17":"0","18":"0","19":"0","20":"0","21":"2304","22":"0","23":"0","24":"0","25":"0","26":"0","27":"0"},{"1":"72","2":"17","3":"8","4":"18","5":"46","6":"3","7":"0","8":"0","9":"0","10":"0","11":"0","12":"1","13":"0","14":"0","15":"0","16":"0","17":"0","18":"0","19":"0","20":"0","21":"2116","22":"0","23":"0","24":"0","25":"0","26":"0","27":"0"},{"1":"72","2":"12","3":"7","4":"8","5":"53","6":"2","7":"0","8":"0","9":"1","10":"0","11":"0","12":"1","13":"0","14":"0","15":"0","16":"0","17":"0","18":"0","19":"0","20":"0","21":"2809","22":"0","23":"0","24":"0","25":"0","26":"0","27":"0"},{"1":"72","2":"12","3":"12","4":"10","5":"42","6":"2","7":"0","8":"0","9":"1","10":"0","11":"0","12":"0","13":"1","14":"0","15":"0","16":"0","17":"0","18":"0","19":"0","20":"0","21":"1764","22":"0","23":"0","24":"0","25":"0","26":"0","27":"0"},{"1":"72","2":"12","3":"3","4":"8","5":"51","6":"2","7":"0","8":"0","9":"0","10":"0","11":"1","12":"0","13":"0","14":"0","15":"0","16":"0","17":"0","18":"0","19":"0","20":"0","21":"2601","22":"0","23":"0","24":"0","25":"0","26":"0","27":"0"},{"1":"72","2":"8","3":"8","4":"8","5":"50","6":"4","7":"0","8":"0","9":"1","10":"0","11":"1","12":"0","13":"0","14":"0","15":"0","16":"0","17":"0","18":"0","19":"0","20":"0","21":"2500","22":"0","23":"0","24":"0","25":"0","26":"0","27":"0"}],"options":{"columns":{"min":{},"max":[10],"total":[27]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="modelo" class="section level3">
-<h3>Modelo</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kZWxfMSA8LSBsbShraWRzIH4gMSArIGVkdWMgKyBhZ2UgKyBJKGFnZV4yKSArIGJsYWNrICsgZWFzdCArIG5vcnRoY2VuICsgd2VzdCArIGZhcm0gKyBvdGhydXJhbCArIHNtY2l0eSArIHk3NCArIHk3NiArIHk3OCArIHk4MCArIHk4MiArIHk4NCwgZmVydGlsMSlcblxuc3VtbWFyeShtb2RlbF8xKVxuYGBgIn0= -->
-<pre class="r"><code>model_1 &lt;- lm(kids ~ 1 + educ + age + I(age^2) + black + east + northcen + west + farm + othrural + smcity + y74 + y76 + y78 + y80 + y82 + y84, fertil1)
-
-summary(model_1)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxubG0oZm9ybXVsYSA9IGtpZHMgfiAxICsgZWR1YyArIGFnZSArIEkoYWdlXjIpICsgYmxhY2sgKyBlYXN0ICsgXG4gICAgbm9ydGhjZW4gKyB3ZXN0ICsgZmFybSArIG90aHJ1cmFsICsgc21jaXR5ICsgeTc0ICsgeTc2ICsgXG4gICAgeTc4ICsgeTgwICsgeTgyICsgeTg0LCBkYXRhID0gZmVydGlsMSlcblxuUmVzaWR1YWxzOlxuICAgIE1pbiAgICAgIDFRICBNZWRpYW4gICAgICAzUSAgICAgTWF4IFxuLTMuOTUxNCAtMS4wMzI2IC0wLjA4MTAgIDAuOTQ0NyAgNC42NDI0IFxuXG5Db2VmZmljaWVudHM6XG4gICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciB0IHZhbHVlIFByKD58dHwpICAgIFxuKEludGVyY2VwdCkgLTcuNzE3OTQ4ICAgMy4wNTA4MTAgIC0yLjUzMCAwLjAxMTU1MCAqICBcbmVkdWMgICAgICAgIC0wLjEyODYxOCAgIDAuMDE4MzQyICAtNy4wMTIgNC4wNmUtMTIgKioqXG5hZ2UgICAgICAgICAgMC41MzMyODIgICAwLjEzODM0MiAgIDMuODU1IDAuMDAwMTIyICoqKlxuSShhZ2VeMikgICAgLTAuMDA1ODE0ICAgMC4wMDE1NjQgIC0zLjcxOCAwLjAwMDIxMSAqKipcbmJsYWNrICAgICAgICAxLjA3MTczMyAgIDAuMTczMzk3ICAgNi4xODEgOC45NGUtMTAgKioqXG5lYXN0ICAgICAgICAgMC4yMDYwNjYgICAwLjEzMTcxMiAgIDEuNTY1IDAuMTE3OTc5ICAgIFxubm9ydGhjZW4gICAgIDAuMzU1MDg0ICAgMC4xMjAyODUgICAyLjk1MiAwLjAwMzIyMyAqKiBcbndlc3QgICAgICAgICAwLjE5NTAxMyAgIDAuMTY2ODI5ICAgMS4xNjkgMC4yNDI2NzkgICAgXG5mYXJtICAgICAgICAtMC4xMDI5MjMgICAwLjEyNjk5OCAgLTAuODEwIDAuNDE3ODY0ICAgIFxub3RocnVyYWwgICAgLTAuMjExMzA0ICAgMC4xNjAxNjAgIC0xLjMxOSAwLjE4NzMzMSAgICBcbnNtY2l0eSAgICAgICAwLjE2NTUwOSAgIDAuMTQ0OTA4ICAgMS4xNDIgMC4yNTM2MzEgICAgXG55NzQgICAgICAgICAgMC4yNjc5MjAgICAwLjE3MjY3NCAgIDEuNTUyIDAuMTIxMDQzICAgIFxueTc2ICAgICAgICAgLTAuMDkwMzcyICAgMC4xNzg3MDMgIC0wLjUwNiAwLjYxMzE2MCAgICBcbnk3OCAgICAgICAgIC0wLjA2NDA2NiAgIDAuMTgxNTEzICAtMC4zNTMgMC43MjQxODggICAgXG55ODAgICAgICAgICAtMC4wNzEyNzQgICAwLjE4MjcyNiAgLTAuMzkwIDAuNjk2NTY3ICAgIFxueTgyICAgICAgICAgLTAuNTIzMTAzICAgMC4xNzIzOTIgIC0zLjAzNCAwLjAwMjQ2NiAqKiBcbnk4NCAgICAgICAgIC0wLjU0MzA0NiAgIDAuMTc0NDQ2ICAtMy4xMTMgMC4wMDE4OTkgKiogXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuUmVzaWR1YWwgc3RhbmRhcmQgZXJyb3I6IDEuNTU0IG9uIDExMTIgZGVncmVlcyBvZiBmcmVlZG9tXG5NdWx0aXBsZSBSLXNxdWFyZWQ6ICAwLjEyOTIsXHRBZGp1c3RlZCBSLXNxdWFyZWQ6ICAwLjExNjYgXG5GLXN0YXRpc3RpYzogMTAuMzEgb24gMTYgYW5kIDExMTIgREYsICBwLXZhbHVlOiA8IDIuMmUtMTZcbiJ9 -->
-<pre><code>
-Call:
-lm(formula = kids ~ 1 + educ + age + I(age^2) + black + east + 
-    northcen + west + farm + othrural + smcity + y74 + y76 + 
-    y78 + y80 + y82 + y84, data = fertil1)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--3.9514 -1.0326 -0.0810  0.9447  4.6424 
-
-Coefficients:
-             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) -7.717948   3.050810  -2.530 0.011550 *  
-educ        -0.128618   0.018342  -7.012 4.06e-12 ***
-age          0.533282   0.138342   3.855 0.000122 ***
-I(age^2)    -0.005814   0.001564  -3.718 0.000211 ***
-black        1.071733   0.173397   6.181 8.94e-10 ***
-east         0.206066   0.131712   1.565 0.117979    
-northcen     0.355084   0.120285   2.952 0.003223 ** 
-west         0.195013   0.166829   1.169 0.242679    
-farm        -0.102923   0.126998  -0.810 0.417864    
-othrural    -0.211304   0.160160  -1.319 0.187331    
-smcity       0.165509   0.144908   1.142 0.253631    
-y74          0.267920   0.172674   1.552 0.121043    
-y76         -0.090372   0.178703  -0.506 0.613160    
-y78         -0.064066   0.181513  -0.353 0.724188    
-y80         -0.071274   0.182726  -0.390 0.696567    
-y82         -0.523103   0.172392  -3.034 0.002466 ** 
-y84         -0.543046   0.174446  -3.113 0.001899 ** 
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 1.554 on 1112 degrees of freedom
-Multiple R-squared:  0.1292,    Adjusted R-squared:  0.1166 
-F-statistic: 10.31 on 16 and 1112 DF,  p-value: &lt; 2.2e-16</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxub2xzcnI6Om9sc190ZXN0X2JyZXVzY2hfcGFnYW4obW9kZWxfMSlcbmBgYCJ9 -->
-<pre class="r"><code>olsrr::ols_test_breusch_pagan(model_1)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG4gQnJldXNjaCBQYWdhbiBUZXN0IGZvciBIZXRlcm9za2VkYXN0aWNpdHlcbiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuIEhvOiB0aGUgdmFyaWFuY2UgaXMgY29uc3RhbnQgICAgICAgICAgICBcbiBIYTogdGhlIHZhcmlhbmNlIGlzIG5vdCBjb25zdGFudCAgICAgICAgXG5cbiAgICAgICAgICAgICAgRGF0YSAgICAgICAgICAgICAgIFxuIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4gUmVzcG9uc2UgOiBraWRzIFxuIFZhcmlhYmxlczogZml0dGVkIHZhbHVlcyBvZiBraWRzIFxuXG4gICAgICAgICBUZXN0IFN1bW1hcnkgICAgICAgICAgIFxuIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbiBERiAgICAgICAgICAgID0gICAgMSBcbiBDaGkyICAgICAgICAgID0gICAgMjYuMzQ5NjUgXG4gUHJvYiA+IENoaTIgICA9ICAgIDIuODQ4NzA3ZS0wNyBcbiJ9 -->
-<pre><code>
- Breusch Pagan Test for Heteroskedasticity
- -----------------------------------------
- Ho: the variance is constant            
- Ha: the variance is not constant        
-
-              Data               
- --------------------------------
- Response : kids 
- Variables: fitted values of kids 
-
-         Test Summary           
- -------------------------------
- DF            =    1 
- Chi2          =    26.34965 
- Prob &gt; Chi2   =    2.848707e-07 </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kZWxfMV9oZXQgPC0gZml4ZXN0OjpmZW9scyhraWRzIH4gMSArIGVkdWMgKyBhZ2UgKyBJKGFnZV4yKSArIGJsYWNrICsgZWFzdCArIG5vcnRoY2VuICsgd2VzdCArIGZhcm0gKyBvdGhydXJhbCArIHNtY2l0eSArIHk3NCArIHk3NiArIHk3OCArIHk4MCArIHk4MiArIHk4NCwgZmVydGlsMSwgXCJ3aGl0ZVwiKVxuXG5zdW1tYXJ5KG1vZGVsXzFfaGV0KVxuYGBgIn0= -->
-<pre class="r"><code>model_1_het &lt;- fixest::feols(kids ~ 1 + educ + age + I(age^2) + black + east + northcen + west + farm + othrural + smcity + y74 + y76 + y78 + y80 + y82 + y84, fertil1, &quot;white&quot;)
-
-summary(model_1_het)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiT0xTIGVzdGltYXRpb24sIERlcC4gVmFyLjoga2lkc1xuT2JzZXJ2YXRpb25zOiAxLDEyOSBcblN0YW5kYXJkLWVycm9yczogSGV0ZXJvc2tlZGFzdGljaXR5LXJvYnVzdCBcbiJ9 -->
-<pre><code>OLS estimation, Dep. Var.: kids
-Observations: 1,129 
-Standard-errors: Heteroskedasticity-robust </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MTcsIm5jb2wiOjUsInN1bW1hcnkiOnsiRGVzY3JpcHRpb24iOlsiZGYgWzE3IMOXIDVdIl19fSwicmRmIjoiSDRzSUFBQUFBQUFBQXd0eWlURG1pdUJpWUdCZ1ptQmhaR1pnWmdVeUdWaERROXgwTFJnWVdKaUFIRVlHRmdaT0VGMEJWQ1FNa2dWaVBpQVdQQ0IzWC9mUWhsY1MrdytVOWY2K3RuU0svVU9CcFprYlM1cjJsMS9JM3J2UFJzRCtvK3JGaGdsYkpPeFBKY1E5elZqS2FuOXQ1eWJicTc1TDdVOTgwNSt6ZE8rVS9ic2lOZE1acDkzY2Y1cUhLZWZnS1N2N28vcHA4aEluZjl0ZlZKMzV0aVovNy83dFN2TW1WTWFuNzkrUXRsRHVwTVRqL1p2c21iMzVwSDMyUDlqcjFMQk93SFAvdzRSRmpPN3FkMkh1Y2VDWUJyYklmdXFLMlZObFlzTHREeDQvMjltdE45Yys4dDY1Y0lFT1B2dVRGeXQwTGR6ejdROUlKVndKMCtPeTM3dG82eUxlTzBuMlIrN2VkejUrOWEzOS9rZlBYclc2Vk5nZjFWM1pWclpjemY3Z2lqVXh3bjk1N1U4dzlmbnZyTjV1ZnpLdDZQY0N1ZmYySjkybnZHSXZNTGMvY2RIU1dYek5VZnNUd21sOGdaZWk3WStmZUJUVHlCVU9EeDhXc1plbU8rVUxEMGdFUFQ1cWRpM01nVzliY292eHRlTUhlRXVYMmMveVBPd2c2dkQ0N0t3Z05mdGZwbXBCVlFvUkRoeWR0OStvTkx5MC82eDhidG5CQlo3N1h4WGF2SnQ3L2UzK0wva01HYmU3MTloL05uejE3OWx2SC90dnQ4RHUzMzlYdGVYTHNXZTM5bDg1ZEttQ3ZXTFcvdXR0SHp4WFRyYzd3R2EvTVRyY2J2VUI5a1R6enowaDVrQzNDSURjQTQxSUxrTTlJME56azFSZEF5T0VpSm1KZ1RGUXhCSWhZbXhnWWc0VU1ZR0pHT21aR0JrYUlvc0F6YkcwTkFXS21DTkVEQXpOUVdvTUVicU1ESTFBSXNZSUVXTkRDek5rTlNaNkJoWVdCcWk2REF3dGpGRkZqQTFNalpCRkRQVk1qVTBza0VYTTlFd3NMRkhNTWRjek1UVkhFekUwTmtJeDJWVFAxQUNzQys1Q1l6MVRFeU5Mc0FnRE15ODQ1RUQ1QTVRVlVERW9KekJCYVh5WUNZSlJzaE5iVG1wWmFrNHhORzVZb2FMTVdscGFDS1lDbktrQVorckJtUXhvSnJJbTV5UVd3d3lFVzVPV21GeVNYd1JrL1VOWG5wZVltNHB1UDRkcmNVbG1ibUpKS2l3c2drdFM5QlJjaTRxQVJrQkUyRXNVeWhKelNtRUtPQUtLTk94cVNtbzBjVGlLc3lpL1hBL1pKbGdxNU5id3pDdEpMVXBPTFNpQjZXVkpUU2xOaHZrek1SMXVoYWNHa0JObkJGUEdtcFNUbUp3TjE1TllYQUpUbUpkZlZKS1JuSm9Ia3l0UGhjdXhwQ1VXNWNMVTVaZGtGSlVXSmViQXdxZzROem16cEJKbWM2VzVDWUpwaG1CYXdKa1dCZ2ltRVlKcEF2RTc4MyswT09CS1NTeEoxRXNyQW9ZQ2xuaGd6eThveWN6UEE0WVBFNngwUmRiTVdJUW13RithQndyUEZOM2tqTks4YkYwVGtBVklhWklYU2dzaXNWa2hWckxBSEFhTGJiYlV2UFRNUEZnNHMrWWtKcVhDd29RUEdHL2dhTk1yS01yTWc0VWlGMUMwV0s4a3Z3UWVkbHpKK1Rrd0ViRGZHUDRCQUJGd1hqSlVCZ0FBIn0= -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimate"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Std. Error"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["t value"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>|t|)"],"name":[4],"type":["chr"],"align":["left"]},{"label":[""],"name":[5],"type":["fctr"],"align":["left"]}],"data":[{"1":"-7.717948","2":"3.073426","3":"-2.511187","4":"1.2174e-02","5":"*","_rn_":"(Intercept)"},{"1":"-0.128618","2":"0.021151","3":"-6.080947","4":"1.6403e-09","5":"***","_rn_":"educ"},{"1":"0.533282","2":"0.138910","3":"3.839057","4":"1.3047e-04","5":"***","_rn_":"age"},{"1":"-0.005814","2":"0.001579","3":"-3.682446","4":"2.4211e-04","5":"***","_rn_":"I(age^2)"},{"1":"1.071733","2":"0.201705","3":"5.313369","4":"1.2995e-07","5":"***","_rn_":"black"},{"1":"0.206066","2":"0.125805","3":"1.637976","4":"1.0171e-01","5":"","_rn_":"east"},{"1":"0.355084","2":"0.115764","3":"3.067314","4":"2.2121e-03","5":"**","_rn_":"northcen"},{"1":"0.195013","2":"0.163021","3":"1.196242","4":"2.3186e-01","5":"","_rn_":"west"},{"1":"-0.102923","2":"0.124556","3":"-0.826323","4":"4.0880e-01","5":"","_rn_":"farm"},{"1":"-0.211304","2":"0.165456","3":"-1.277100","4":"2.0183e-01","5":"","_rn_":"othrural"},{"1":"0.165509","2":"0.137960","3":"1.199687","4":"2.3052e-01","5":"","_rn_":"smcity"},{"1":"0.267920","2":"0.187578","3":"1.428315","4":"1.5348e-01","5":"","_rn_":"y74"},{"1":"-0.090372","2":"0.198439","3":"-0.455415","4":"6.4890e-01","5":"","_rn_":"y76"},{"1":"-0.064066","2":"0.197497","3":"-0.324391","4":"7.4570e-01","5":"","_rn_":"y78"},{"1":"-0.071274","2":"0.193885","3":"-0.367611","4":"7.1323e-01","5":"","_rn_":"y80"},{"1":"-0.523103","2":"0.188092","3":"-2.781100","4":"5.5090e-03","5":"**","_rn_":"y82"},{"1":"-0.543046","2":"0.185818","3":"-2.922470","4":"3.5429e-03","5":"**","_rn_":"y84"}],"options":{"columns":{"min":{},"max":[10],"total":[5]},"rows":{"min":[10],"max":[10],"total":[17]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiLS0tXG5TaWduaWYuIGNvZGVzOiAgMCAnKioqJyAwLjAwMSAnKionIDAuMDEgJyonIDAuMDUgJy4nIDAuMSAnICcgMVxuUk1TRTogMS41NDI3MiAgIEFkai4gUjI6IDAuMTE2NjIyXG4ifQ== -->
-<pre><code>---
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-RMSE: 1.54272   Adj. R2: 0.116622</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Note que adotamos 1972 como ano base, uma vez que foi o ano excluído
-das dummies. No geral, as dummies de ano mostram uma queda significativa
-na taxa de natalidade, independentemente dos fatores anos de estudo.
-Considerando o ano de 1982, o coeficiente <code>y82</code> (-0.52)
-revela uma queda de “meia criança” por mulher em comparação ao ano de
-1972. Isto é, independentemente de idade, anos de estudo, etc, 100
-mulheres em 1982 teriam 52 crianças a menos do que em 1972. Os
-coeficientes de <code>y82</code> e <code>y84</code> representam quedas
-na taxa de natalidade que não são capturadas pelas variáveis
-explicativas. Essa queda não tem nenhuma relação com o aumento médio na
-educação, pois esse é um fator controlado.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZmVydGlsMSB8PiBcbiAgZHBseXI6OmZpbHRlcih5ZWFyID09IDcyIHwgeWVhciA9PSA4NCkgfD4gXG4gIGRwbHlyOjpncm91cF9ieSh5ZWFyKSB8PiBcbiAgZHBseXI6OnN1bW1hcmlzZShtZWFuKGVkdWMpKVxuYGBgIn0= -->
-<pre class="r"><code>fertil1 |&gt; 
-  dplyr::filter(year == 72 | year == 84) |&gt; 
-  dplyr::group_by(year) |&gt; 
-  dplyr::summarise(mean(educ))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="significância-das-dummies" class="section level3">
-<h3>Significância das dummies</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2FyOjpsaW5lYXJIeXBvdGhlc2lzKFxuICBtb2RlbF8xX2hldCxcbiAgaHlwb3RoZXNpcy5tYXRyaXggPSBjKFwieTc0ID0gMFwiLCBcInk3NiA9IDBcIiwgXCJ5NzggPSAwXCIsIFwieTgwID0gMFwiLCBcInk4MiA9IDBcIiwgXCJ5ODQgPSAwXCIpLFxuICB0ZXN0ID0gXCJGXCJcbilcbmBgYCJ9 -->
-<pre class="r"><code>car::linearHypothesis(
-  model_1_het,
-  hypothesis.matrix = c(&quot;y74 = 0&quot;, &quot;y76 = 0&quot;, &quot;y78 = 0&quot;, &quot;y80 = 0&quot;, &quot;y82 = 0&quot;, &quot;y84 = 0&quot;),
-  test = &quot;F&quot;
-)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Logo, as variáveis são não nulas e significantes.</p>
-</div>
-<div id="queda-na-taxa-de-fertilidade-comparada-entre-mulheres-com-nível-superior-e-médio" class="section level3">
-<h3>Queda na taxa de fertilidade comparada entre mulheres com nível
-superior e médio</h3>
-<p>Dado que ef. parcial da <code>educ</code> é -0.128 e que as mulheres
-com nível superior estudam, em média, 4 anos a mais: -0.512. Isto é,
-mulheres com nível superior terão aprox. 1/2 criança a menos que as
-mulheres com nível médio. Ou, em média, 100 mulheres com nível superior
-terão 51,2 filhos a menos que 100 mulheres com nível médio.</p>
-</div>
-<div id="queda-na-taxa-de-fertilidade-que-é-devida-aos-outros-fatores-aumento-escolaridade" class="section level3">
-<h3>Queda na taxa de fertilidade que é devida aos outros fatores +
-aumento escolaridade</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZWR1Y19kaWZmIDwtIGZlcnRpbDEgfD4gXG4gIGRwbHlyOjpmaWx0ZXIoeWVhciA9PSA3MiB8IHllYXIgPT0gODQpIHw+IFxuICBkcGx5cjo6Z3JvdXBfYnkoeWVhcikgfD4gXG4gIGRwbHlyOjpzdW1tYXJpc2UobWVhbihlZHVjKSkgfD4gXG4gIHRpZHlyOjpwaXZvdF93aWRlcihuYW1lc19mcm9tID0geWVhciwgdmFsdWVzX2Zyb20gPSBgbWVhbihlZHVjKWApIHw+IFxuICBkcGx5cjo6bXV0YXRlKGRpZmYgPSBgODRgIC0gYDcyYCkgfD4gXG4gIGRwbHlyOjpwdWxsKClcbmBgYCJ9 -->
-<pre class="r"><code>educ_diff &lt;- fertil1 |&gt; 
-  dplyr::filter(year == 72 | year == 84) |&gt; 
-  dplyr::group_by(year) |&gt; 
-  dplyr::summarise(mean(educ)) |&gt; 
-  tidyr::pivot_wider(names_from = year, values_from = `mean(educ)`) |&gt; 
-  dplyr::mutate(diff = `84` - `72`) |&gt; 
-  dplyr::pull()</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Aumento de 1.1116906 anos na escolaridade média.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFydGlhbF9lZHUgPC0gbW9kZWxfMV9oZXQkY29lZmZpY2llbnRzWzJdICogZWR1Y19kaWZmXG5gYGAifQ== -->
-<pre class="r"><code>partial_edu &lt;- model_1_het$coefficients[2] * educ_diff</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Efeito do aumento da escolaridade: -0.1429839</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFydGlhbF9lZHVfb3RoZXJzIDwtIG1vZGVsXzFfaGV0JGNvZWZmaWNpZW50c1tsZW5ndGgobW9kZWxfMV9oZXQkY29lZmZpY2llbnRzKV0gKyBwYXJ0aWFsX2VkdVxuYGBgIn0= -->
-<pre class="r"><code>partial_edu_others &lt;- model_1_het$coefficients[length(model_1_het$coefficients)] + partial_edu</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Efeito do aumento da escolaridade + outros fatores: -0.68603. Isto é
-aproximadamente 2/3 de criança por mulher.</p>
-</div>
-<div id="exercícios" class="section level3">
-<h3>Exercícios</h3>
-<p><strong>Computer Exercise 1, p. 426:</strong></p>
-<p><em>(i)</em> In the equation estimated in Example 13.1, test whether
-living environment at age 16 has an effect on fertility (the base group
-is large city). Report the value of the F statistic and the p-value.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2FyOjpsaW5lYXJIeXBvdGhlc2lzKFxuICBtb2RlbF8xX2hldCxcbiAgaHlwb3RoZXNpcy5tYXRyaXggPSBjKFwiZmFybSA9IDBcIiwgXCJvdGhydXJhbCA9IDBcIiwgXCJzbWNpdHkgPSAwXCIpLFxuICB0ZXN0ID0gXCJGXCJcbilcbmBgYCJ9 -->
-<pre class="r"><code>car::linearHypothesis(
-  model_1_het,
-  hypothesis.matrix = c(&quot;farm = 0&quot;, &quot;othrural = 0&quot;, &quot;smcity = 0&quot;),
-  test = &quot;F&quot;
-)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>As variáveis não são relevantes.</p>
-<p><em>(ii)</em> Test whether region of the country at age 16 (South is
-the base group) has an effect on fertility.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2FyOjpsaW5lYXJIeXBvdGhlc2lzKFxuICBtb2RlbF8xX2hldCxcbiAgaHlwb3RoZXNpcy5tYXRyaXggPSBjKFwiZWFzdCA9IDBcIiwgXCJub3J0aGNlbiA9IDBcIiwgXCJ3ZXN0ID0gMFwiKSxcbiAgdGVzdCA9IFwiRlwiXG4pXG5gYGAifQ== -->
-<pre class="r"><code>car::linearHypothesis(
-  model_1_het,
-  hypothesis.matrix = c(&quot;east = 0&quot;, &quot;northcen = 0&quot;, &quot;west = 0&quot;),
-  test = &quot;F&quot;
-)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>As variáveis são relevantes.</p>
-<p><em>(iii)</em> Let <span class="math inline">\(u\)</span> be the
-error term in the population equation. Suppose you think that the
-variance of <span class="math inline">\(u\)</span> changes over time
-(but not with educ, age, and so on). A model that captures this is <span class="math inline">\(u^2 = \gamma _0 + \gamma_1 y74 + \gamma_2 y76 +
-\gamma_3 y78 + \gamma_4 y80 + \gamma_5 y82 + \gamma_6 y84 + v\)</span>.
-Using this model, test for heteroskedasticity in <span class="math inline">\(u\)</span>. (Hint: Your F test should have 6 and
-1,122 degrees of freedom.)</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudTIgPC0gdGliYmxlOjp0aWJibGUodTIgPSBtb2RlbF8xJHJlc2lkdWFsc14yKVxuXG5lcnJvciA8LSBmZXJ0aWwxIHw+IFxuICBkcGx5cjo6c2VsZWN0KHllYXIpIHw+XG4gIGRwbHlyOjpiaW5kX2NvbHModTIpIHw+XG4gIGRwbHlyOjpmaWx0ZXIoeWVhciA+IDcyKSB8PiBcbiAgZHBseXI6Om11dGF0ZSh5ZWFyID0gZm9yY2F0czo6YXNfZmFjdG9yKHllYXIpKVxuXG5lcnJvcl9tb2RlbCA8LSBsbSh1MiB+IHllYXIsIGVycm9yKVxuXG5zdW1tYXJ5KGVycm9yX21vZGVsKVxuXG5jYXI6OmxpbmVhckh5cG90aGVzaXMoXG4gIGVycm9yX21vZGVsLFxuICBoeXBvdGhlc2lzLm1hdHJpeCA9IGMoXCJ5ZWFyNzYgPSAwXCIsIFwieWVhcjc4ID0gMFwiLCBcInllYXI4MCA9IDBcIiwgXCJ5ZWFyODIgPSAwXCIsIFwieWVhcjg0ID0gMFwiKSxcbiAgdGVzdCA9IFwiRlwiXG4pXG5gYGAifQ== -->
-<pre class="r"><code>u2 &lt;- tibble::tibble(u2 = model_1$residuals^2)
-
-error &lt;- fertil1 |&gt; 
-  dplyr::select(year) |&gt;
-  dplyr::bind_cols(u2) |&gt;
-  dplyr::filter(year &gt; 72) |&gt; 
-  dplyr::mutate(year = forcats::as_factor(year))
-
-error_model &lt;- lm(u2 ~ year, error)
-
-summary(error_model)
-
-car::linearHypothesis(
-  error_model,
-  hypothesis.matrix = c(&quot;year76 = 0&quot;, &quot;year78 = 0&quot;, &quot;year80 = 0&quot;, &quot;year82 = 0&quot;, &quot;year84 = 0&quot;),
-  test = &quot;F&quot;
-)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>A variância é igual através dos anos.</p>
-<p><em>(iv)</em> Add the interaction terms <span class="math inline">\(y74\cdot educ\)</span>, <span class="math inline">\(y76\cdot educ\)</span>,…, <span class="math inline">\(y84\cdot educ\)</span> to the model estimated in
-Table 13.1. Explain what these terms represent. Are they jointly
-significant?</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kZWxfMl9oZXQgPC0gZml4ZXN0OjpmZW9scyhraWRzIH4gMSArIGVkdWMgKyBhZ2UgKyBJKGFnZV4yKSArIGJsYWNrICsgZWFzdCArIG5vcnRoY2VuICsgd2VzdCArIGZhcm0gKyBvdGhydXJhbCArIHNtY2l0eSArIHk3NCArIHk3NiArIHk3OCArIHk4MCArIHk4MiArIHk4NCArIHk3NCAqIGVkdWMgKyB5NzYgKiBlZHVjICsgeTc4ICogZWR1YyArIHk4MCAqIGVkdWMgKyB5ODIgKiBlZHVjICsgeTg0ICogZWR1YywgZmVydGlsMSwgXCJ3aGl0ZVwiKVxuXG5zdW1tYXJ5KG1vZGVsXzJfaGV0KVxuXG5jYXI6OmxpbmVhckh5cG90aGVzaXMoXG4gIG1vZGVsXzJfaGV0LFxuICBoeXBvdGhlc2lzLm1hdHJpeCA9IGMoXCJlZHVjOnk3NiA9IDBcIiwgXCJlZHVjOnk3OCA9IDBcIiwgXCJlZHVjOnk4MCA9IDBcIiwgXCJlZHVjOnk4MiA9IDBcIiwgXCJlZHVjOnk4NCA9IDBcIiksXG4gIHRlc3QgPSBcIkZcIlxuKVxuYGBgIn0= -->
-<pre class="r"><code>model_2_het &lt;- fixest::feols(kids ~ 1 + educ + age + I(age^2) + black + east + northcen + west + farm + othrural + smcity + y74 + y76 + y78 + y80 + y82 + y84 + y74 * educ + y76 * educ + y78 * educ + y80 * educ + y82 * educ + y84 * educ, fertil1, &quot;white&quot;)
-
-summary(model_2_het)
-
-car::linearHypothesis(
-  model_2_het,
-  hypothesis.matrix = c(&quot;educ:y76 = 0&quot;, &quot;educ:y78 = 0&quot;, &quot;educ:y80 = 0&quot;, &quot;educ:y82 = 0&quot;, &quot;educ:y84 = 0&quot;),
-  test = &quot;F&quot;
-)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Estes termos representam o efeito do ano e da educação conjuntamente,
-ou seja, o diferencial da educação durante os anos e seu efeito sobre as
-taxas de fertilidade. Conjuntamente, as variáveis não são
-significantes.</p>
-<!-- rnb-text-end -->
-</div>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiQXVsYSA2IgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIEFVTEEgNiAtIEVjb25vbWV0cmlhIElJCgpPYmpldGl2b3M6CgoxLiAgRGFyIGNvbnRpbnVpZGFkZSDDoCBJbnRyb2R1w6fDo28gYW8gU29mdHdhcmUgRXN0YXTDrXN0aWNvIFIgZSBwYWNvdGVzIGVjb25vbcOpdHJpY29zIGRpc3BvbsOtdmVpcy4KMi4gIEVzdGltYcOnw6NvIGUgSW50ZXJwcmV0YcOnw6NvIGRlcyBNb2RlbG9zIGNvbSAiUG9vbGVkIENyb3NzLVNlY3Rpb24gRGF0YSIuCgpSZWZlcsOqbmNpYXM6CgoxLiAgV29vbGRyaWRnZSBKLk0uICgyMDEyKSAiSW50cm9kdWN0b3J5IEVjb25vbWV0cmljcyIuCjIuICBXb29sZHJpZGdlIEouTS4gKDIwMDIpICJFY29ub21ldHJpYyBhbmFseXNpcyBvZiBjcm9zcyBzZWN0aW9uIGFuZCBwYW5lbCBkYXRhIi4KMy4gIEtsZWliZXIsIEMuICYgWmVpbGVpcywgQS4gKDIwMDgpICJBcHBsaWVkIEVjb25vbWV0cmljcyB3aXRoIFIiLiBwLiAxMDYKCiMjIEJpYmxpb3RlY2FzCgpgYGB7cn0Kc291cmNlKCJSL2xpYnJhcmllcy5SIikKYGBgCgojIyBBIG1vZGVsIGV4cGxhaW5pbmcgdGhlIHRvdGFsIG51bWJlciBvZiBraWRzIGJvcm4gdG8gYSB3b21hbgoKIyMjIERhZG9zCgpgYGB7cn0KZmVydGlsMSA8LSB0aWJibGU6OmFzX3RpYmJsZSh3b29sZHJpZGdlOjpmZXJ0aWwxKQoKaGVhZChmZXJ0aWwxKQpgYGAKCiMjIyBNb2RlbG8KCmBgYHtyfQptb2RlbF8xIDwtIGxtKGtpZHMgfiAxICsgZWR1YyArIGFnZSArIEkoYWdlXjIpICsgYmxhY2sgKyBlYXN0ICsgbm9ydGhjZW4gKyB3ZXN0ICsgZmFybSArIG90aHJ1cmFsICsgc21jaXR5ICsgeTc0ICsgeTc2ICsgeTc4ICsgeTgwICsgeTgyICsgeTg0LCBmZXJ0aWwxKQoKc3VtbWFyeShtb2RlbF8xKQpgYGAKCmBgYHtyfQpvbHNycjo6b2xzX3Rlc3RfYnJldXNjaF9wYWdhbihtb2RlbF8xKQoKbW9kZWxfMV9oZXQgPC0gZml4ZXN0OjpmZW9scyhraWRzIH4gMSArIGVkdWMgKyBhZ2UgKyBJKGFnZV4yKSArIGJsYWNrICsgZWFzdCArIG5vcnRoY2VuICsgd2VzdCArIGZhcm0gKyBvdGhydXJhbCArIHNtY2l0eSArIHk3NCArIHk3NiArIHk3OCArIHk4MCArIHk4MiArIHk4NCwgZmVydGlsMSwgIndoaXRlIikKCnN1bW1hcnkobW9kZWxfMV9oZXQpCmBgYAoKTm90ZSBxdWUgYWRvdGFtb3MgMTk3MiBjb21vIGFubyBiYXNlLCB1bWEgdmV6IHF1ZSBmb2kgbyBhbm8gZXhjbHXDrWRvIGRhcyBkdW1taWVzLiBObyBnZXJhbCwgYXMgZHVtbWllcyBkZSBhbm8gbW9zdHJhbSB1bWEgcXVlZGEgc2lnbmlmaWNhdGl2YSBuYSB0YXhhIGRlIG5hdGFsaWRhZGUsIGluZGVwZW5kZW50ZW1lbnRlIGRvcyBmYXRvcmVzIGFub3MgZGUgZXN0dWRvLiBDb25zaWRlcmFuZG8gbyBhbm8gZGUgMTk4MiwgbyBjb2VmaWNpZW50ZSBgeTgyYCAoLTAuNTIpIHJldmVsYSB1bWEgcXVlZGEgZGUgIm1laWEgY3JpYW7Dp2EiIHBvciBtdWxoZXIgZW0gY29tcGFyYcOnw6NvIGFvIGFubyBkZSAxOTcyLiBJc3RvIMOpLCBpbmRlcGVuZGVudGVtZW50ZSBkZSBpZGFkZSwgYW5vcyBkZSBlc3R1ZG8sIGV0YywgMTAwIG11bGhlcmVzIGVtIDE5ODIgdGVyaWFtIDUyIGNyaWFuw6dhcyBhIG1lbm9zIGRvIHF1ZSBlbSAxOTcyLiBPcyBjb2VmaWNpZW50ZXMgZGUgYHk4MmAgZSBgeTg0YCByZXByZXNlbnRhbSBxdWVkYXMgbmEgdGF4YSBkZSBuYXRhbGlkYWRlIHF1ZSBuw6NvIHPDo28gY2FwdHVyYWRhcyBwZWxhcyB2YXJpw6F2ZWlzIGV4cGxpY2F0aXZhcy4gRXNzYSBxdWVkYSBuw6NvIHRlbSBuZW5odW1hIHJlbGHDp8OjbyBjb20gbyBhdW1lbnRvIG3DqWRpbyBuYSBlZHVjYcOnw6NvLCBwb2lzIGVzc2Ugw6kgdW0gZmF0b3IgY29udHJvbGFkby4KCmBgYHtyfQpmZXJ0aWwxIHw+IAogIGRwbHlyOjpmaWx0ZXIoeWVhciA9PSA3MiB8IHllYXIgPT0gODQpIHw+IAogIGRwbHlyOjpncm91cF9ieSh5ZWFyKSB8PiAKICBkcGx5cjo6c3VtbWFyaXNlKG1lYW4oZWR1YykpCmBgYAoKIyMjIFNpZ25pZmljw6JuY2lhIGRhcyBkdW1taWVzCgpgYGB7cn0KY2FyOjpsaW5lYXJIeXBvdGhlc2lzKAogIG1vZGVsXzFfaGV0LAogIGh5cG90aGVzaXMubWF0cml4ID0gYygieTc0ID0gMCIsICJ5NzYgPSAwIiwgInk3OCA9IDAiLCAieTgwID0gMCIsICJ5ODIgPSAwIiwgInk4NCA9IDAiKSwKICB0ZXN0ID0gIkYiCikKYGBgCgpMb2dvLCBhcyB2YXJpw6F2ZWlzIHPDo28gbsOjbyBudWxhcyBlIHNpZ25pZmljYW50ZXMuCgojIyMgUXVlZGEgbmEgdGF4YSBkZSBmZXJ0aWxpZGFkZSBjb21wYXJhZGEgZW50cmUgbXVsaGVyZXMgY29tIG7DrXZlbCBzdXBlcmlvciBlIG3DqWRpbwoKRGFkbyBxdWUgZWYuIHBhcmNpYWwgZGEgYGVkdWNgIMOpIC0wLjEyOCBlIHF1ZSBhcyBtdWxoZXJlcyBjb20gbsOtdmVsIHN1cGVyaW9yIGVzdHVkYW0sIGVtIG3DqWRpYSwgNCBhbm9zIGEgbWFpczogYHIgLTAuMTI4ICogNGAuIElzdG8gw6ksIG11bGhlcmVzIGNvbSBuw612ZWwgc3VwZXJpb3IgdGVyw6NvIGFwcm94LiAxLzIgY3JpYW7Dp2EgYSBtZW5vcyBxdWUgYXMgbXVsaGVyZXMgY29tIG7DrXZlbCBtw6lkaW8uIE91LCBlbSBtw6lkaWEsIDEwMCBtdWxoZXJlcyBjb20gbsOtdmVsIHN1cGVyaW9yIHRlcsOjbyA1MSwyIGZpbGhvcyBhIG1lbm9zIHF1ZSAxMDAgbXVsaGVyZXMgY29tIG7DrXZlbCBtw6lkaW8uCgojIyMgUXVlZGEgbmEgdGF4YSBkZSBmZXJ0aWxpZGFkZSBxdWUgw6kgZGV2aWRhIGFvcyBvdXRyb3MgZmF0b3JlcyArIGF1bWVudG8gZXNjb2xhcmlkYWRlCgpgYGB7cn0KZWR1Y19kaWZmIDwtIGZlcnRpbDEgfD4gCiAgZHBseXI6OmZpbHRlcih5ZWFyID09IDcyIHwgeWVhciA9PSA4NCkgfD4gCiAgZHBseXI6Omdyb3VwX2J5KHllYXIpIHw+IAogIGRwbHlyOjpzdW1tYXJpc2UobWVhbihlZHVjKSkgfD4gCiAgdGlkeXI6OnBpdm90X3dpZGVyKG5hbWVzX2Zyb20gPSB5ZWFyLCB2YWx1ZXNfZnJvbSA9IGBtZWFuKGVkdWMpYCkgfD4gCiAgZHBseXI6Om11dGF0ZShkaWZmID0gYDg0YCAtIGA3MmApIHw+IAogIGRwbHlyOjpwdWxsKCkKYGBgCgpBdW1lbnRvIGRlIGByIGVkdWNfZGlmZmAgYW5vcyBuYSBlc2NvbGFyaWRhZGUgbcOpZGlhLgoKYGBge3J9CnBhcnRpYWxfZWR1IDwtIG1vZGVsXzFfaGV0JGNvZWZmaWNpZW50c1syXSAqIGVkdWNfZGlmZgpgYGAKCkVmZWl0byBkbyBhdW1lbnRvIGRhIGVzY29sYXJpZGFkZTogYHIgcGFydGlhbF9lZHVgCgpgYGB7cn0KcGFydGlhbF9lZHVfb3RoZXJzIDwtIG1vZGVsXzFfaGV0JGNvZWZmaWNpZW50c1tsZW5ndGgobW9kZWxfMV9oZXQkY29lZmZpY2llbnRzKV0gKyBwYXJ0aWFsX2VkdQpgYGAKCkVmZWl0byBkbyBhdW1lbnRvIGRhIGVzY29sYXJpZGFkZSArIG91dHJvcyBmYXRvcmVzOiBgciBwYXJ0aWFsX2VkdV9vdGhlcnNgLiBJc3RvIMOpIGFwcm94aW1hZGFtZW50ZSAyLzMgZGUgY3JpYW7Dp2EgcG9yIG11bGhlci4KCiMjIyBFeGVyY8OtY2lvcwoKKipDb21wdXRlciBFeGVyY2lzZSAxLCBwLiA0MjY6KioKCiooaSkqIEluIHRoZSBlcXVhdGlvbiBlc3RpbWF0ZWQgaW4gRXhhbXBsZSAxMy4xLCB0ZXN0IHdoZXRoZXIgbGl2aW5nIGVudmlyb25tZW50IGF0IGFnZSAxNiBoYXMgYW4gZWZmZWN0IG9uIGZlcnRpbGl0eSAodGhlIGJhc2UgZ3JvdXAgaXMgbGFyZ2UgY2l0eSkuIFJlcG9ydCB0aGUgdmFsdWUgb2YgdGhlIEYgc3RhdGlzdGljIGFuZCB0aGUgcC12YWx1ZS4KCmBgYHtyfQpjYXI6OmxpbmVhckh5cG90aGVzaXMoCiAgbW9kZWxfMV9oZXQsCiAgaHlwb3RoZXNpcy5tYXRyaXggPSBjKCJmYXJtID0gMCIsICJvdGhydXJhbCA9IDAiLCAic21jaXR5ID0gMCIpLAogIHRlc3QgPSAiRiIKKQpgYGAKCkFzIHZhcmnDoXZlaXMgbsOjbyBzw6NvIHJlbGV2YW50ZXMuCgoqKGlpKSogVGVzdCB3aGV0aGVyIHJlZ2lvbiBvZiB0aGUgY291bnRyeSBhdCBhZ2UgMTYgKFNvdXRoIGlzIHRoZSBiYXNlIGdyb3VwKSBoYXMgYW4gZWZmZWN0IG9uIGZlcnRpbGl0eS4KCmBgYHtyfQpjYXI6OmxpbmVhckh5cG90aGVzaXMoCiAgbW9kZWxfMV9oZXQsCiAgaHlwb3RoZXNpcy5tYXRyaXggPSBjKCJlYXN0ID0gMCIsICJub3J0aGNlbiA9IDAiLCAid2VzdCA9IDAiKSwKICB0ZXN0ID0gIkYiCikKYGBgCgpBcyB2YXJpw6F2ZWlzIHPDo28gcmVsZXZhbnRlcy4KCiooaWlpKSogTGV0ICR1JCBiZSB0aGUgZXJyb3IgdGVybSBpbiB0aGUgcG9wdWxhdGlvbiBlcXVhdGlvbi4gU3VwcG9zZSB5b3UgdGhpbmsgdGhhdCB0aGUgdmFyaWFuY2Ugb2YgJHUkIGNoYW5nZXMgb3ZlciB0aW1lIChidXQgbm90IHdpdGggZWR1YywgYWdlLCBhbmQgc28gb24pLiBBIG1vZGVsIHRoYXQgY2FwdHVyZXMgdGhpcyBpcyAkdV4yID0gXGdhbW1hIF8wICsgXGdhbW1hXzEgeTc0ICsgXGdhbW1hXzIgeTc2ICsgXGdhbW1hXzMgeTc4ICsgXGdhbW1hXzQgeTgwICsgXGdhbW1hXzUgeTgyICsgXGdhbW1hXzYgeTg0ICsgdiQuIFVzaW5nIHRoaXMgbW9kZWwsIHRlc3QgZm9yIGhldGVyb3NrZWRhc3RpY2l0eSBpbiAkdSQuIChIaW50OiBZb3VyIEYgdGVzdCBzaG91bGQgaGF2ZSA2IGFuZCAxLDEyMiBkZWdyZWVzIG9mIGZyZWVkb20uKQoKYGBge3J9CnUyIDwtIHRpYmJsZTo6dGliYmxlKHUyID0gbW9kZWxfMSRyZXNpZHVhbHNeMikKCmVycm9yIDwtIGZlcnRpbDEgfD4gCiAgZHBseXI6OnNlbGVjdCh5ZWFyKSB8PgogIGRwbHlyOjpiaW5kX2NvbHModTIpIHw+CiAgZHBseXI6OmZpbHRlcih5ZWFyID4gNzIpIHw+IAogIGRwbHlyOjptdXRhdGUoeWVhciA9IGZvcmNhdHM6OmFzX2ZhY3Rvcih5ZWFyKSkKCmVycm9yX21vZGVsIDwtIGxtKHUyIH4geWVhciwgZXJyb3IpCgpzdW1tYXJ5KGVycm9yX21vZGVsKQoKY2FyOjpsaW5lYXJIeXBvdGhlc2lzKAogIGVycm9yX21vZGVsLAogIGh5cG90aGVzaXMubWF0cml4ID0gYygieWVhcjc2ID0gMCIsICJ5ZWFyNzggPSAwIiwgInllYXI4MCA9IDAiLCAieWVhcjgyID0gMCIsICJ5ZWFyODQgPSAwIiksCiAgdGVzdCA9ICJGIgopCmBgYAoKQSB2YXJpw6JuY2lhIMOpIGlndWFsIGF0cmF2w6lzIGRvcyBhbm9zLgoKKihpdikqIEFkZCB0aGUgaW50ZXJhY3Rpb24gdGVybXMgJHk3NFxjZG90IGVkdWMkLCAkeTc2XGNkb3QgZWR1YyQsLi4uLCAkeTg0XGNkb3QgZWR1YyQgdG8gdGhlIG1vZGVsIGVzdGltYXRlZCBpbiBUYWJsZSAxMy4xLiBFeHBsYWluIHdoYXQgdGhlc2UgdGVybXMgcmVwcmVzZW50LiBBcmUgdGhleSBqb2ludGx5IHNpZ25pZmljYW50PwoKYGBge3J9Cm1vZGVsXzJfaGV0IDwtIGZpeGVzdDo6ZmVvbHMoa2lkcyB+IDEgKyBlZHVjICsgYWdlICsgSShhZ2VeMikgKyBibGFjayArIGVhc3QgKyBub3J0aGNlbiArIHdlc3QgKyBmYXJtICsgb3RocnVyYWwgKyBzbWNpdHkgKyB5NzQgKyB5NzYgKyB5NzggKyB5ODAgKyB5ODIgKyB5ODQgKyB5NzQgKiBlZHVjICsgeTc2ICogZWR1YyArIHk3OCAqIGVkdWMgKyB5ODAgKiBlZHVjICsgeTgyICogZWR1YyArIHk4NCAqIGVkdWMsIGZlcnRpbDEsICJ3aGl0ZSIpCgpzdW1tYXJ5KG1vZGVsXzJfaGV0KQoKY2FyOjpsaW5lYXJIeXBvdGhlc2lzKAogIG1vZGVsXzJfaGV0LAogIGh5cG90aGVzaXMubWF0cml4ID0gYygiZWR1Yzp5NzYgPSAwIiwgImVkdWM6eTc4ID0gMCIsICJlZHVjOnk4MCA9IDAiLCAiZWR1Yzp5ODIgPSAwIiwgImVkdWM6eTg0ID0gMCIpLAogIHRlc3QgPSAiRiIKKQpgYGAKCkVzdGVzIHRlcm1vcyByZXByZXNlbnRhbSBvIGVmZWl0byBkbyBhbm8gZSBkYSBlZHVjYcOnw6NvIGNvbmp1bnRhbWVudGUsIG91IHNlamEsIG8gZGlmZXJlbmNpYWwgZGEgZWR1Y2HDp8OjbyBkdXJhbnRlIG9zIGFub3MgZSBzZXUgZWZlaXRvIHNvYnJlIGFzIHRheGFzIGRlIGZlcnRpbGlkYWRlLiBDb25qdW50YW1lbnRlLCBhcyB2YXJpw6F2ZWlzIG7Do28gc8OjbyBzaWduaWZpY2FudGVzLgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQXVsYSA3IgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIEFVTEEgNyAtIEVjb25vbWV0cmlhIElJCgpPYmpldGl2b3M6CgoxLiAgRGFyIGNvbnRpbnVpZGFkZSDDoCBJbnRyb2R1w6fDo28gYW8gU29mdHdhcmUgRXN0YXTDrXN0aWNvIFIgZSBwYWNvdGVzIGVjb25vbcOpdHJpY29zIGRpc3BvbsOtdmVpcy4KMi4gIEVzdGltYcOnw6NvIGUgaW50ZXJwcmV0YcOnw6NvIGRvcyBtb2RlbG9zIGNvbSBkYWRvcyBlbSBQYWluZWwgcmVzdHJpdG9zIGEgMiBwZXLDrW9kb3MuCgpSZWZlcsOqbmNpYXM6CgoxLiAgV29vbGRyaWRnZSBKLk0uICgyMDEyKSAiSW50cm9kdWN0b3J5IEVjb25vbWV0cmljcyIsIHAuIDQxMi4KMi4gIEtsZWliZXIsIEMuICYgWmVpbGVpcywgQS4gKDIwMDgpICJBcHBsaWVkIEVjb25vbWV0cmljcyB3aXRoIFIiLCBwLiA4NC4KMy4gIENyb2lzc2FudCwgWS4gJiBNaWxsbywgRy4gKDIwMTkpICJQYW5lbCBEYXRhIEVjb25vbWV0cmljcyB3aXRoIFIgYnkiLCBwLiAxLgoKIyMgQmlibGlvdGVjYXMKCmBgYHtyfQpzb3VyY2UoIlIvbGlicmFyaWVzLlIiKQpgYGAK</div>
 
 
 
@@ -2124,7 +1835,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("aula_6.Rmd");
+  window.initializeSourceEmbed("aula_7.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
