@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.1.2",
+    "Version": "4.1.3",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -155,6 +155,16 @@
         "Rcpp"
       ]
     },
+    "Rdpack": {
+      "Package": "Rdpack",
+      "Version": "2.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "30b04e5b957144334d31e024ee2a222e",
+      "Requirements": [
+        "rbibutils"
+      ]
+    },
     "SparseM": {
       "Package": "SparseM",
       "Version": "1.81",
@@ -215,6 +225,14 @@
         "datawizard",
         "insight"
       ]
+    },
+    "bdsmatrix": {
+      "Package": "bdsmatrix",
+      "Version": "1.3-4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "1012f2033c32d595e1a16bee3bb0b3e5",
+      "Requirements": []
     },
     "bit": {
       "Package": "bit",
@@ -683,6 +701,20 @@
         "nlme",
         "numDeriv",
         "sandwich"
+      ]
+    },
+    "flightsbr": {
+      "Package": "flightsbr",
+      "Version": "0.1.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "c197497c501a2da96164b9e8b80bce0c",
+      "Requirements": [
+        "data.table",
+        "httr",
+        "parzer",
+        "pbapply",
+        "rvest"
       ]
     },
     "fontawesome": {
@@ -1215,6 +1247,18 @@
         "xfun"
       ]
     },
+    "maxLik": {
+      "Package": "maxLik",
+      "Version": "1.5-2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "56b86f88928f66983965406582149e5c",
+      "Requirements": [
+        "generics",
+        "miscTools",
+        "sandwich"
+      ]
+    },
     "mgcv": {
       "Package": "mgcv",
       "Version": "1.8-39",
@@ -1242,6 +1286,16 @@
       "Hash": "eaee7d2a6f3ed4491df868611cb064cc",
       "Requirements": [
         "Rcpp"
+      ]
+    },
+    "miscTools": {
+      "Package": "miscTools",
+      "Version": "0.6-26",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "340f0789cb2dcc816d9856d375c1df83",
+      "Requirements": [
+        "digest"
       ]
     },
     "modelr": {
@@ -1382,6 +1436,17 @@
         "insight"
       ]
     },
+    "parzer": {
+      "Package": "parzer",
+      "Version": "0.4.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "aff2856fb19e4963566a4931ba029ebd",
+      "Requirements": [
+        "Rcpp",
+        "withr"
+      ]
+    },
     "pbapply": {
       "Package": "pbapply",
       "Version": "1.5-0",
@@ -1467,6 +1532,26 @@
         "rprojroot",
         "rstudioapi",
         "withr"
+      ]
+    },
+    "plm": {
+      "Package": "plm",
+      "Version": "2.6-1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f677256ce01b586ac64671b33c5e3d38",
+      "Requirements": [
+        "Formula",
+        "MASS",
+        "Rdpack",
+        "bdsmatrix",
+        "collapse",
+        "lattice",
+        "lmtest",
+        "maxLik",
+        "nlme",
+        "sandwich",
+        "zoo"
       ]
     },
     "png": {
@@ -1580,6 +1665,14 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "5e3c5dc0b071b21fa128676560dbe94d",
+      "Requirements": []
+    },
+    "rbibutils": {
+      "Package": "rbibutils",
+      "Version": "2.2.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "69f4a840b0c2aa99f5ce473fd7fa21bd",
       "Requirements": []
     },
     "readr": {
