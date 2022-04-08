@@ -1,0 +1,66 @@
+---
+title: "Aula 8"
+output: html_notebook
+---
+
+# AULA 8 - Econometria II
+
+Objetivos:
+
+1.  Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+2.  Estimação e Interpretação dos Modelos com dados em Painel Multiperíodos: Estimação em Primeiras Diferenças
+
+Referências:
+
+1.  Wooldridge J.M. (2012) "Introductory Econometrics", p.412.
+2.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R", p. 84.
+3.  Croissant, Y. & Millo, G. (2019) "Panel Data Econometrics with R by", p.1.
+
+Sites que contém material auxiliar sobre a aula:
+
+-   <http://eclr.humanities.manchester.ac.uk/index.php/Panel_in_R>
+-   <https://justinmshea.github.io/wooldridge/articles/Introductory-Econometrics-Examples.html#chapter-13-pooling-cross-sections-across-time-simple-panel-data-methods>
+-   <https://justinmshea.github.io/wooldridge/index.html>
+
+## Bibliotecas
+
+```{r}
+source("R/libraries.R")
+```
+
+## County crime rates in North Carolina
+
+### Dados
+
+Data on 90 counties in North Carolina, for the years 1981 through 1987. Various factors including geographical location, attitudes toward crime, historical records, and reporting conventions might be contained in a~i~.
+
+-   **crmrte** is number of crimes per person.
+-   **prbarr** is the estimated probability of arrest
+-   **prbconv** is the estimated probability of conviction (given an arrest)
+-   **prbpris** is the probability of serving time in prison (given a conviction)
+-   **avgsen** is the average sentence length served
+-   **polpc** is the number of police officers per capita.
+
+We use the logs of all variables to estimate elasticities. We also include a full set of year dummies to control for state trends in crime rates. We can use the years 1982 through 1987 to estimate the differenced equation
+
+```{r}
+crime4 <- tibble::as_tibble(wooldridge::crime4)
+
+head(crime4)
+```
+
+### Modelo
+
+```{r}
+model_1 <- plm::plm(
+  lcrmrte ~ d83 + d84 + d85 + d86 + d87 + lprbarr + lprbconv + lprbpris + lavgsen + lpolpc, 
+  data = crime4, 
+  effect = "individual", 
+  model = "fd", # first differences 
+  index = c("county", "year")) # identificadores de observações (cross section e temporal)
+
+summary(model_1)
+
+```
+
+Obs: A função plm para opção `fd` calcula o modelo com dummies em primeiras diferenças; não altera as estimaões dos efeitos parciais.

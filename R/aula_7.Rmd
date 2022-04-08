@@ -21,3 +21,122 @@ Referências:
 ```{r}
 source("R/libraries.R")
 ```
+
+## Sleeping vs. working: tradeoff entre horas de trabalho e horas de sono
+
+### Dados
+
+```{r}
+slp75_81 <- tibble::as_tibble(wooldridge::slp75_81)
+
+head(slp75_81)
+```
+
+-   **educ75**: years educ in '75
+
+-   **educ81**: years educ in '81
+
+-   **gdhlth75**: = 1 if good hlth in '75
+
+-   **gdhlth81**: =1 if good hlth in '81
+
+-   **marr75**: = 1 if married in '75
+
+-   **marr81**: =1 if married in '81
+
+-   **slpnap75**: mins slp wk, inc naps, '75
+
+-   **slpnap81**: mins slp wk, inc naps, '81
+
+-   **totwrk75**: minutes worked per week, '75
+
+-   **totwrk81**: minutes worked per week, '81
+
+-   **yngkid75**: = 1 if child \< 3, '75
+
+-   **yngkid81**: =1 if child \< 3, '81
+
+### Modelo
+
+Modelo no nível:
+
+$$
+slpnap_{it} = \beta_0 + \delta_0 \cdot d81 + \beta_1 \cdot totwrk_{it} + \beta_2 \cdot educ_{it} + \beta_3 \cdot marr_{it} + \beta_4 \cdot yngkid_{it} + \beta_5 \cdot gdhlth_{it} + a_i + u_{it}, t = 1, 2
+$$ Modelo 1ª diferença:
+
+$$
+\Delta slpnap_{i} = \delta_0 + \beta_1 \cdot \Delta totwrk_{i} + \beta_2 \cdot \Delta educ_{i} + \beta_3 \cdot \Delta marr_{i} + \beta_4 \cdot \Delta yngkid_{i} + \beta_5 \cdot \Delta gdhlth_{i} + \Delta u_{i}
+$$
+
+Estimando modelo:
+
+```{r}
+data_model_1 <- slp75_81 |> 
+  dplyr::summarise(
+    dslpnap = slpnap81 - slpnap75,
+    dtotwrk = totwrk81 - totwrk75,
+    deduc = educ81 - educ75,
+    dmarr = marr81 - marr75,
+    dyngkid = yngkid81 - yngkid75,
+    dgdhlth = gdhlth81 - gdhlth75
+  )
+
+model_1 <- fixest::feols(
+  dslpnap ~ dtotwrk + deduc + dmarr + dyngkid + dgdhlth,
+  data = data_model_1
+)
+
+summary(model_1)
+
+olsrr::ols_test_breusch_pagan(lm(dslpnap ~ dtotwrk + deduc + dmarr + dyngkid + dgdhlth, data_model_1))
+
+car::linearHypothesis(
+  model_1,
+  hypothesis.matrix = c("deduc = 0", "dmarr = 0", "dyngkid = 0", "dgdhlth = 0"),
+  test = "F"
+)
+```
+
+## Equação do crime
+
+### Dados
+
+```{r}
+crime2 <- tibble::as_tibble(wooldridge::crime2)
+
+head(crime2)
+```
+
+### Modelo
+
+Modelo no nível:
+
+$$
+crmrte_{it} = \beta_0 + \delta_0 \cdot d87 + \beta_1 \cdot unem_{it} + a_i + u_{it}, t = 1, 2
+$$
+
+Modelo 1ª diferença:
+
+$$
+\Delta crmrte_{i} = \beta_0 + \beta_1 \cdot \Delta unem_{i} +  \Delta u_{i}
+$$
+
+```{r}
+data_model_2 <- crime2 |>
+  dplyr::select(unem, crmrte, year) |> 
+  dplyr::arrange(year) |> 
+  dplyr::summarise(
+    dunem = dplyr::lead(unem, 46) - unem,
+    dcrmrte = dplyr::lead(crmrte , 46) - crmrte
+  ) |> 
+  tidyr::drop_na()
+
+model_2 <- fixest::feols(
+  dcrmrte ~ dunem,
+  data = data_model_2
+)
+
+summary(model_2)
+
+olsrr::ols_test_breusch_pagan(lm(dcrmrte ~ dunem, data_model_2))
+```
