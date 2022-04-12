@@ -1,0 +1,189 @@
+#
+# Econometria II - Graduação Economia (UFABC) -  Prof. Guilherme Lima
+# Rotina para os Alunos - Aula 12
+
+# Objetivos:
+# 1.	Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+# 2.	Teste de Hausman e Estimação por Variáveis Instrumentais/2SLS
+
+# Referências:
+# Referências:
+# (1) Wooldridge J.M. (2012) "Introductory Econometrics", p.441.
+# (2) Kleiber, C. &  Zeileis, A. (2008) "Applied Econometrics with R".
+# (3) Croissant, Y. & Millo, G. (2019) "Panel Data Econometrics with R by".
+
+# Sites que contém material auxiliar:
+# http://eclr.humanities.manchester.ac.uk/index.php/IV_in_R
+
+# Pacotes utilizados:
+# 1. sandwich
+# 2. AER,  incorpora o sandwich.
+# 3. sym
+# 4. lmtest
+# 5. wooldridge
+
+install.packages("sandwich")	# for white robust tests
+library(sandwich)
+
+install.packages("AER")
+library(AER)
+
+install.packages("systemfit")
+library(systemfit)
+
+install.packages("lmtest")		# "waldtest": teste de significância conjunta.
+library(lmtest)
+
+install.packages("wooldridge")
+library(wooldridge)
+
+
+data("mroz")		# Barse de dados dos Exemplos 5.1-5.3
+attach(mroz)
+ls(mroz)
+View(mroz)
+help(package=wooldridge)
+
+# T.A. Mroz (1987), “The Sensitivity of an Empirical Model of Married Women’s Hours of Work to Economic and Statistical Assumptions,” Econometrica 55, 765-799.
+# A data.frame with 753 observations on 22 variables:
+# hours: hours worked, 1975
+# kidslt6: # kids < 6 years
+# kidsge6: # kids 6-18
+# age: woman's age in yrs
+# educ: years of schooling
+# wage: est. wage from earn, hrs
+# hushrs: hours worked by husband, 1975
+# husage: husband's age
+# huseduc: husband's years of schooling
+# huswage: husband's hourly wage, 1975
+# motheduc: mother's years of schooling
+# fatheduc: father's years of schooling
+# unem: unem. rate in county of resid.
+# exper: actual labor mkt exper
+# lwage: log(wage)
+
+
+# Example 5.1 (Wage Equation): 
+#
+# log(wage)= ß0 + ß1*exper + ß2*exper^2 + ß3*educ + u
+# Cov(u,educ)!=0
+# educ = delta0 + delta1*exper + delta2*exper^2 + theta*motheduc + u
+
+###########################################################################################################################
+# Teste de Hausman para H0: Exogeneidade vs. Ha: Endogeneidade
+#
+# Problema: se utilizarmos IV em um modelo apenas com variáveis exógenas, embora IV seja consistente, ele será menos eficiente que OLS.
+#		Isto é, seus desvios-padrão serão muito elevados em comparação com OLS (Eficiente).	Portanto, o interesse do pesquisador
+#		aplicado é avaliar se a(s) variável(eis) explicativa(s) que se supõe endógena é realmente endógena ou não. Caso seja 
+#		exógena, deve-se utilizar OLS ao invés de IV/2SLS. O Teste de Hausman-Wu avalia estatísticamente as hipóteses:
+#		H0: Regressores Exógenos vs. Ha: Regressores Endógenos. Para aplicar o teste de Hausman-Wu são necessários alguns quesitos:
+#		1. Identificar, a princípio, quais variáveis explicativas podem ser endógenas.
+#		2. Possuir instrumentos (válidos) para cada uma dessas variáveis. 
+#		Sob (1) e (2) o Teste de Hausman-Wu pode ser aplicado em 3 etapas:
+###########################################################################################################################
+
+# Etapa 1: Estimar a Equação na Forma Reduzida para a variável investigada:
+
+HWT.1 <- lm( educ ~ exper + I(exper^2) + motheduc)
+
+# Etapa 2: Estimar a Equação do Teste de Hausman-Wu utilizando os resíduos estimados da Etapa 1:
+
+HWT.2  <- lm(log(wage) ~ educ + exper + I(exper^2) + HWT.1$residuals)
+summary(HWT.2)
+
+# Etapa 3: Aplicar o Teste F para avaliar a (nulidade da)diferença entre os modelos:
+# Obs: no exemplo, se educ for endógena, a eq. da Etapa 1 terá filtrado a parte de educ 
+# que é correlacionada. Assim, o resíduo de HWT.1 estará livre dessa correlação e, se educ
+# for realmente endógena, o resíduo deverá ser estatisticamente relavante na eq. HWT.2
+
+HWT.3 <- waldtest(HWT.2, .~. - HWT.1$residuals)
+HWT.3		
+
+# Ao nível de 5% de significância, Rejeitamos H0. Concluímos que educ é endógena.
+
+
+#####################################################################################################################################
+## Método I: Estimação por VI: exogenas: exper, exper^2; endógena: educ; instrumento: motheduc
+#####################################################################################################################################
+
+#(Wage Equation): 
+#
+# log(wage)= ß0 + ß1*exper + ß2*exper^2 + ß3*educ* + u
+# educ* = delta0 + delta1*exper + delta2*exper^2 + theta*motheduc
+
+
+## Método I: 
+#(1) Estimação Eq. Forma Reduzida(EFR);
+#(2) Estimação Eq.Instrumental(EI);
+#(3) Cálculo dos Parâmetros Populacionais Recursivamente
+
+# (1) Estimação EFR:
+
+efr.educ <- lm(educ ~ exper + I(exper^2) + motheduc)		# Eq. Forma Reduzida para educ
+summary(efr.educ)									# motheduc estatísticamente significante
+delta0 <- efr.educ$coefficients[1]					# Estimativas dos Parâmetros da Eq. Forma Reduzida para educ
+delta1 <- efr.educ$coefficients[2]
+delta2 <- efr.educ$coefficients[3]
+theta <- efr.educ$coefficients[4]
+
+#(2) Estimação EI:
+
+ei <- lm(log(wage) ~ exper + I(exper^2) + motheduc)		# Equação Instrumental
+summary(ei)
+alpha0 <- ei$coefficients[1]							# Estimativas dos Parâmetros da Regressão Instrumental
+alpha1 <- ei$coefficients[2]
+alpha2 <- ei$coefficients[3]
+lambda <- ei$coefficients[4]
+
+# (3) Estimativas dos Parâmetros Populacionais Recursivamente:
+
+betak <- lambda/theta							# betak = lambda/theta
+beta0 <- alpha0 - betak*delta0					# alphai = betai + betak
+beta1 <- alpha1 - betak*delta1
+beta2 <- alpha2 - betak*delta2
+
+coef.iv <- c(beta0, beta1, beta2, betak)
+coef.iv
+
+# *Obs: Note que, alternativamente, podemos estimar o modelo diretamente usando os valores previstos da EFR:  
+
+educ.hat <- fitted(efr.educ)
+iv.1 <- lm(log(wage) ~ exper + I(exper^2) + educ.hat)
+
+iv.1$coefficients	
+coef.iv
+
+###########################################################################################################################
+## Método II: Estimação usando ivreg{AER}
+###########################################################################################################################
+
+iv.2  <- ivreg(log(wage) ~ exper + I(exper^2) + educ | exper + I(exper^2) + motheduc)
+summary(iv.2)
+
+teste$coefficients
+iv.2$coefficients											# Comparação dos Resultados dos Métodos I e II
+coef.iv
+
+
+#####################################################################################################################################
+### Estimação por 2SLS: exogenas: exper, exper^2; endógena: educ; instrumentos: motheduc, fatheduc, huseduc
+#####################################################################################################################################
+
+
+efr.2sls <- lm(educ ~ exper + I(exper^2) + motheduc + fatheduc + huseduc)	# Eq. Forma Reduzida para educ
+summary(efr.2sls)
+waldtest(efr.2sls, .~. - motheduc - fatheduc - huseduc)					# Teste F de Significância Conjunta dos Instrumentos
+
+iv.2sls  <- ivreg(log(wage) ~ exper + I(exper^2) + educ |exper + I(exper^2) + motheduc + fatheduc + huseduc)	# Estimação por 2SLS
+summary(iv.2sls)
+
+iv.2sls$coefficients	# Comparação dos Resultados dos Métodos IV e 2SLS
+iv.2$coefficients				
+
+
+# Questão: Por que o efeito parcial da educação estimado por 2SLS é diferente do IV?
+
+
+# *Obs: 2SLS(c/ 1 instrumento) = VI
+ivreg(log(wage) ~ exper + I(exper^2) + educ |exper + I(exper^2) + motheduc)$coefficients
+iv.2$coefficients				

@@ -1,0 +1,82 @@
+---
+title: "Aula 19"
+output: html_notebook
+---
+
+# AULA 10 - Econometria II
+
+Objetivos:
+
+1.	Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+2.	Estimação e Interpretação dos Modelos com dados em Painel: Estimador de Efeitos Aleatórios.
+
+1.  Wooldridge J.M. (2012) "Introductory Econometrics", p. 435
+2.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R".
+3.  Croissant, Y. & Millo, G. (2019) "Panel Data Econometrics with R by".
+
+Sites que contém material auxiliar sobre a aula:
+
+-   <http://eclr.humanities.manchester.ac.uk/index.php/Panel_in_R>
+-   <https://justinmshea.github.io/wooldridge/articles/Introductory-Econometrics-Examples.html#chapter-13-pooling-cross-sections-across-time-simple-panel-data-methods>
+-   <https://justinmshea.github.io/wooldridge/index.html>
+
+## Bibliotecas
+
+```{r}
+source("R/libraries.R")
+```
+
+## Has the Return to Education Changed over Time?
+
+Vella and Verbeek (1998). Each of the 545 men in the sample worked in every year from 1980 through 1987. Some variables in the data set change over time: experience, marital status, and union status are the three important ones. Other variables do not change: race and education are the key examples: we cannot include race, education, or experience in the equation. However, we can include interactions of educ with year dummies for 1981 through 1987 to test whether the return to education was constant over this time period. We use log(wage) as the dependent variable, dummy variables for marital and union status, a full set of year dummies, and the interaction terms: $d81*educ$, $d82*educ$,..., $d87*educ$.
+
+### Dados
+
+```{r}
+wagepan <- tibble::as_tibble(wooldridge::wagepan)
+
+head(wagepan)
+```
+
+### Modelo
+
+```{r}
+cat("\n ===== MODELO 1 - RANDOM ===== \n")
+model_1 <- plm::plm(
+  lwage ~ educ + black + hisp + exper + expersq + married + union + d81 + d82 + d83 + d84 + d85 + d86 + d87, 
+  data = wagepan, 
+  effect = "individual", 
+  model = "random", 
+  index = c("nr", "year")
+)
+
+summary(model_1)
+
+cat("\n ===== MODELO 2 - POOLED ===== \n")
+model_2 <- plm::plm(
+  lwage ~ educ + black + hisp + exper + expersq + married + union + d81 + d82 + d83 + d84 + d85 + d86 + d87, 
+  data = wagepan, 
+  effect = "individual", 
+  model = "pooling", 
+  index = c("nr", "year")
+) # modelo viesado para autocorrelação
+
+summary(model_2)
+
+cat("\n ===== MODELO 3 - FIXED ===== \n")
+model_3 <- plm::plm(
+  lwage ~ educ + black + hisp + exper + expersq + married + union + d81 + d82 + d83 + d84 + d85 + d86 + d87, 
+  data = wagepan, 
+  effect = "individual", 
+  model = "within", 
+  index = c("nr", "year")
+) # modelo não aceita dummies não temporais e variáveis com pouca variabilidade
+
+summary(model_3)
+```
+
+### Decidindo entre modelo de efeitos fixos ou aleatórios
+
+```{r}
+plm::phtest(model_1, model_2)
+```

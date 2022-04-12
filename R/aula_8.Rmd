@@ -60,7 +60,6 @@ model_1 <- plm::plm(
   index = c("county", "year")) # identificadores de observações (cross section e temporal)
 
 summary(model_1)
-
 ```
 
 Obs: A função plm para opção `fd` calcula o modelo com dummies em primeiras diferenças; não altera as estimaões dos efeitos parciais.

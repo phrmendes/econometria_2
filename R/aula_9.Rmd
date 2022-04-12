@@ -1,0 +1,66 @@
+---
+title: "Aula 9"
+output: html_notebook
+---
+
+# AULA 9 - Econometria II
+
+Objetivos:
+
+1.	Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+2.	Estimação e Interpretação dos Modelos com dados em Painel: Estimador de Efeitos Fixos.
+
+1.  Wooldridge J.M. (2012) "Introductory Econometrics", p. 435
+2.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R".
+3.  Croissant, Y. & Millo, G. (2019) "Panel Data Econometrics with R by".
+
+Sites que contém material auxiliar sobre a aula:
+
+-   <http://eclr.humanities.manchester.ac.uk/index.php/Panel_in_R>
+-   <https://justinmshea.github.io/wooldridge/articles/Introductory-Econometrics-Examples.html#chapter-13-pooling-cross-sections-across-time-simple-panel-data-methods>
+-   <https://justinmshea.github.io/wooldridge/index.html>
+
+## Bibliotecas
+
+```{r}
+source("R/libraries.R")
+```
+
+## Has the Return to Education Changed over Time?
+
+Vella and Verbeek (1998). Each of the 545 men in the sample worked in every year from 1980 through 1987. Some variables in the data set change over time: experience, marital status, and union status are the three important ones. Other variables do not change: race and education are the key examples: we cannot include race, education, or experience in the equation. However, we can include interactions of educ with year dummies for 1981 through 1987 to test whether the return to education was constant over this time period. We use log(wage) as the dependent variable, dummy variables for marital and union status, a full set of year dummies, and the interaction terms: $d81*educ$, $d82*educ$,..., $d87*educ$.
+
+### Dados
+
+```{r}
+wagepan <- tibble::as_tibble(wooldridge::wagepan)
+
+head(wagepan)
+```
+
+### Modelo
+
+```{r}
+model_1 <- plm::plm(
+  lwage ~ d81 + d82 + d83 + d84 + d85 + d86 + d87 + married + union + d81 * educ + d82 * educ + d83 * educ + d84 * educ + d85 * educ + d86 * educ + d87 * educ, 
+  data = wagepan, 
+  effect = "individual", 
+  model = "within", 
+  index = c("nr", "year")
+)
+
+summary(model_1)
+```
+
+The estimates on these interaction terms are all positive, and they generally get larger for more recent years. The largest coefficient of .030 is on `d87:educ`: the return to education is estimated to be about 3 percentage points larger in 1987 than in the base year, 1980. The estimates on the earlier years are smaller and insignificant at the 5% level against a two-sided alternative.
+
+### Significância conjunta
+
+```{r}
+car::linearHypothesis(
+  model = model_1,
+  hypothesis.matrix = c("d81:educ = 0", "d82:educ = 0", "d83:educ = 0", "d84:educ = 0", "d85:educ = 0", "d86:educ = 0", "d87:educ = 0"),
+  test = "F"
+)
+```
+
