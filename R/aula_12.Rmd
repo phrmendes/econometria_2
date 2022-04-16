@@ -1,0 +1,126 @@
+---
+title: "Aula 12"
+output: html_notebook
+---
+
+# AULA 11 - Econometria II
+
+Objetivos:
+
+1.  Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+2.  Estimação por Variáveis Instrumentais/2SLS.
+
+Material de apoio:
+
+1.  Wooldridge J.M. (2012) "Introductory Econometrics", p. 441.
+2.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R".
+3.  Croissant, Y. & Millo, G. (2019) "Panel Data Econometrics with R by".
+
+Sites que contém material auxiliar sobre a aula:
+
+-   <http://eclr.humanities.manchester.ac.uk/index.php/Panel_in_R>
+-   <https://justinmshea.github.io/wooldridge/articles/Introductory-Econometrics-Examples.html#chapter-13-pooling-cross-sections-across-time-simple-panel-data-methods>
+-   <https://justinmshea.github.io/wooldridge/index.html>
+
+## Bibliotecas
+
+```{r}
+source("R/libraries.R")
+```
+
+## Simple Estimators for Treatment Parameters in a Latent-Variable Framework
+
+### Dados
+
+A dataframe with 753 observations on 22 variables:
+
+- lwage: log of hourly wage, 1991
+- educ: highest grade completed by 1991
+- ne: =1 if in northeast, 1991
+- nc: =1 if in nrthcntrl, 1991
+- west: =1 if in west, 1991
+- south: =1 if in south, 1991
+- exper: potential experience
+- urban: =1 if in urban area, 1991
+- ne18: =1 if in NE, age 18
+- nc18: =1 if in NC, age 18
+- south18: =1 if in south, age 18
+- west18: =1 if in west, age 18
+- urban18: =1 if in urban area, age 18
+- tuit17: college tuition, age 17
+- tuit18: college tuition, age 18
+- expersq: exper^2
+- ctuit: tuit18 - tuit17
+
+```{r}
+htv <- tibble::as_tibble(wooldridge::htv)
+
+head(htv)
+```
+
+**(i)** Run a simple OLS regression of log(wage) on `educ`. Without controlling for other factors, what is the 95% confidence interval for the return to another year of education?
+
+```{r}
+model_1 <- summary(lm(lwage ~ educ, data = htv))
+
+model_1
+
+c(
+  inf_lim = model_1$coefficients[2, 1] - qt(1 - 0.025, df = model_1$df[2]) *  model_1$coefficients[2, 2],
+  sup_lim = model_1$coefficients[2, 1] + qt(1 - 0.025, df = model_1$df[2]) *  model_1$coefficients[2, 2]
+)
+```
+
+**(ii)** The variable `ctuit`, in thousands of dollars, is the change in college tuition facing students from age 17 to age 18. Show that educ and `ctuit` are essentially uncorrelated. What does this say about `ctuit` as a possible IV for `educ` in a simple regression analysis?
+
+```{r}
+summary(lm(educ ~ ctuit, data = htv))
+```
+
+Neste caso, mesmo que `ctuit` seja exógena, ela não é correlacionada com `educ` e, portanto, não cumpre as condições para ser variável instrumental para `educ`. 
+
+**(iii)** Now, add to the simple regression model in part (i) a quadratic in experience and a full set of regional dummy variables for current residence and residence at age 18. Also include the urban indicators for current and age 18 residences. What is the estimated return to a year of education?
+
+```{r}
+efr_educ <- lm(educ ~ ctuit + exper + I(exper^2) + ne + nc + west + urban + ne18 + nc18 + west18 + urban18, data = htv)
+
+summary(efr_educ)
+```
+
+A variável `ctuit` passa a ser est. significante. Um aumento de US$ 1.000,00 reduz os anos de estudo, em média, em 0.1652 anos.
+
+**(v)** Estimate the model from part (iii) by IV, using `ctuit` as an IV for `educ`. How does the confidence interval for the return to education compare with the OLS CI from part (iii)?
+
+```{r}
+iv <- summary(AER::ivreg(lwage ~ educ + exper + I(exper^2) + ne + nc + west + urban + ne18 + nc18 + west18 + urban18 | ctuit + exper + I(exper^2) + ne + nc + west + urban + ne18 + nc18 + west18 + urban18, data = htv))
+
+iv
+
+c(
+  inf_lim = iv$coefficients[2, 1] - qt(1 - 0.025, df = iv$df[2]) *  iv$coefficients[2, 2],
+  sup_lim = iv$coefficients[2, 1] + qt(1 - 0.025, df = iv$df[2]) *  iv$coefficients[2, 2]
+)
+```
+
+O efeito parcial da educação eleva significativamente para 25%. Porém, o desvio padrão é muito alto comparado com a estimação por OLS: IC muito amplo!
+
+**(vi)** Do you think the IV procedure from part (v) is convincing?
+
+IV não se mostrou adequado para o modelo em questão devido ao elevado desvio-padrão, que produz um IC muito amplo. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

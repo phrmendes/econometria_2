@@ -11,7 +11,7 @@
 
 
 
-<title>Aula 9</title>
+<title>Aula 11</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1754,24 +1754,23 @@ pre code {
 
 
 
-<h1 class="title toc-ignore">Aula 9</h1>
+<h1 class="title toc-ignore">Aula 11</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<div id="aula-9---econometria-ii" class="section level1">
-<h1>AULA 9 - Econometria II</h1>
+<div id="aula-11---econometria-ii" class="section level1">
+<h1>AULA 11 - Econometria II</h1>
 <p>Objetivos:</p>
 <ol style="list-style-type: decimal">
 <li>Dar continuidade à Introdução ao Software Estatístico R e pacotes
 econométricos disponíveis.</li>
-<li>Estimação e Interpretação dos Modelos com dados em Painel: Estimador
-de Efeitos Fixos.</li>
+<li>Teste de Hausman e Estimação por Variáveis Instrumentais/2SLS.</li>
 </ol>
 <p>Material de apoio:</p>
 <ol style="list-style-type: decimal">
-<li>Wooldridge J.M. (2012) “Introductory Econometrics”, p. 435</li>
+<li>Wooldridge J.M. (2012) “Introductory Econometrics”, p. 441.</li>
 <li>Kleiber, C. &amp; Zeileis, A. (2008) “Applied Econometrics with
 R”.</li>
 <li>Croissant, Y. &amp; Millo, G. (2019) “Panel Data Econometrics with R
@@ -1793,31 +1792,40 @@ by”.</li>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="has-the-return-to-education-changed-over-time" class="section level2">
-<h2>Has the Return to Education Changed over Time?</h2>
-<p>Vella and Verbeek (1998). Each of the 545 men in the sample worked in
-every year from 1980 through 1987. Some variables in the data set change
-over time: experience, marital status, and union status are the three
-important ones. Other variables do not change: race and education are
-the key examples: we cannot include race, education, or experience in
-the equation. However, we can include interactions of educ with year
-dummies for 1981 through 1987 to test whether the return to education
-was constant over this time period. We use log(wage) as the dependent
-variable, dummy variables for marital and union status, a full set of
-year dummies, and the interaction terms: <span class="math inline">\(d81*educ\)</span>, <span class="math inline">\(d82*educ\)</span>,…, <span class="math inline">\(d87*educ\)</span>.</p>
+<div id="the-sensitivity-of-an-empirical-model-of-married-womens-hours-of-work-to-economic-and-statistical-assumptions" class="section level2">
+<h2>The Sensitivity of an Empirical Model of Married Womens Hours of
+Work to Economic and Statistical Assumptions</h2>
 <div id="dados" class="section level3">
 <h3>Dados</h3>
+<p>A dataframe with 753 observations on 22 variables:</p>
+<ul>
+<li>hours: hours worked, 1975</li>
+<li>kidslt6: - kids &lt; 6 years</li>
+<li>kidsge6: - kids 6-18</li>
+<li>age: woman’s age in yrs</li>
+<li>educ: years of schooling</li>
+<li>wage: est. wage from earn, hrs</li>
+<li>hushrs: hours worked by husband, 1975</li>
+<li>husage: husband’s age</li>
+<li>huseduc: husband’s years of schooling</li>
+<li>huswage: husband’s hourly wage, 1975</li>
+<li>motheduc: mother’s years of schooling</li>
+<li>fatheduc: father’s years of schooling</li>
+<li>unem: unem. rate in county of resid.</li>
+<li>exper: actual labor mkt exper</li>
+<li>lwage: log(wage)</li>
+</ul>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud2FnZXBhbiA8LSB0aWJibGU6OmFzX3RpYmJsZSh3b29sZHJpZGdlOjp3YWdlcGFuKVxuXG5oZWFkKHdhZ2VwYW4pXG5gYGAifQ== -->
-<pre class="r"><code>wagepan &lt;- tibble::as_tibble(wooldridge::wagepan)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXJveiA8LSB0aWJibGU6OmFzX3RpYmJsZSh3b29sZHJpZGdlOjptcm96KVxuXG5oZWFkKG1yb3opXG5gYGAifQ== -->
+<pre class="r"><code>mroz &lt;- tibble::as_tibble(wooldridge::mroz)
 
-head(wagepan)</code></pre>
+head(mroz)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6NDQsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNiDDlyA0NCJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUE3MVd5MjdUUUJRZHgzYlNHRkZhc1VDc2lCQWJwQ1pLbktZRU5tV0JXTEJFSUhYSnhKbkVWdTBaZDJ5clJXS0IrQUsrZ3EvZ1VmNmtheFpzRUVpQWFMaGp6ZGhtbENoRmpSTHBaTTZkKzVwNzU1RThmWFRRZHc0Y2hKQ0pMTU5FcGcwVTJjK2ZQVzRQRWJKcUlCaklRazB4bm9EUmRTQTdnS3VBdWh3WEFmU045NEFQZ0krQVQ0QlR3T2VLLzZMUFJmV0dsQTJOcnpLK2FJSUpzQUEyS3V0ZVJmd2xlaWRHcUxtRjBKVlhnTGVBR2FDN3Z2eEw5Y1lDWENiK0t2ZHZYdXpMK1Ardlh1L0xQUC9xL0xyWHQweS91UUNyekcvTTBZc2M5ZjF2ZDIrZEFkbi84KzcyUXpGK2YvTWxIMzk4UFdxSjhlY041NFVZZjd1blp4ZUxxNjlMdDVtMzdrWDdOczltWGVkYXhCTHZrWGlZdHdBM0FYZTBCOXVtT0NLSk5OaVJrelhLSmJOZUVxeTRqYWM4OEpRd0NyRjNLQVZ6bENXU2JuaU1KaW5QbEoxSmFLcGN5RWxNVkRCekVsQ1Z3dytTV0xuSGpIRS9USDNsNDdPTXE5aDJoR2sya1VJandwd0haS3ppUlVXOEJ1V3A3eEVsYmdpUjRFUXR3MktlMTZ0d3Q4TDdGYjViNFlNSzM2dndleFUrclBEN2FsV1ZnbVBPQ3BxTkZPVlowZDZFWlVYZEZobVhMVXc1VnROQVZjVjJSZ09taXJURFl6d2x5bUU4N0pYVUxXbS9wTHNsSFpSMHI2U3F0RWErYThtUmRtNmFuQjEzMU5rUkI2NzJHcjVtczlrdnpkQkpnNGgwa2hSSHNUeGxTclB0RGxwUE10cHl1NzFleSswLzZQYjFzK21GT0VrMEwyZU1VOXlaY0VnTjBybm0wbUJ4Q2wwQnA1cjRGMkpyemdiWEpxNWxWQlF4Ym50K1JnL2JQWkVBL1h0VERWVCttaHY1SmNsVDFtWXlsQzFEMVFtZEJwUVVHNEpISkpUQ0pqUXI3MVVuNWtGeEh4eVlUVG9wUzdHeWN6d1dxcG04Tm5UK0YrRjZwN2g4Q1FBQSJ9 -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6MjIsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNiDDlyAyMiJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUEyMVV6VThUUVJTZmJ0dGR1bUtwUUVqUWlCWFVrQmdhNkFvQkw2M1JjT0JvSUhBd3hyWGQwZzNkM2JxN0RYZ3djakR4b0VlTkp4TXZ4dmdYY09IQWdZTXhKR3FFbU9nRkpZcWUxQkNWZUdoOTg5V09Felo1K2IyUGVXL2UrODNNWHI0MForaHpPa0lvaW1LUktJckdRVVh4bWVuSm9YR0VZZ29ZRVJSRENZeExzS2dMbEI2UXd5QXFDUjRzTEs1T2dVQ2V0Z3J1RjZDblFmOGg1YU1Ea01meHA1RHVxQ2hTSE9xaFBwQUJrSDZRRXlCalFyeGRrcVNBYWw3ZnJPTml1ZC9qMy9PQStjN01vMlZzLzd4MzhRbXhyNkp0Z24rK3NYMXBYdHd3eUhxT3FjRmZheGgxdWlqZnZyRkI3RTZLclg3MEJ3Z2xWTnFDQmx0cHI0SGtsTkJ2UDV0bkVHU1V6VGNoelpOZ3FETTgxT3dyZGZ3VzJUZjlxZmNhNmVQcEpPMW5wa1Q4cDFoL1I5ODlXeGJuZWZXQityZW1LRzdlcDdoNmgrTDc1eFRmSnRaRUhuSzdQWGR4ZzduUFo4bTU1TDZrMXpGdnVXOUtPK1lsdDdNekxmcWxPVFFKazBKY2t5UXBvSnJ2Wm5PY1lkZ3Q0UUREUHNRLzhUNUZVT3VUN2l1cGo1OUFoOURIeWVhK3A5L3NFVjZOMjNYQzUyQzNoK2ZQSHpPeUJNLzFQaWJ4Z1pXdGJaR252U3N2Q1U5YjZpemhaMy9pNnpMR2xZZkZiV0lYRmdoZis3dXpFay9ySUwwZ0gwSHc2WTNBZmJrZ1BjeTRhenBXQUVvSzRjZEpuVEhiclpUNGdySlg4d05tYUF0Mk1haUVZNkk1YjNFemFzNWJ2SUpWckJXNHZ0anlhNzVWRlV5MVhBdkt6ZXJZRXBhQ0pWVEJwcGhaTWgzYjVjR29FL3BNYlhPOHNDemt0WlhNLyt4WXpiVWNyaGZzOENhZjAxcXFXczBpN3FKZHNscjE0eFZ4QnJJeXVDRXhtZkM5eFF4bkV4K0JnbytwMFdqOGxSYnFvZTFZbVNBMG5TcmpuVWVPWkVmVFV6VTNuUjBlR1VsbmpmUERobnhhaFlvWkJGS1dYalJETTFQeVlXdXc2bEtLNWxWRDIzTWhTZWxpOTFOTWp2aVNvNlBtNGlHS1E0Vnl6VjBZTWhEOVY0ai8xZ2k3WDF6dm9Wc3FEVllxenMvSWN1ZHQxMnB5YUY2M0tzeElBbG1FcTB6VnQ5MlFUd0xlSUJONm9jblg2UVd2d2oxa05sVC9CL2x0MmdSMkJnQUEifQ== -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["nr"],"name":[1],"type":["int"],"align":["right"]},{"label":["year"],"name":[2],"type":["int"],"align":["right"]},{"label":["agric"],"name":[3],"type":["int"],"align":["right"]},{"label":["black"],"name":[4],"type":["int"],"align":["right"]},{"label":["bus"],"name":[5],"type":["int"],"align":["right"]},{"label":["construc"],"name":[6],"type":["int"],"align":["right"]},{"label":["ent"],"name":[7],"type":["int"],"align":["right"]},{"label":["exper"],"name":[8],"type":["int"],"align":["right"]},{"label":["fin"],"name":[9],"type":["int"],"align":["right"]},{"label":["hisp"],"name":[10],"type":["int"],"align":["right"]},{"label":["poorhlth"],"name":[11],"type":["int"],"align":["right"]},{"label":["hours"],"name":[12],"type":["int"],"align":["right"]},{"label":["manuf"],"name":[13],"type":["int"],"align":["right"]},{"label":["married"],"name":[14],"type":["int"],"align":["right"]},{"label":["min"],"name":[15],"type":["int"],"align":["right"]},{"label":["nrthcen"],"name":[16],"type":["int"],"align":["right"]},{"label":["nrtheast"],"name":[17],"type":["int"],"align":["right"]},{"label":["occ1"],"name":[18],"type":["int"],"align":["right"]},{"label":["occ2"],"name":[19],"type":["int"],"align":["right"]},{"label":["occ3"],"name":[20],"type":["int"],"align":["right"]},{"label":["occ4"],"name":[21],"type":["int"],"align":["right"]},{"label":["occ5"],"name":[22],"type":["int"],"align":["right"]},{"label":["occ6"],"name":[23],"type":["int"],"align":["right"]},{"label":["occ7"],"name":[24],"type":["int"],"align":["right"]},{"label":["occ8"],"name":[25],"type":["int"],"align":["right"]},{"label":["occ9"],"name":[26],"type":["int"],"align":["right"]},{"label":["per"],"name":[27],"type":["int"],"align":["right"]},{"label":["pro"],"name":[28],"type":["int"],"align":["right"]},{"label":["pub"],"name":[29],"type":["int"],"align":["right"]},{"label":["rur"],"name":[30],"type":["int"],"align":["right"]},{"label":["south"],"name":[31],"type":["int"],"align":["right"]},{"label":["educ"],"name":[32],"type":["int"],"align":["right"]},{"label":["tra"],"name":[33],"type":["int"],"align":["right"]},{"label":["trad"],"name":[34],"type":["int"],"align":["right"]},{"label":["union"],"name":[35],"type":["int"],"align":["right"]},{"label":["lwage"],"name":[36],"type":["dbl"],"align":["right"]},{"label":["d81"],"name":[37],"type":["int"],"align":["right"]},{"label":["d82"],"name":[38],"type":["int"],"align":["right"]},{"label":["d83"],"name":[39],"type":["int"],"align":["right"]},{"label":["d84"],"name":[40],"type":["int"],"align":["right"]},{"label":["d85"],"name":[41],"type":["int"],"align":["right"]},{"label":["d86"],"name":[42],"type":["int"],"align":["right"]},{"label":["d87"],"name":[43],"type":["int"],"align":["right"]},{"label":["expersq"],"name":[44],"type":["int"],"align":["right"]}],"data":[{"1":"13","2":"1980","3":"0","4":"0","5":"1","6":"0","7":"0","8":"1","9":"0","10":"0","11":"0","12":"2672","13":"0","14":"0","15":"0","16":"0","17":"1","18":"0","19":"0","20":"0","21":"0","22":"0","23":"0","24":"0","25":"0","26":"1","27":"0","28":"0","29":"0","30":"0","31":"0","32":"14","33":"0","34":"0","35":"0","36":"1.197540","37":"0","38":"0","39":"0","40":"0","41":"0","42":"0","43":"0","44":"1"},{"1":"13","2":"1981","3":"0","4":"0","5":"0","6":"0","7":"0","8":"2","9":"0","10":"0","11":"0","12":"2320","13":"0","14":"0","15":"0","16":"0","17":"1","18":"0","19":"0","20":"0","21":"0","22":"0","23":"0","24":"0","25":"0","26":"1","27":"1","28":"0","29":"0","30":"0","31":"0","32":"14","33":"0","34":"0","35":"1","36":"1.853060","37":"1","38":"0","39":"0","40":"0","41":"0","42":"0","43":"0","44":"4"},{"1":"13","2":"1982","3":"0","4":"0","5":"1","6":"0","7":"0","8":"3","9":"0","10":"0","11":"0","12":"2940","13":"0","14":"0","15":"0","16":"0","17":"1","18":"0","19":"0","20":"0","21":"0","22":"0","23":"0","24":"0","25":"0","26":"1","27":"0","28":"0","29":"0","30":"0","31":"0","32":"14","33":"0","34":"0","35":"0","36":"1.344462","37":"0","38":"1","39":"0","40":"0","41":"0","42":"0","43":"0","44":"9"},{"1":"13","2":"1983","3":"0","4":"0","5":"1","6":"0","7":"0","8":"4","9":"0","10":"0","11":"0","12":"2960","13":"0","14":"0","15":"0","16":"0","17":"1","18":"0","19":"0","20":"0","21":"0","22":"0","23":"0","24":"0","25":"0","26":"1","27":"0","28":"0","29":"0","30":"0","31":"0","32":"14","33":"0","34":"0","35":"0","36":"1.433213","37":"0","38":"0","39":"1","40":"0","41":"0","42":"0","43":"0","44":"16"},{"1":"13","2":"1984","3":"0","4":"0","5":"0","6":"0","7":"0","8":"5","9":"0","10":"0","11":"0","12":"3071","13":"0","14":"0","15":"0","16":"0","17":"1","18":"0","19":"0","20":"0","21":"0","22":"1","23":"0","24":"0","25":"0","26":"0","27":"1","28":"0","29":"0","30":"0","31":"0","32":"14","33":"0","34":"0","35":"0","36":"1.568125","37":"0","38":"0","39":"0","40":"1","41":"0","42":"0","43":"0","44":"25"},{"1":"13","2":"1985","3":"0","4":"0","5":"1","6":"0","7":"0","8":"6","9":"0","10":"0","11":"0","12":"2864","13":"0","14":"0","15":"0","16":"0","17":"1","18":"0","19":"1","20":"0","21":"0","22":"0","23":"0","24":"0","25":"0","26":"0","27":"0","28":"0","29":"0","30":"0","31":"0","32":"14","33":"0","34":"0","35":"0","36":"1.699891","37":"0","38":"0","39":"0","40":"0","41":"1","42":"0","43":"0","44":"36"}],"options":{"columns":{"min":{},"max":[10],"total":[44]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+{"columns":[{"label":["inlf"],"name":[1],"type":["int"],"align":["right"]},{"label":["hours"],"name":[2],"type":["int"],"align":["right"]},{"label":["kidslt6"],"name":[3],"type":["int"],"align":["right"]},{"label":["kidsge6"],"name":[4],"type":["int"],"align":["right"]},{"label":["age"],"name":[5],"type":["int"],"align":["right"]},{"label":["educ"],"name":[6],"type":["int"],"align":["right"]},{"label":["wage"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["repwage"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["hushrs"],"name":[9],"type":["int"],"align":["right"]},{"label":["husage"],"name":[10],"type":["int"],"align":["right"]},{"label":["huseduc"],"name":[11],"type":["int"],"align":["right"]},{"label":["huswage"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["faminc"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["mtr"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["motheduc"],"name":[15],"type":["int"],"align":["right"]},{"label":["fatheduc"],"name":[16],"type":["int"],"align":["right"]},{"label":["unem"],"name":[17],"type":["dbl"],"align":["right"]},{"label":["city"],"name":[18],"type":["int"],"align":["right"]},{"label":["exper"],"name":[19],"type":["int"],"align":["right"]},{"label":["nwifeinc"],"name":[20],"type":["dbl"],"align":["right"]},{"label":["lwage"],"name":[21],"type":["dbl"],"align":["right"]},{"label":["expersq"],"name":[22],"type":["int"],"align":["right"]}],"data":[{"1":"1","2":"1610","3":"1","4":"0","5":"32","6":"12","7":"3.3540","8":"2.65","9":"2708","10":"34","11":"12","12":"4.0288","13":"16310","14":"0.7215","15":"12","16":"7","17":"5.0","18":"0","19":"14","20":"10.910060","21":"1.21015370","22":"196"},{"1":"1","2":"1656","3":"0","4":"2","5":"30","6":"12","7":"1.3889","8":"2.65","9":"2310","10":"30","11":"9","12":"8.4416","13":"21800","14":"0.6615","15":"7","16":"7","17":"11.0","18":"1","19":"5","20":"19.499981","21":"0.32851210","22":"25"},{"1":"1","2":"1980","3":"1","4":"3","5":"35","6":"12","7":"4.5455","8":"4.04","9":"3072","10":"40","11":"12","12":"3.5807","13":"21040","14":"0.6915","15":"12","16":"7","17":"5.0","18":"0","19":"15","20":"12.039910","21":"1.51413774","22":"225"},{"1":"1","2":"456","3":"0","4":"3","5":"34","6":"12","7":"1.0965","8":"3.25","9":"1920","10":"53","11":"10","12":"3.5417","13":"7300","14":"0.7815","15":"7","16":"7","17":"5.0","18":"0","19":"6","20":"6.799996","21":"0.09212332","22":"36"},{"1":"1","2":"1568","3":"1","4":"2","5":"31","6":"14","7":"4.5918","8":"3.60","9":"2000","10":"32","11":"12","12":"10.0000","13":"27300","14":"0.6215","15":"12","16":"14","17":"9.5","18":"1","19":"7","20":"20.100058","21":"1.52427220","22":"49"},{"1":"1","2":"2032","3":"0","4":"0","5":"54","6":"12","7":"4.7421","8":"4.70","9":"1040","10":"57","11":"11","12":"6.7106","13":"19495","14":"0.6915","15":"14","16":"7","17":"7.5","18":"1","19":"33","20":"9.859054","21":"1.55648005","22":"1089"}],"options":{"columns":{"min":{},"max":[10],"total":[22]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
   </script>
 </div>
 <!-- rnb-frame-end -->
@@ -1826,111 +1834,311 @@ head(wagepan)</code></pre>
 </div>
 <div id="modelo" class="section level3">
 <h3>Modelo</h3>
+<ul>
+<li><span class="math inline">\(log(wage) = \beta_0 + \beta_1\ exper +
+\beta_1\ exper^2 + \beta_3\ educ + u\)</span></li>
+<li><span class="math inline">\(Cov(u, educ) \ne 0\)</span></li>
+<li><span class="math inline">\(educ = \delta_0 + \delta_1\ exper +
+\delta_2\ exper^2 + \theta\ mothereduc + u\)</span></li>
+</ul>
+</div>
+<div id="teste-de-hausman" class="section level3">
+<h3>Teste de Hausman:</h3>
+<p>Se utilizarmos IV em um modelo apenas com variáveis exógenas, embora
+IV seja consistente, ele será menos eficiente que OLS. Isto é, seus
+desvios-padrão serão muito elevados em comparação com OLS (Eficiente).
+Portanto, o interesse do pesquisador aplicado é avaliar se as variáveis
+explicativas que se supõe endógenas são realmente endógena ou não. Caso
+sejam exógenas, deve-se utilizar OLS ao invés de IV/2SLS. O Teste de
+Hausman-Wu avalia estatisticamente as hipóteses:</p>
+<p>H<sub>0</sub>: Regressores Exógenos vs. H<sub>a</sub>: Regressores
+Endógenos.</p>
+<p>Para aplicar o teste de Hausman-Wu são necessários alguns
+quesitos:</p>
+<ol style="list-style-type: decimal">
+<li>Identificar, a princípio, quais variáveis explicativas podem ser
+endógenas.</li>
+<li>Possuir instrumentos (válidos) para cada uma dessas variáveis.</li>
+</ol>
+<p>Sob (1) e (2) o Teste de Hausman-Wu pode ser aplicado em 3
+etapas:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kZWxfMSA8LSBwbG06OnBsbShcbiAgbHdhZ2UgfiBkODEgKyBkODIgKyBkODMgKyBkODQgKyBkODUgKyBkODYgKyBkODcgKyBtYXJyaWVkICsgdW5pb24gKyBkODEgKiBlZHVjICsgZDgyICogZWR1YyArIGQ4MyAqIGVkdWMgKyBkODQgKiBlZHVjICsgZDg1ICogZWR1YyArIGQ4NiAqIGVkdWMgKyBkODcgKiBlZHVjLCBcbiAgZGF0YSA9IHdhZ2VwYW4sIFxuICBlZmZlY3QgPSBcImluZGl2aWR1YWxcIiwgXG4gIG1vZGVsID0gXCJ3aXRoaW5cIiwgXG4gIGluZGV4ID0gYyhcIm5yXCIsIFwieWVhclwiKVxuKVxuXG5zdW1tYXJ5KG1vZGVsXzEpXG5gYGAifQ== -->
-<pre class="r"><code>model_1 &lt;- plm::plm(
-  lwage ~ d81 + d82 + d83 + d84 + d85 + d86 + d87 + married + union + d81 * educ + d82 * educ + d83 * educ + d84 * educ + d85 * educ + d86 * educ + d87 * educ, 
-  data = wagepan, 
-  effect = &quot;individual&quot;, 
-  model = &quot;within&quot;, 
-  index = c(&quot;nr&quot;, &quot;year&quot;)
-)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBldGFwYSAxOiBlc3RpbWFyIGEgZXF1YcOnw6NvIG5hIGZvcm1hIHJlZHV6aWRhIHBhcmEgYSB2YXJpw6F2ZWwgaW52ZXN0aWdhZGFcbm1vZGVsX2VkdWMgPC0gbG0oZWR1YyB+IGV4cGVyICsgSShleHBlcl4yKSArIG1vdGhlZHVjLCBkYXRhID0gbXJveilcblxuIyBldGFwYSAyOiBlc3RpbWFyIGEgZXF1YcOnw6NvIGRvIHRlc3RlIGRlIEhhdXNtYW4tV3UgdXRpbGl6YW5kbyBvcyByZXPDrWR1b3MgZXN0aW1hZG9zIGRhIGV0YXBhIDFcbm1vZGVsX2NvbXBsZXRlIDwtIGxtKGxvZyh3YWdlKSB+IGVkdWMgKyBleHBlciArIEkoZXhwZXJeMikgKyBtb2RlbF9lZHVjJHJlc2lkdWFscywgZGF0YSA9IG1yb3opXG5cbnN1bW1hcnkobW9kZWxfY29tcGxldGUpXG5gYGAifQ== -->
+<pre class="r"><code># etapa 1: estimar a equação na forma reduzida para a variável investigada
+model_educ &lt;- lm(educ ~ exper + I(exper^2) + motheduc, data = mroz)
 
-summary(model_1)</code></pre>
+# etapa 2: estimar a equação do teste de Hausman-Wu utilizando os resíduos estimados da etapa 1
+model_complete &lt;- lm(log(wage) ~ educ + exper + I(exper^2) + model_educ$residuals, data = mroz)
+
+summary(model_complete)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiT25ld2F5IChpbmRpdmlkdWFsKSBlZmZlY3QgV2l0aGluIE1vZGVsXG5cbkNhbGw6XG5wbG06OnBsbShmb3JtdWxhID0gbHdhZ2UgfiBkODEgKyBkODIgKyBkODMgKyBkODQgKyBkODUgKyBkODYgKyBcbiAgICBkODcgKyBtYXJyaWVkICsgdW5pb24gKyBkODEgKiBlZHVjICsgZDgyICogZWR1YyArIGQ4MyAqIGVkdWMgKyBcbiAgICBkODQgKiBlZHVjICsgZDg1ICogZWR1YyArIGQ4NiAqIGVkdWMgKyBkODcgKiBlZHVjLCBkYXRhID0gd2FnZXBhbiwgXG4gICAgZWZmZWN0ID0gXCJpbmRpdmlkdWFsXCIsIG1vZGVsID0gXCJ3aXRoaW5cIiwgaW5kZXggPSBjKFwibnJcIiwgXG4gICAgICAgIFwieWVhclwiKSlcblxuQmFsYW5jZWQgUGFuZWw6IG4gPSA1NDUsIFQgPSA4LCBOID0gNDM2MFxuXG5SZXNpZHVhbHM6XG4gICAgIE1pbi4gICAxc3QgUXUuICAgIE1lZGlhbiAgIDNyZCBRdS4gICAgICBNYXguIFxuLTQuMTUyMTExIC0wLjEyNTYzMCAgMC4wMTA4OTcgIDAuMTYwODAwICAxLjQ4MzQwMSBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yIHQtdmFsdWUgIFByKD58dHwpICAgIFxuZDgxICAgICAgLTAuMDIyNDE1OCAgMC4xNDU4ODg1IC0wLjE1MzcgIDAuODc3ODkzICAgIFxuZDgyICAgICAgLTAuMDA1NzYxMSAgMC4xNDU4NTU4IC0wLjAzOTUgIDAuOTY4NDk1ICAgIFxuZDgzICAgICAgIDAuMDEwNDI5NyAgMC4xNDU4NTc5ICAwLjA3MTUgIDAuOTQyOTk5ICAgIFxuZDg0ICAgICAgIDAuMDg0Mzc0MyAgMC4xNDU4NTE4ICAwLjU3ODUgIDAuNTYyOTY1ICAgIFxuZDg1ICAgICAgIDAuMDQ5NzI1MyAgMC4xNDU4NjAyICAwLjM0MDkgIDAuNzMzMTkwICAgIFxuZDg2ICAgICAgIDAuMDY1NjA2NCAgMC4xNDU4OTE3ICAwLjQ0OTcgIDAuNjUyOTU4ICAgIFxuZDg3ICAgICAgIDAuMDkwNDQ0OCAgMC4xNDU4NTA1ICAwLjYyMDEgIDAuNTM1MjE2ICAgIFxubWFycmllZCAgIDAuMDU0ODIwNSAgMC4wMTg0MTI2ICAyLjk3NzMgIDAuMDAyOTI2ICoqIFxudW5pb24gICAgIDAuMDgyOTc4NSAgMC4wMTk0NDYxICA0LjI2NzEgMi4wMjllLTA1ICoqKlxuZDgxOmVkdWMgIDAuMDExNTg1NCAgMC4wMTIyNjI1ICAwLjk0NDggIDAuMzQ0ODI3ICAgIFxuZDgyOmVkdWMgIDAuMDE0NzkwNSAgMC4wMTIyNjM1ICAxLjIwNjEgIDAuMjI3ODcyICAgIFxuZDgzOmVkdWMgIDAuMDE3MTE4MiAgMC4wMTIyNjMzICAxLjM5NTkgIDAuMTYyODMwICAgIFxuZDg0OmVkdWMgIDAuMDE2NTgzOSAgMC4wMTIyNjU3ICAxLjM1MjEgIDAuMTc2NDM3ICAgIFxuZDg1OmVkdWMgIDAuMDIzNzA4NSAgMC4wMTIyNzM4ICAxLjkzMTYgIDAuMDUzNDc5IC4gIFxuZDg2OmVkdWMgIDAuMDI3NDEyMyAgMC4wMTIyNzQwICAyLjIzMzQgIDAuMDI1NTgzICogIFxuZDg3OmVkdWMgIDAuMDMwNDMzMiAgMC4wMTIyNzIzICAyLjQ3OTggIDAuMDEzMTg4ICogIFxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cblRvdGFsIFN1bSBvZiBTcXVhcmVzOiAgICA1NzIuMDVcblJlc2lkdWFsIFN1bSBvZiBTcXVhcmVzOiA0NzQuMzVcblItU3F1YXJlZDogICAgICAwLjE3MDhcbkFkai4gUi1TcXVhcmVkOiAwLjA0ODU2N1xuRi1zdGF0aXN0aWM6IDQ4LjkwNjkgb24gMTYgYW5kIDM3OTkgREYsIHAtdmFsdWU6IDwgMi4yMmUtMTZcbiJ9 -->
-<pre><code>Oneway (individual) effect Within Model
-
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxubG0oZm9ybXVsYSA9IGxvZyh3YWdlKSB+IGVkdWMgKyBleHBlciArIEkoZXhwZXJeMikgKyBtb2RlbF9lZHVjJHJlc2lkdWFscywgXG4gICAgZGF0YSA9IG1yb3opXG5cblJlc2lkdWFsczpcbiAgICAgTWluICAgICAgIDFRICAgTWVkaWFuICAgICAgIDNRICAgICAgTWF4IFxuLTMuMDQ1NjUgLTAuMzAzMTMgIDAuMDQyMzIgIDAuMzk3ODUgIDIuMzQ0MzUgXG5cbkNvZWZmaWNpZW50czpcbiAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciB0IHZhbHVlIFByKD58dHwpICAgIFxuKEludGVyY2VwdCkgICAgICAgICAgIDAuMDgyMTA4NSAgMC40MDI3ODY4ICAgMC4yMDQgMC44Mzg1NjggICAgXG5lZHVjICAgICAgICAgICAgICAgICAgMC4wNTU5ODYwICAwLjAzMzA1ODMgICAxLjY5NCAwLjA5MTA4NyAuICBcbmV4cGVyICAgICAgICAgICAgICAgICAwLjA0NzA2NzkgIDAuMDEzNTI3MCAgIDMuNDgwIDAuMDAwNTU0ICoqKlxuSShleHBlcl4yKSAgICAgICAgICAgLTAuMDAwOTY0NSAgMC4wMDA0MDIzICAtMi4zOTcgMC4wMTY5NDMgKiAgXG5tb2RlbF9lZHVjJHJlc2lkdWFscyAgMC4wNjE2NTg1ICAwLjAzNTc4ODEgICAxLjcyMyAwLjA4NTY0MiAuICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5SZXNpZHVhbCBzdGFuZGFyZCBlcnJvcjogMC42NjQ5IG9uIDQyMyBkZWdyZWVzIG9mIGZyZWVkb21cbiAgKDMyNSBvYnNlcnZhdGlvbnMgZGVsZXRlZCBkdWUgdG8gbWlzc2luZ25lc3MpXG5NdWx0aXBsZSBSLXNxdWFyZWQ6ICAwLjE2MjcsXHRBZGp1c3RlZCBSLXNxdWFyZWQ6ICAwLjE1NDggXG5GLXN0YXRpc3RpYzogMjAuNTUgb24gNCBhbmQgNDIzIERGLCAgcC12YWx1ZTogMS43MzNlLTE1XG4ifQ== -->
+<pre><code>
 Call:
-plm::plm(formula = lwage ~ d81 + d82 + d83 + d84 + d85 + d86 + 
-    d87 + married + union + d81 * educ + d82 * educ + d83 * educ + 
-    d84 * educ + d85 * educ + d86 * educ + d87 * educ, data = wagepan, 
-    effect = &quot;individual&quot;, model = &quot;within&quot;, index = c(&quot;nr&quot;, 
-        &quot;year&quot;))
-
-Balanced Panel: n = 545, T = 8, N = 4360
+lm(formula = log(wage) ~ educ + exper + I(exper^2) + model_educ$residuals, 
+    data = mroz)
 
 Residuals:
-     Min.   1st Qu.    Median   3rd Qu.      Max. 
--4.152111 -0.125630  0.010897  0.160800  1.483401 
+     Min       1Q   Median       3Q      Max 
+-3.04565 -0.30313  0.04232  0.39785  2.34435 
 
 Coefficients:
-           Estimate Std. Error t-value  Pr(&gt;|t|)    
-d81      -0.0224158  0.1458885 -0.1537  0.877893    
-d82      -0.0057611  0.1458558 -0.0395  0.968495    
-d83       0.0104297  0.1458579  0.0715  0.942999    
-d84       0.0843743  0.1458518  0.5785  0.562965    
-d85       0.0497253  0.1458602  0.3409  0.733190    
-d86       0.0656064  0.1458917  0.4497  0.652958    
-d87       0.0904448  0.1458505  0.6201  0.535216    
-married   0.0548205  0.0184126  2.9773  0.002926 ** 
-union     0.0829785  0.0194461  4.2671 2.029e-05 ***
-d81:educ  0.0115854  0.0122625  0.9448  0.344827    
-d82:educ  0.0147905  0.0122635  1.2061  0.227872    
-d83:educ  0.0171182  0.0122633  1.3959  0.162830    
-d84:educ  0.0165839  0.0122657  1.3521  0.176437    
-d85:educ  0.0237085  0.0122738  1.9316  0.053479 .  
-d86:educ  0.0274123  0.0122740  2.2334  0.025583 *  
-d87:educ  0.0304332  0.0122723  2.4798  0.013188 *  
+                       Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)           0.0821085  0.4027868   0.204 0.838568    
+educ                  0.0559860  0.0330583   1.694 0.091087 .  
+exper                 0.0470679  0.0135270   3.480 0.000554 ***
+I(exper^2)           -0.0009645  0.0004023  -2.397 0.016943 *  
+model_educ$residuals  0.0616585  0.0357881   1.723 0.085642 .  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Total Sum of Squares:    572.05
-Residual Sum of Squares: 474.35
-R-Squared:      0.1708
-Adj. R-Squared: 0.048567
-F-statistic: 48.9069 on 16 and 3799 DF, p-value: &lt; 2.22e-16</code></pre>
+Residual standard error: 0.6649 on 423 degrees of freedom
+  (325 observations deleted due to missingness)
+Multiple R-squared:  0.1627,    Adjusted R-squared:  0.1548 
+F-statistic: 20.55 on 4 and 423 DF,  p-value: 1.733e-15</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The estimates on these interaction terms are all positive, and they
-generally get larger for more recent years. The largest coefficient of
-.030 is on <code>d87:educ</code>: the return to education is estimated
-to be about 3 percentage points larger in 1987 than in the base year,
-1980. The estimates on the earlier years are smaller and insignificant
-at the 5% level against a two-sided alternative.</p>
-</div>
-<div id="significância-conjunta" class="section level3">
-<h3>Significância conjunta</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2FyOjpsaW5lYXJIeXBvdGhlc2lzKFxuICBtb2RlbCA9IG1vZGVsXzEsXG4gIGh5cG90aGVzaXMubWF0cml4ID0gYyhcImQ4MTplZHVjID0gMFwiLCBcImQ4MjplZHVjID0gMFwiLCBcImQ4MzplZHVjID0gMFwiLCBcImQ4NDplZHVjID0gMFwiLCBcImQ4NTplZHVjID0gMFwiLCBcImQ4NjplZHVjID0gMFwiLCBcImQ4NzplZHVjID0gMFwiKSxcbiAgdGVzdCA9IFwiRlwiXG4pXG5gYGAifQ== -->
-<pre class="r"><code>car::linearHypothesis(
-  model = model_1,
-  hypothesis.matrix = c(&quot;d81:educ = 0&quot;, &quot;d82:educ = 0&quot;, &quot;d83:educ = 0&quot;, &quot;d84:educ = 0&quot;, &quot;d85:educ = 0&quot;, &quot;d86:educ = 0&quot;, &quot;d87:educ = 0&quot;),
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIycgZXRhcGEgMzogYXBsaWNhciBvIHRlc3RlIEYgcGFyYSBhdmFsaWFyIGEgKG51bGlkYWRlIGRhKSBkaWZlcmVuw6dhIGVudHJlIG9zIG1vZGVsb3NcbiMnIG9iczogbm8gZXhlbXBsbywgc2UgZWR1YyBmb3IgZW5kw7NnZW5hLCBhIGVxLiBkYSBldGFwYSAxIHRlcsOhIGZpbHRyYWRvIGEgcGFydGVcbiMnIGRlIGVkdWMgcXVlIMOpIGNvcnJlbGFjaW9uYWRhLiBBc3NpbSwgbyByZXPDrWR1byBkZSBtb2RlbF9lZHVjIGVzdGFyw6EgbGl2cmUgXG4jJyBkZXNzYSBjb3JyZWxhw6fDo28gZSwgc2UgZWR1YyBmb3IgcmVhbG1lbnRlIGVuZMOzZ2VuYSwgbyByZXPDrWR1byBkZXZlcsOhIFxuIycgc2VyIGVzdGF0aXN0aWNhbWVudGUgcmVsYXZhbnRlIGVtIG1vZGVsX2NvbXBsZXRlXG5cbmNhcjo6bGluZWFySHlwb3RoZXNpcyhcbiAgbW9kZWwgPSBtb2RlbF9jb21wbGV0ZSxcbiAgaHlwb3RoZXNpcy5tYXRyaXggPSBcIm1vZGVsX2VkdWMkcmVzaWR1YWxzID0gMFwiLFxuICB0ZXN0ID0gXCJGXCJcbilcbmBgYCJ9 -->
+<pre class="r"><code>#&#39; etapa 3: aplicar o teste F para avaliar a (nulidade da) diferença entre os modelos
+#&#39; obs: no exemplo, se educ for endógena, a eq. da etapa 1 terá filtrado a parte
+#&#39; de educ que é correlacionada. Assim, o resíduo de model_educ estará livre 
+#&#39; dessa correlação e, se educ for realmente endógena, o resíduo deverá 
+#&#39; ser estatisticamente relavante em model_complete
+
+car::linearHypothesis(
+  model = model_complete,
+  hypothesis.matrix = &quot;model_educ$residuals = 0&quot;,
   test = &quot;F&quot;
 )</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTGluZWFyIGh5cG90aGVzaXMgdGVzdFxuXG5IeXBvdGhlc2lzOlxuZDgxOmVkdWMgPSAwXG5kODI6ZWR1YyA9IDBcbmQ4MzplZHVjID0gMFxuZDg0OmVkdWMgPSAwXG5kODU6ZWR1YyA9IDBcbmQ4NjplZHVjID0gMFxuZDg3OmVkdWMgPSAwXG5cbk1vZGVsIDE6IHJlc3RyaWN0ZWQgbW9kZWxcbk1vZGVsIDI6IGx3YWdlIH4gZDgxICsgZDgyICsgZDgzICsgZDg0ICsgZDg1ICsgZDg2ICsgZDg3ICsgbWFycmllZCArIHVuaW9uICsgXG4gICAgZDgxICogZWR1YyArIGQ4MiAqIGVkdWMgKyBkODMgKiBlZHVjICsgZDg0ICogZWR1YyArIGQ4NSAqIFxuICAgIGVkdWMgKyBkODYgKiBlZHVjICsgZDg3ICogZWR1Y1xuXG4gIFJlcy5EZiBEZiAgICAgIEYgUHIoPkYpXG4xICAgMzgwNiAgICAgICAgICAgICAgICAgXG4yICAgMzc5OSAgNyAxLjIzNjUgMC4yNzg3XG4ifQ== -->
+<!-- rnb-output-begin eyJkYXRhIjoiTGluZWFyIGh5cG90aGVzaXMgdGVzdFxuXG5IeXBvdGhlc2lzOlxubW9kZWxfZWR1YyRyZXNpZHVhbHMgPSAwXG5cbk1vZGVsIDE6IHJlc3RyaWN0ZWQgbW9kZWxcbk1vZGVsIDI6IGxvZyh3YWdlKSB+IGVkdWMgKyBleHBlciArIEkoZXhwZXJeMikgKyBtb2RlbF9lZHVjJHJlc2lkdWFsc1xuXG4gIFJlcy5EZiAgICBSU1MgRGYgU3VtIG9mIFNxICAgICAgRiAgUHIoPkYpICBcbjEgICAgNDI0IDE4OC4zMSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxuMiAgICA0MjMgMTg2Ljk5ICAxICAgIDEuMzEyMiAyLjk2ODMgMC4wODU2NCAuXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcbiJ9 -->
 <pre><code>Linear hypothesis test
 
 Hypothesis:
-d81:educ = 0
-d82:educ = 0
-d83:educ = 0
-d84:educ = 0
-d85:educ = 0
-d86:educ = 0
-d87:educ = 0
+model_educ$residuals = 0
 
 Model 1: restricted model
-Model 2: lwage ~ d81 + d82 + d83 + d84 + d85 + d86 + d87 + married + union + 
-    d81 * educ + d82 * educ + d83 * educ + d84 * educ + d85 * 
-    educ + d86 * educ + d87 * educ
+Model 2: log(wage) ~ educ + exper + I(exper^2) + model_educ$residuals
 
-  Res.Df Df      F Pr(&gt;F)
-1   3806                 
-2   3799  7 1.2365 0.2787</code></pre>
+  Res.Df    RSS Df Sum of Sq      F  Pr(&gt;F)  
+1    424 188.31                              
+2    423 186.99  1    1.3122 2.9683 0.08564 .
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>Com uma significância de 5%, não se pode rejeitar H<sub>0</sub>.
+Porém, a uma significância de 10%, pode-se considerar a variável
+<code>educ</code> como endógena.</p>
+</div>
+<div id="método-i-estimação-por-vi" class="section level3">
+<h3>Método I: Estimação por VI</h3>
+<ul>
+<li>exógenas: <code>exper</code>, <code>exper^2</code></li>
+<li>endógena: <code>educ</code></li>
+<li>instrumento: <code>motheduc</code></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>Estimação Eq. Forma Reduzida (EFR)</li>
+<li>Estimação Eq. Instrumental (EI)</li>
+<li>Cálculo dos Parâmetros Populacionais Recursivamente</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb2VmaWNpZW50ZXMgZGEgZXN0aW1hw6fDo28gZGEgZXF1YcOnw6NvIGRhIGZvcm1hIHJlZHV6aWRhXG5wYXJfZWZyIDwtIHB1cnJyOjptYXAyX2RmcihcbiAgLnggPSBjKGdsdWU6OmdsdWUoXCJkZWx0YV97MDoyfVwiKSwgXCJ0aGV0YVwiKSxcbiAgLnkgPSBwdXJycjo6bWFwX2RibCgxOjQsIH4gbW9kZWxfZWR1YyRjb2VmZmljaWVudHNbWy54XV0pLFxuICB+IHRpYmJsZTo6dGliYmxlKFxuICAgIGNvZWYgPSAueCxcbiAgICB2YWx1ZV9lZnIgPSAueVxuICApXG4pXG5cbnBhcl9lZnJcbmBgYCJ9 -->
+<pre class="r"><code># coeficientes da estimação da equação da forma reduzida
+par_efr &lt;- purrr::map2_dfr(
+  .x = c(glue::glue(&quot;delta_{0:2}&quot;), &quot;theta&quot;),
+  .y = purrr::map_dbl(1:4, ~ model_educ$coefficients[[.x]]),
+  ~ tibble::tibble(
+    coef = .x,
+    value_efr = .y
+  )
+)
+
+par_efr</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NCwibmNvbCI6Miwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI0IMOXIDIiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBd3R5aVREbWl1QmlZR0JnWm1CaFpHWmdaZ1V5R1ZoRFE5eDBMUmdZV0ppQUhFWUdGZ1pPRUYwQlZDUU1aSUFFQllDWUJTckJucEthVTVJWWI0REtOVVRsR2tHNXJDVVpxU1dKUUFZZnlBUUh4VmRyY3hvdVg3UGZ6bGY1NDcvbXF2MkpyZ2VyMG1yNjdTOERiUkJtV1kzbUJOYTh4TnpVWXFqMVRGQkJsdVQ4MURRb203TXNNYWMwTlQ0MXJRaE5KMmRSZnJrZVREY3ZTSGNEa1BqLy8vOGZkQ3VTY3hLTFlWYkFCTGxTRWtzUzlkS0tnUHFCdkg5b1d0anpDMG95OC9PQW1waEF3Y09LcHBteENFMkF2elFQNUpJVTNlU00wcnhzWFZPUUJXQnBDT0NGc2xtUTJFd1FLNW4rUTQxaWhSckZscHFYbnBtWENuTjdUbUpTYWc2VXd3ZjBNZGpEZWdWRm1Ya2xNSjhBUll2MVN2SkxFbUhxdUpMemMyQWlZTDh4L0FNQUV4UzZ4aFVDQUFBPSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["coef"],"name":[1],"type":["chr"],"align":["left"]},{"label":["value_efr"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"delta_0","2":"8.958354369"},{"1":"delta_1","2":"0.090064643"},{"1":"delta_2","2":"-0.002108457"},{"1":"theta","2":"0.296878815"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[4]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jIGNvZWZpY2llbnRlcyBkYSBlc3RpbWHDp8OjbyBkYSBlcXVhw6fDo28gZGEgZm9ybWEgaW5zdHJ1bWVudGFsXG5laSA8LSBsbShsb2cod2FnZSkgfiBleHBlciArIEkoZXhwZXJeMikgKyBtb3RoZWR1YywgZGF0YSA9IG1yb3opXG5cbnBhcl9lcV9pbnMgPC0gcHVycnI6Om1hcDJfZGZyKFxuICAueCA9IGMoZ2x1ZTo6Z2x1ZShcImFsZmFfezA6Mn1cIiksIFwibGFtYmRhXCIpLFxuICAueSA9IHB1cnJyOjptYXBfZGJsKDE6NCwgfiBlaSRjb2VmZmljaWVudHNbWy54XV0pLFxuICB+IHRpYmJsZTo6dGliYmxlKFxuICAgIGNvZWYgPSAueCxcbiAgICB2YWx1ZV9laSA9IC55XG4gIClcbilcblxucGFyX2VxX2luc1xuYGBgIn0= -->
+<pre class="r"><code>
+# coeficientes da estimação da equação da forma instrumental
+ei &lt;- lm(log(wage) ~ exper + I(exper^2) + motheduc, data = mroz)
+
+par_eq_ins &lt;- purrr::map2_dfr(
+  .x = c(glue::glue(&quot;alfa_{0:2}&quot;), &quot;lambda&quot;),
+  .y = purrr::map_dbl(1:4, ~ ei$coefficients[[.x]]),
+  ~ tibble::tibble(
+    coef = .x,
+    value_ei = .y
+  )
+)
+
+par_eq_ins</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NCwibmNvbCI6Miwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI0IMOXIDIiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBd3R5aVREbWl1QmlZR0JnWm1CaFpHWmdaZ1V5R1ZoRFE5eDBMUmdZV0ppQUhFWUdGZ1pPRUYwQlZDUU1aSUFFQllDWUJTckJscGlUbGhodmdNSXpST0Vad1hnNWlibEpLWWxBRmg5SXYvM1RBMms3eEhNLzJLOHd1aUVydno5cmY0Q0sxblJ6bnpmMjNZd3Z3MzRkNVVkekFHdGVZbTVxTWRSeUpxZ2dTM0orYWhxVXpWR1dtRk9hR3ArYWlhYVJzeWkvWEErbW1SZWt1UUZJL1AvLy93KzZEY2s1aWNVd0cyQ0NYQ21KSllsNmFVVkEvVURlUHpRdDdQa0ZKWm41ZVVCTlRLQ3dZVVhUekZpRUpzQmZtZ2R5U1lwdWNrWnBYcmF1S2NnQ3NEUUU4RUxaTEVoc0pvaVZUUCtoUnJIQ1FqTTFMejB6THhYbTlwekVwTlFjS0ljUDZHT3doL1VLaWpMelNtQStBWW9XNjVYa2x5VEMxSEVsNStmQVJNQitZL2dIQUREMGJ4NFNBZ0FBIn0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["coef"],"name":[1],"type":["chr"],"align":["left"]},{"label":["value_ei"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"alfa_0","2":"0.6797364803"},{"1":"alfa_1","2":"0.0472629104"},{"1":"alfa_2","2":"-0.0009851852"},{"1":"lambda","2":"0.0131872396"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[4]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jIGVzdGltYXRpdmEgZG9zIHBhcsOibWV0cm9zIHBvcHVsYWNpb25haXMgcmVjdXJzaXZhbWVudGVcbmJldGFfayA8LSBwYXJfZXFfaW5zJHZhbHVlX2VpWzRdIC8gcGFyX2VmciR2YWx1ZV9lZnJbNF0gIyBsYW1iZGEgLyB0aGV0YVxuXG5wYXJfcG9wX3JlYyA8LSBwdXJycjo6bWFwMl9kZnIoXG4gIC54ID0gZ2x1ZTo6Z2x1ZShcImJldGFfe2MoJ2snLCAwOjIpfVwiKSxcbiAgLnkgPSBjKFxuICAgIGJldGFfayxcbiAgICBwYXJfZXFfaW5zJHZhbHVlX2VpWzE6M10gLSBiZXRhX2sgKiBwYXJfZWZyJHZhbHVlX2VmclsxOjNdXG4gICksXG4gIH4gdGliYmxlOjp0aWJibGUoXG4gICAgY29lZiA9IC54LFxuICAgIHZhbHVlID0gLnlcbiAgKVxuKVxuXG5wYXJfcG9wX3JlY1xuYGBgIn0= -->
+<pre class="r"><code>
+# estimativa dos parâmetros populacionais recursivamente
+beta_k &lt;- par_eq_ins$value_ei[4] / par_efr$value_efr[4] # lambda / theta
+
+par_pop_rec &lt;- purrr::map2_dfr(
+  .x = glue::glue(&quot;beta_{c(&#39;k&#39;, 0:2)}&quot;),
+  .y = c(
+    beta_k,
+    par_eq_ins$value_ei[1:3] - beta_k * par_efr$value_efr[1:3]
+  ),
+  ~ tibble::tibble(
+    coef = .x,
+    value = .y
+  )
+)
+
+par_pop_rec</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NCwibmNvbCI6Miwic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI0IMOXIDIiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBd3R5aVREbWl1QmlZR0JnWm1CaFpHWmdaZ1V5R1ZoRFE5eDBMUmdZV0ppQUhFWUdGZ1pPRUYwQlZDUU1aQUFGbVFXQU5BdFVnaTBwdFNReFBodUZaNERDTTBUaEdhRVp6SnFjazFoY0RHUUlnQTJIQ0xLazU1U21RdG1jeVJtSlJZbkpKYWxGUU00L0lPWURLYkJmdGs5cmRqZGZyUDBsVHAzS2hOdUM5c3ZVS25rdWJKKzEzOWRzM2FLZ0tWcm90dVFsNXFaaTJKS2NuNW9HVTFDV0NMSVNWUmRuVVg2NUhrd25MMGhuQTVENC8vLy9INGhDcHY5UUUyRWF1RklTU3hMMTBvcUFXaUNPUlRHT1BiK2dKRE0vRDJnWUV5Z2tXZEUwTXhhaENmQ1g1b0VzVDlGTnppak55OVkxQlZrQWxvWUFYaWliQlluTkJMR1NHZVl3VmxqWXArYWxaK2JCZ3BRMUp6RXBOUWZLNFFONkV1eEh2WUtpekx3U21FK0Fvc1Y2SmZrbGlUQjFYTW41T1RBUlNFVDhBd0RZTVNMMlFBSUFBQT09In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["coef"],"name":[1],"type":["S3: glue"],"align":["right"]},{"label":["value"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"beta_k","2":"0.0444196048"},{"1":"beta_0","2":"0.2818099199"},{"1":"beta_1","2":"0.0432622746"},{"1":"beta_2","2":"-0.0008915284"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[4]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jIGFsdGVybmF0aXZhbWVudGUsIHBvZGVtb3MgZXN0aW1hciBvIG1vZGVsbyBkaXJldGFtZW50ZSB1c2FuZG8gb3MgdmFsb3JlcyBwcmV2aXN0b3MgZGUgcGFyX2VmclxuXG5tcm96IDwtIG1yb3ogfD5cbiAgZHBseXI6OmJpbmRfY29scyhcbiAgICB0aWJibGU6OnRpYmJsZShlZHVjX2hhdCA9IGZpdHRlZChtb2RlbF9lZHVjKSlcbiAgKVxuXG5pdiA8LSBsbShsb2cod2FnZSkgfiBleHBlciArIEkoZXhwZXJeMikgKyBlZHVjX2hhdCwgZGF0YSA9IG1yb3opXG5cbnN1bW1hcnkoaXYpXG5gYGAifQ== -->
+<pre class="r"><code>
+# alternativamente, podemos estimar o modelo diretamente usando os valores previstos de par_efr
+
+mroz &lt;- mroz |&gt;
+  dplyr::bind_cols(
+    tibble::tibble(educ_hat = fitted(model_educ))
+  )
+
+iv &lt;- lm(log(wage) ~ exper + I(exper^2) + educ_hat, data = mroz)
+
+summary(iv)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxubG0oZm9ybXVsYSA9IGxvZyh3YWdlKSB+IGV4cGVyICsgSShleHBlcl4yKSArIGVkdWNfaGF0LCBkYXRhID0gbXJveilcblxuUmVzaWR1YWxzOlxuICAgICBNaW4gICAgICAgMVEgICBNZWRpYW4gICAgICAgM1EgICAgICBNYXggXG4tMy4xNTI5OSAtMC4zNDc3MyAgMC4wMjkwNiAgMC4zOTAyMyAgMi4zNTYyNCBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yIHQgdmFsdWUgUHIoPnx0fCkgICBcbihJbnRlcmNlcHQpICAwLjI4MTgwOTkgIDAuNDI4NjMyMCAgIDAuNjU3ICAwLjUxMTI0ICAgXG5leHBlciAgICAgICAgMC4wNDMyNjIzICAwLjAxNDQxNTMgICAzLjAwMSAgMC4wMDI4NSAqKlxuSShleHBlcl4yKSAgLTAuMDAwODkxNSAgMC4wMDA0Mjg5ICAtMi4wNzkgIDAuMDM4MjQgKiBcbmVkdWNfaGF0ICAgICAwLjA0NDQxOTYgIDAuMDM1MjE2MyAgIDEuMjYxICAwLjIwNzg4ICAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuUmVzaWR1YWwgc3RhbmRhcmQgZXJyb3I6IDAuNzA5IG9uIDQyNCBkZWdyZWVzIG9mIGZyZWVkb21cbiAgKDMyNSBvYnNlcnZhdGlvbnMgZGVsZXRlZCBkdWUgdG8gbWlzc2luZ25lc3MpXG5NdWx0aXBsZSBSLXNxdWFyZWQ6ICAwLjA0NTU5LFx0QWRqdXN0ZWQgUi1zcXVhcmVkOiAgMC4wMzg4NCBcbkYtc3RhdGlzdGljOiA2Ljc1MSBvbiAzIGFuZCA0MjQgREYsICBwLXZhbHVlOiAwLjAwMDE4NjFcbiJ9 -->
+<pre><code>
+Call:
+lm(formula = log(wage) ~ exper + I(exper^2) + educ_hat, data = mroz)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-3.15299 -0.34773  0.02906  0.39023  2.35624 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)  0.2818099  0.4286320   0.657  0.51124   
+exper        0.0432623  0.0144153   3.001  0.00285 **
+I(exper^2)  -0.0008915  0.0004289  -2.079  0.03824 * 
+educ_hat     0.0444196  0.0352163   1.261  0.20788   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.709 on 424 degrees of freedom
+  (325 observations deleted due to missingness)
+Multiple R-squared:  0.04559,   Adjusted R-squared:  0.03884 
+F-statistic: 6.751 on 3 and 424 DF,  p-value: 0.0001861</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="método-ii-estimação-usando-aerivreg" class="section level3">
+<h3>Método II: Estimação usando AER::ivreg</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaXYgPC0gQUVSOjppdnJlZyhsb2cod2FnZSkgfiBleHBlciArIEkoZXhwZXJeMikgKyBlZHVjIHwgZXhwZXIgKyBJKGV4cGVyXjIpICsgbW90aGVkdWMsIGRhdGEgPSBtcm96KVxuXG5zdW1tYXJ5KGl2KVxuYGBgIn0= -->
+<pre class="r"><code>iv &lt;- AER::ivreg(log(wage) ~ exper + I(exper^2) + educ | exper + I(exper^2) + motheduc, data = mroz)
+
+summary(iv)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxuQUVSOjppdnJlZyhmb3JtdWxhID0gbG9nKHdhZ2UpIH4gZXhwZXIgKyBJKGV4cGVyXjIpICsgZWR1YyB8IFxuICAgIGV4cGVyICsgSShleHBlcl4yKSArIG1vdGhlZHVjLCBkYXRhID0gbXJveilcblxuUmVzaWR1YWxzOlxuICAgICBNaW4gICAgICAgMVEgICBNZWRpYW4gICAgICAgM1EgICAgICBNYXggXG4tMy4xMDgwNCAtMC4zMjYzMyAgMC4wNjAyNCAgMC4zNjc3MiAgMi4zNDM1MSBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yIHQgdmFsdWUgUHIoPnx0fCkgICBcbihJbnRlcmNlcHQpICAwLjE5ODE4NjEgIDAuNDcyODc3MiAgIDAuNDE5ICAwLjY3NTM1ICAgXG5leHBlciAgICAgICAgMC4wNDQ4NTU4ICAwLjAxMzU3NjggICAzLjMwNCAgMC4wMDEwMyAqKlxuSShleHBlcl4yKSAgLTAuMDAwOTIyMSAgMC4wMDA0MDY0ICAtMi4yNjkgIDAuMDIzNzcgKiBcbmVkdWMgICAgICAgICAwLjA0OTI2MzAgIDAuMDM3NDM2MCAgIDEuMzE2ICAwLjE4ODkxICAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuUmVzaWR1YWwgc3RhbmRhcmQgZXJyb3I6IDAuNjc5NiBvbiA0MjQgZGVncmVlcyBvZiBmcmVlZG9tXG5NdWx0aXBsZSBSLVNxdWFyZWQ6IDAuMTIzMSxcdEFkanVzdGVkIFItc3F1YXJlZDogMC4xMTY5IFxuV2FsZCB0ZXN0OiA3LjM0OCBvbiAzIGFuZCA0MjQgREYsICBwLXZhbHVlOiA4LjIyOGUtMDUgXG4ifQ== -->
+<pre><code>
+Call:
+AER::ivreg(formula = log(wage) ~ exper + I(exper^2) + educ | 
+    exper + I(exper^2) + motheduc, data = mroz)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-3.10804 -0.32633  0.06024  0.36772  2.34351 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)  0.1981861  0.4728772   0.419  0.67535   
+exper        0.0448558  0.0135768   3.304  0.00103 **
+I(exper^2)  -0.0009221  0.0004064  -2.269  0.02377 * 
+educ         0.0492630  0.0374360   1.316  0.18891   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.6796 on 424 degrees of freedom
+Multiple R-Squared: 0.1231, Adjusted R-squared: 0.1169 
+Wald test: 7.348 on 3 and 424 DF,  p-value: 8.228e-05 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="estimação-por-2sls" class="section level3">
+<h3>Estimação por 2SLS</h3>
+<ul>
+<li>exógenas: <code>exper</code>, <code>exper^2</code></li>
+<li>endógena: <code>educ</code></li>
+<li>instrumento: <code>motheduc</code>, <code>fatheduc</code>,
+<code>huseduc</code></li>
+</ul>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaXYgPC0gQUVSOjppdnJlZyhsb2cod2FnZSkgfiBleHBlciArIEkoZXhwZXJeMikgKyBlZHVjIHwgZXhwZXIgKyBJKGV4cGVyXjIpICsgbW90aGVkdWMgKyBmYXRoZWR1YyArIGh1c2VkdWMsIGRhdGEgPSBtcm96KVxuXG5zdW1tYXJ5KGl2KVxuYGBgIn0= -->
+<pre class="r"><code>iv &lt;- AER::ivreg(log(wage) ~ exper + I(exper^2) + educ | exper + I(exper^2) + motheduc + fatheduc + huseduc, data = mroz)
+
+summary(iv)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxuQUVSOjppdnJlZyhmb3JtdWxhID0gbG9nKHdhZ2UpIH4gZXhwZXIgKyBJKGV4cGVyXjIpICsgZWR1YyB8IFxuICAgIGV4cGVyICsgSShleHBlcl4yKSArIG1vdGhlZHVjICsgZmF0aGVkdWMgKyBodXNlZHVjLCBkYXRhID0gbXJveilcblxuUmVzaWR1YWxzOlxuICAgICBNaW4gICAgICAgMVEgICBNZWRpYW4gICAgICAgM1EgICAgICBNYXggXG4tMy4wODM3OCAtMC4zMjEzNSAgMC4wMzUzOCAgMC4zNjkzNCAgMi4zNTgyOSBcblxuQ29lZmZpY2llbnRzOlxuICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yIHQgdmFsdWUgUHIoPnx0fCkgICAgXG4oSW50ZXJjZXB0KSAtMC4xODY4NTcyICAwLjI4NTM5NTkgIC0wLjY1NSAwLjUxMjk5NyAgICBcbmV4cGVyICAgICAgICAwLjA0MzA5NzMgIDAuMDEzMjY0OSAgIDMuMjQ5IDAuMDAxMjUwICoqIFxuSShleHBlcl4yKSAgLTAuMDAwODYyOCAgMC4wMDAzOTYyICAtMi4xNzggMC4wMjk5NzYgKiAgXG5lZHVjICAgICAgICAgMC4wODAzOTE4ICAwLjAyMTc3NDAgICAzLjY5MiAwLjAwMDI1MSAqKipcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5SZXNpZHVhbCBzdGFuZGFyZCBlcnJvcjogMC42NjkzIG9uIDQyNCBkZWdyZWVzIG9mIGZyZWVkb21cbk11bHRpcGxlIFItU3F1YXJlZDogMC4xNDk1LFx0QWRqdXN0ZWQgUi1zcXVhcmVkOiAwLjE0MzUgXG5XYWxkIHRlc3Q6IDExLjUyIG9uIDMgYW5kIDQyNCBERiwgIHAtdmFsdWU6IDIuODE3ZS0wNyBcbiJ9 -->
+<pre><code>
+Call:
+AER::ivreg(formula = log(wage) ~ exper + I(exper^2) + educ | 
+    exper + I(exper^2) + motheduc + fatheduc + huseduc, data = mroz)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-3.08378 -0.32135  0.03538  0.36934  2.35829 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -0.1868572  0.2853959  -0.655 0.512997    
+exper        0.0430973  0.0132649   3.249 0.001250 ** 
+I(exper^2)  -0.0008628  0.0003962  -2.178 0.029976 *  
+educ         0.0803918  0.0217740   3.692 0.000251 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.6693 on 424 degrees of freedom
+Multiple R-Squared: 0.1495, Adjusted R-squared: 0.1435 
+Wald test: 11.52 on 3 and 424 DF,  p-value: 2.817e-07 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>O efeito parcial da educação estimado pelo modelo de 2SLS é diferente
+do de IV devido ao fato da forma reduzida do modelo IV do modelo sofrer
+do viés de variável omitida ao não levar em consideração mais variáveis
+relevantes que expliquem o comportamento de <code>educ</code>.</p>
 <!-- rnb-text-end -->
 </div>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiQXVsYSA5IgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIEFVTEEgOSAtIEVjb25vbWV0cmlhIElJCgpPYmpldGl2b3M6CgoxLglEYXIgY29udGludWlkYWRlIMOgIEludHJvZHXDp8OjbyBhbyBTb2Z0d2FyZSBFc3RhdMOtc3RpY28gUiBlIHBhY290ZXMgZWNvbm9tw6l0cmljb3MgZGlzcG9uw612ZWlzLgoyLglFc3RpbWHDp8OjbyBlIEludGVycHJldGHDp8OjbyBkb3MgTW9kZWxvcyBjb20gZGFkb3MgZW0gUGFpbmVsOiBFc3RpbWFkb3IgZGUgRWZlaXRvcyBGaXhvcy4KCk1hdGVyaWFsIGRlIGFwb2lvOgoKMS4gIFdvb2xkcmlkZ2UgSi5NLiAoMjAxMikgIkludHJvZHVjdG9yeSBFY29ub21ldHJpY3MiLCBwLiA0MzUKMi4gIEtsZWliZXIsIEMuICYgWmVpbGVpcywgQS4gKDIwMDgpICJBcHBsaWVkIEVjb25vbWV0cmljcyB3aXRoIFIiLgozLiAgQ3JvaXNzYW50LCBZLiAmIE1pbGxvLCBHLiAoMjAxOSkgIlBhbmVsIERhdGEgRWNvbm9tZXRyaWNzIHdpdGggUiBieSIuCgpTaXRlcyBxdWUgY29udMOpbSBtYXRlcmlhbCBhdXhpbGlhciBzb2JyZSBhIGF1bGE6CgotICAgPGh0dHA6Ly9lY2xyLmh1bWFuaXRpZXMubWFuY2hlc3Rlci5hYy51ay9pbmRleC5waHAvUGFuZWxfaW5fUj4KLSAgIDxodHRwczovL2p1c3Rpbm1zaGVhLmdpdGh1Yi5pby93b29sZHJpZGdlL2FydGljbGVzL0ludHJvZHVjdG9yeS1FY29ub21ldHJpY3MtRXhhbXBsZXMuaHRtbCNjaGFwdGVyLTEzLXBvb2xpbmctY3Jvc3Mtc2VjdGlvbnMtYWNyb3NzLXRpbWUtc2ltcGxlLXBhbmVsLWRhdGEtbWV0aG9kcz4KLSAgIDxodHRwczovL2p1c3Rpbm1zaGVhLmdpdGh1Yi5pby93b29sZHJpZGdlL2luZGV4Lmh0bWw+CgojIyBCaWJsaW90ZWNhcwoKYGBge3J9CnNvdXJjZSgiUi9saWJyYXJpZXMuUiIpCmBgYAoKIyMgSGFzIHRoZSBSZXR1cm4gdG8gRWR1Y2F0aW9uIENoYW5nZWQgb3ZlciBUaW1lPwoKVmVsbGEgYW5kIFZlcmJlZWsgKDE5OTgpLiBFYWNoIG9mIHRoZSA1NDUgbWVuIGluIHRoZSBzYW1wbGUgd29ya2VkIGluIGV2ZXJ5IHllYXIgZnJvbSAxOTgwIHRocm91Z2ggMTk4Ny4gU29tZSB2YXJpYWJsZXMgaW4gdGhlIGRhdGEgc2V0IGNoYW5nZSBvdmVyIHRpbWU6IGV4cGVyaWVuY2UsIG1hcml0YWwgc3RhdHVzLCBhbmQgdW5pb24gc3RhdHVzIGFyZSB0aGUgdGhyZWUgaW1wb3J0YW50IG9uZXMuIE90aGVyIHZhcmlhYmxlcyBkbyBub3QgY2hhbmdlOiByYWNlIGFuZCBlZHVjYXRpb24gYXJlIHRoZSBrZXkgZXhhbXBsZXM6IHdlIGNhbm5vdCBpbmNsdWRlIHJhY2UsIGVkdWNhdGlvbiwgb3IgZXhwZXJpZW5jZSBpbiB0aGUgZXF1YXRpb24uIEhvd2V2ZXIsIHdlIGNhbiBpbmNsdWRlIGludGVyYWN0aW9ucyBvZiBlZHVjIHdpdGggeWVhciBkdW1taWVzIGZvciAxOTgxIHRocm91Z2ggMTk4NyB0byB0ZXN0IHdoZXRoZXIgdGhlIHJldHVybiB0byBlZHVjYXRpb24gd2FzIGNvbnN0YW50IG92ZXIgdGhpcyB0aW1lIHBlcmlvZC4gV2UgdXNlIGxvZyh3YWdlKSBhcyB0aGUgZGVwZW5kZW50IHZhcmlhYmxlLCBkdW1teSB2YXJpYWJsZXMgZm9yIG1hcml0YWwgYW5kIHVuaW9uIHN0YXR1cywgYSBmdWxsIHNldCBvZiB5ZWFyIGR1bW1pZXMsIGFuZCB0aGUgaW50ZXJhY3Rpb24gdGVybXM6ICRkODEqZWR1YyQsICRkODIqZWR1YyQsLi4uLCAkZDg3KmVkdWMkLgoKIyMjIERhZG9zCgpgYGB7cn0Kd2FnZXBhbiA8LSB0aWJibGU6OmFzX3RpYmJsZSh3b29sZHJpZGdlOjp3YWdlcGFuKQoKaGVhZCh3YWdlcGFuKQpgYGAKCiMjIyBNb2RlbG8KCmBgYHtyfQptb2RlbF8xIDwtIHBsbTo6cGxtKAogIGx3YWdlIH4gZDgxICsgZDgyICsgZDgzICsgZDg0ICsgZDg1ICsgZDg2ICsgZDg3ICsgbWFycmllZCArIHVuaW9uICsgZDgxICogZWR1YyArIGQ4MiAqIGVkdWMgKyBkODMgKiBlZHVjICsgZDg0ICogZWR1YyArIGQ4NSAqIGVkdWMgKyBkODYgKiBlZHVjICsgZDg3ICogZWR1YywgCiAgZGF0YSA9IHdhZ2VwYW4sIAogIGVmZmVjdCA9ICJpbmRpdmlkdWFsIiwgCiAgbW9kZWwgPSAid2l0aGluIiwgCiAgaW5kZXggPSBjKCJuciIsICJ5ZWFyIikKKQoKc3VtbWFyeShtb2RlbF8xKQpgYGAKClRoZSBlc3RpbWF0ZXMgb24gdGhlc2UgaW50ZXJhY3Rpb24gdGVybXMgYXJlIGFsbCBwb3NpdGl2ZSwgYW5kIHRoZXkgZ2VuZXJhbGx5IGdldCBsYXJnZXIgZm9yIG1vcmUgcmVjZW50IHllYXJzLiBUaGUgbGFyZ2VzdCBjb2VmZmljaWVudCBvZiAuMDMwIGlzIG9uIGBkODc6ZWR1Y2A6IHRoZSByZXR1cm4gdG8gZWR1Y2F0aW9uIGlzIGVzdGltYXRlZCB0byBiZSBhYm91dCAzIHBlcmNlbnRhZ2UgcG9pbnRzIGxhcmdlciBpbiAxOTg3IHRoYW4gaW4gdGhlIGJhc2UgeWVhciwgMTk4MC4gVGhlIGVzdGltYXRlcyBvbiB0aGUgZWFybGllciB5ZWFycyBhcmUgc21hbGxlciBhbmQgaW5zaWduaWZpY2FudCBhdCB0aGUgNSUgbGV2ZWwgYWdhaW5zdCBhIHR3by1zaWRlZCBhbHRlcm5hdGl2ZS4KCiMjIyBTaWduaWZpY8OibmNpYSBjb25qdW50YQoKYGBge3J9CmNhcjo6bGluZWFySHlwb3RoZXNpcygKICBtb2RlbCA9IG1vZGVsXzEsCiAgaHlwb3RoZXNpcy5tYXRyaXggPSBjKCJkODE6ZWR1YyA9IDAiLCAiZDgyOmVkdWMgPSAwIiwgImQ4MzplZHVjID0gMCIsICJkODQ6ZWR1YyA9IDAiLCAiZDg1OmVkdWMgPSAwIiwgImQ4NjplZHVjID0gMCIsICJkODc6ZWR1YyA9IDAiKSwKICB0ZXN0ID0gIkYiCikKYGBgCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQXVsYSAxMSIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBBVUxBIDExIC0gRWNvbm9tZXRyaWEgSUkKCk9iamV0aXZvczoKCjEuICBEYXIgY29udGludWlkYWRlIMOgIEludHJvZHXDp8OjbyBhbyBTb2Z0d2FyZSBFc3RhdMOtc3RpY28gUiBlIHBhY290ZXMgZWNvbm9tw6l0cmljb3MgZGlzcG9uw612ZWlzLgoyLiAgVGVzdGUgZGUgSGF1c21hbiBlIEVzdGltYcOnw6NvIHBvciBWYXJpw6F2ZWlzIEluc3RydW1lbnRhaXMvMlNMUy4KCk1hdGVyaWFsIGRlIGFwb2lvOgoKMS4gV29vbGRyaWRnZSBKLk0uICgyMDEyKSAiSW50cm9kdWN0b3J5IEVjb25vbWV0cmljcyIsIHAuIDQ0MS4KMi4gS2xlaWJlciwgQy4gJiBaZWlsZWlzLCBBLiAoMjAwOCkgIkFwcGxpZWQgRWNvbm9tZXRyaWNzIHdpdGggUiIuCjMuIENyb2lzc2FudCwgWS4gJiBNaWxsbywgRy4gKDIwMTkpICJQYW5lbCBEYXRhIEVjb25vbWV0cmljcyB3aXRoIFIgYnkiLgoKU2l0ZXMgcXVlIGNvbnTDqW0gbWF0ZXJpYWwgYXV4aWxpYXIgc29icmUgYSBhdWxhOgoKLSAgIDxodHRwOi8vZWNsci5odW1hbml0aWVzLm1hbmNoZXN0ZXIuYWMudWsvaW5kZXgucGhwL1BhbmVsX2luX1I+Ci0gICA8aHR0cHM6Ly9qdXN0aW5tc2hlYS5naXRodWIuaW8vd29vbGRyaWRnZS9hcnRpY2xlcy9JbnRyb2R1Y3RvcnktRWNvbm9tZXRyaWNzLUV4YW1wbGVzLmh0bWwjY2hhcHRlci0xMy1wb29saW5nLWNyb3NzLXNlY3Rpb25zLWFjcm9zcy10aW1lLXNpbXBsZS1wYW5lbC1kYXRhLW1ldGhvZHM+Ci0gICA8aHR0cHM6Ly9qdXN0aW5tc2hlYS5naXRodWIuaW8vd29vbGRyaWRnZS9pbmRleC5odG1sPgoKIyMgQmlibGlvdGVjYXMKCmBgYHtyfQpzb3VyY2UoIlIvbGlicmFyaWVzLlIiKQpgYGAKCiMjIFRoZSBTZW5zaXRpdml0eSBvZiBhbiBFbXBpcmljYWwgTW9kZWwgb2YgTWFycmllZCBXb21lbnMgSG91cnMgb2YgV29yayB0byBFY29ub21pYyBhbmQgU3RhdGlzdGljYWwgQXNzdW1wdGlvbnMKCiMjIyBEYWRvcwoKQSBkYXRhZnJhbWUgd2l0aCA3NTMgb2JzZXJ2YXRpb25zIG9uIDIyIHZhcmlhYmxlczoKCi0gICBob3VyczogaG91cnMgd29ya2VkLCAxOTc1Ci0gICBraWRzbHQ2OiAtIGtpZHMgXDwgNiB5ZWFycwotICAga2lkc2dlNjogLSBraWRzIDYtMTgKLSAgIGFnZTogd29tYW4ncyBhZ2UgaW4geXJzCi0gICBlZHVjOiB5ZWFycyBvZiBzY2hvb2xpbmcKLSAgIHdhZ2U6IGVzdC4gd2FnZSBmcm9tIGVhcm4sIGhycwotICAgaHVzaHJzOiBob3VycyB3b3JrZWQgYnkgaHVzYmFuZCwgMTk3NQotICAgaHVzYWdlOiBodXNiYW5kJ3MgYWdlCi0gICBodXNlZHVjOiBodXNiYW5kJ3MgeWVhcnMgb2Ygc2Nob29saW5nCi0gICBodXN3YWdlOiBodXNiYW5kJ3MgaG91cmx5IHdhZ2UsIDE5NzUKLSAgIG1vdGhlZHVjOiBtb3RoZXIncyB5ZWFycyBvZiBzY2hvb2xpbmcKLSAgIGZhdGhlZHVjOiBmYXRoZXIncyB5ZWFycyBvZiBzY2hvb2xpbmcKLSAgIHVuZW06IHVuZW0uIHJhdGUgaW4gY291bnR5IG9mIHJlc2lkLgotICAgZXhwZXI6IGFjdHVhbCBsYWJvciBta3QgZXhwZXIKLSAgIGx3YWdlOiBsb2cod2FnZSkKCmBgYHtyfQptcm96IDwtIHRpYmJsZTo6YXNfdGliYmxlKHdvb2xkcmlkZ2U6Om1yb3opCgpoZWFkKG1yb3opCmBgYAoKIyMjIE1vZGVsbwoKLSAgICRsb2cod2FnZSkgPSBcYmV0YV8wICsgXGJldGFfMVwgZXhwZXIgKyBcYmV0YV8xXCBleHBlcl4yICsgXGJldGFfM1wgZWR1YyArIHUkCi0gICAkQ292KHUsIGVkdWMpIFxuZSAwJAotICAgJGVkdWMgPSBcZGVsdGFfMCArIFxkZWx0YV8xXCBleHBlciArIFxkZWx0YV8yXCBleHBlcl4yICsgXHRoZXRhXCBtb3RoZXJlZHVjICsgdSQKCiMjIyBUZXN0ZSBkZSBIYXVzbWFuOgoKU2UgdXRpbGl6YXJtb3MgSVYgZW0gdW0gbW9kZWxvIGFwZW5hcyBjb20gdmFyacOhdmVpcyBleMOzZ2VuYXMsIGVtYm9yYSBJViBzZWphIGNvbnNpc3RlbnRlLCBlbGUgc2Vyw6EgbWVub3MgZWZpY2llbnRlIHF1ZSBPTFMuIElzdG8gw6ksIHNldXMgZGVzdmlvcy1wYWRyw6NvIHNlcsOjbyBtdWl0byBlbGV2YWRvcyBlbSBjb21wYXJhw6fDo28gY29tIE9MUyAoRWZpY2llbnRlKS4gUG9ydGFudG8sIG8gaW50ZXJlc3NlIGRvIHBlc3F1aXNhZG9yIGFwbGljYWRvIMOpIGF2YWxpYXIgc2UgYXMgdmFyacOhdmVpcyBleHBsaWNhdGl2YXMgcXVlIHNlIHN1cMO1ZSBlbmTDs2dlbmFzIHPDo28gcmVhbG1lbnRlIGVuZMOzZ2VuYSBvdSBuw6NvLiBDYXNvIHNlamFtIGV4w7NnZW5hcywgZGV2ZS1zZSB1dGlsaXphciBPTFMgYW8gaW52w6lzIGRlIElWLzJTTFMuIE8gVGVzdGUgZGUgSGF1c21hbi1XdSBhdmFsaWEgZXN0YXRpc3RpY2FtZW50ZSBhcyBoaXDDs3Rlc2VzOgoKSH4wfjogUmVncmVzc29yZXMgRXjDs2dlbm9zIHZzLiBIfmF+OiBSZWdyZXNzb3JlcyBFbmTDs2dlbm9zLgoKUGFyYSBhcGxpY2FyIG8gdGVzdGUgZGUgSGF1c21hbi1XdSBzw6NvIG5lY2Vzc8OhcmlvcyBhbGd1bnMgcXVlc2l0b3M6CgoxLiAgSWRlbnRpZmljYXIsIGEgcHJpbmPDrXBpbywgcXVhaXMgdmFyacOhdmVpcyBleHBsaWNhdGl2YXMgcG9kZW0gc2VyIGVuZMOzZ2VuYXMuCjIuICBQb3NzdWlyIGluc3RydW1lbnRvcyAodsOhbGlkb3MpIHBhcmEgY2FkYSB1bWEgZGVzc2FzIHZhcmnDoXZlaXMuCgpTb2IgKDEpIGUgKDIpIG8gVGVzdGUgZGUgSGF1c21hbi1XdSBwb2RlIHNlciBhcGxpY2FkbyBlbSAzIGV0YXBhczoKCmBgYHtyfQojIGV0YXBhIDE6IGVzdGltYXIgYSBlcXVhw6fDo28gbmEgZm9ybWEgcmVkdXppZGEgcGFyYSBhIHZhcmnDoXZlbCBpbnZlc3RpZ2FkYQptb2RlbF9lZHVjIDwtIGxtKGVkdWMgfiBleHBlciArIEkoZXhwZXJeMikgKyBtb3RoZWR1YywgZGF0YSA9IG1yb3opCgojIGV0YXBhIDI6IGVzdGltYXIgYSBlcXVhw6fDo28gZG8gdGVzdGUgZGUgSGF1c21hbi1XdSB1dGlsaXphbmRvIG9zIHJlc8OtZHVvcyBlc3RpbWFkb3MgZGEgZXRhcGEgMQptb2RlbF9jb21wbGV0ZSA8LSBsbShsb2cod2FnZSkgfiBlZHVjICsgZXhwZXIgKyBJKGV4cGVyXjIpICsgbW9kZWxfZWR1YyRyZXNpZHVhbHMsIGRhdGEgPSBtcm96KQoKc3VtbWFyeShtb2RlbF9jb21wbGV0ZSkKCiMnIGV0YXBhIDM6IGFwbGljYXIgbyB0ZXN0ZSBGIHBhcmEgYXZhbGlhciBhIChudWxpZGFkZSBkYSkgZGlmZXJlbsOnYSBlbnRyZSBvcyBtb2RlbG9zCiMnIG9iczogbm8gZXhlbXBsbywgc2UgZWR1YyBmb3IgZW5kw7NnZW5hLCBhIGVxLiBkYSBldGFwYSAxIHRlcsOhIGZpbHRyYWRvIGEgcGFydGUKIycgZGUgZWR1YyBxdWUgw6kgY29ycmVsYWNpb25hZGEuIEFzc2ltLCBvIHJlc8OtZHVvIGRlIG1vZGVsX2VkdWMgZXN0YXLDoSBsaXZyZSAKIycgZGVzc2EgY29ycmVsYcOnw6NvIGUsIHNlIGVkdWMgZm9yIHJlYWxtZW50ZSBlbmTDs2dlbmEsIG8gcmVzw61kdW8gZGV2ZXLDoSAKIycgc2VyIGVzdGF0aXN0aWNhbWVudGUgcmVsYXZhbnRlIGVtIG1vZGVsX2NvbXBsZXRlCgpjYXI6OmxpbmVhckh5cG90aGVzaXMoCiAgbW9kZWwgPSBtb2RlbF9jb21wbGV0ZSwKICBoeXBvdGhlc2lzLm1hdHJpeCA9ICJtb2RlbF9lZHVjJHJlc2lkdWFscyA9IDAiLAogIHRlc3QgPSAiRiIKKQpgYGAKCkNvbSB1bWEgc2lnbmlmaWPDom5jaWEgZGUgNSUsIG7Do28gc2UgcG9kZSByZWplaXRhciBIfjB+LiBQb3LDqW0sIGEgdW1hIHNpZ25pZmljw6JuY2lhIGRlIDEwJSwgcG9kZS1zZSBjb25zaWRlcmFyIGEgdmFyacOhdmVsIGBlZHVjYCBjb21vIGVuZMOzZ2VuYS4KCiMjIyBNw6l0b2RvIEk6IEVzdGltYcOnw6NvIHBvciBWSQoKLSBleMOzZ2VuYXM6IGBleHBlcmAsIGBleHBlcl4yYAotIGVuZMOzZ2VuYTogYGVkdWNgCi0gaW5zdHJ1bWVudG86IGBtb3RoZWR1Y2AKCjEuIEVzdGltYcOnw6NvIEVxLiBGb3JtYSBSZWR1emlkYSAoRUZSKQoyLiBFc3RpbWHDp8OjbyBFcS4gSW5zdHJ1bWVudGFsIChFSSkKMy4gQ8OhbGN1bG8gZG9zIFBhcsOibWV0cm9zIFBvcHVsYWNpb25haXMgUmVjdXJzaXZhbWVudGUKCmBgYHtyfQojIGNvZWZpY2llbnRlcyBkYSBlc3RpbWHDp8OjbyBkYSBlcXVhw6fDo28gZGEgZm9ybWEgcmVkdXppZGEKcGFyX2VmciA8LSBwdXJycjo6bWFwMl9kZnIoCiAgLnggPSBjKGdsdWU6OmdsdWUoImRlbHRhX3swOjJ9IiksICJ0aGV0YSIpLAogIC55ID0gcHVycnI6Om1hcF9kYmwoMTo0LCB+IG1vZGVsX2VkdWMkY29lZmZpY2llbnRzW1sueF1dKSwKICB+IHRpYmJsZTo6dGliYmxlKAogICAgY29lZiA9IC54LAogICAgdmFsdWVfZWZyID0gLnkKICApCikKCnBhcl9lZnIKCiMgY29lZmljaWVudGVzIGRhIGVzdGltYcOnw6NvIGRhIGVxdWHDp8OjbyBkYSBmb3JtYSBpbnN0cnVtZW50YWwKZWkgPC0gbG0obG9nKHdhZ2UpIH4gZXhwZXIgKyBJKGV4cGVyXjIpICsgbW90aGVkdWMsIGRhdGEgPSBtcm96KQoKcGFyX2VxX2lucyA8LSBwdXJycjo6bWFwMl9kZnIoCiAgLnggPSBjKGdsdWU6OmdsdWUoImFsZmFfezA6Mn0iKSwgImxhbWJkYSIpLAogIC55ID0gcHVycnI6Om1hcF9kYmwoMTo0LCB+IGVpJGNvZWZmaWNpZW50c1tbLnhdXSksCiAgfiB0aWJibGU6OnRpYmJsZSgKICAgIGNvZWYgPSAueCwKICAgIHZhbHVlX2VpID0gLnkKICApCikKCnBhcl9lcV9pbnMKCiMgZXN0aW1hdGl2YSBkb3MgcGFyw6JtZXRyb3MgcG9wdWxhY2lvbmFpcyByZWN1cnNpdmFtZW50ZQpiZXRhX2sgPC0gcGFyX2VxX2lucyR2YWx1ZV9laVs0XSAvIHBhcl9lZnIkdmFsdWVfZWZyWzRdICMgbGFtYmRhIC8gdGhldGEKCnBhcl9wb3BfcmVjIDwtIHB1cnJyOjptYXAyX2RmcigKICAueCA9IGdsdWU6OmdsdWUoImJldGFfe2MoJ2snLCAwOjIpfSIpLAogIC55ID0gYygKICAgIGJldGFfaywKICAgIHBhcl9lcV9pbnMkdmFsdWVfZWlbMTozXSAtIGJldGFfayAqIHBhcl9lZnIkdmFsdWVfZWZyWzE6M10KICApLAogIH4gdGliYmxlOjp0aWJibGUoCiAgICBjb2VmID0gLngsCiAgICB2YWx1ZSA9IC55CiAgKQopCgpwYXJfcG9wX3JlYwoKIyBhbHRlcm5hdGl2YW1lbnRlLCBwb2RlbW9zIGVzdGltYXIgbyBtb2RlbG8gZGlyZXRhbWVudGUgdXNhbmRvIG9zIHZhbG9yZXMgcHJldmlzdG9zIGRlIHBhcl9lZnIKCm1yb3ogPC0gbXJveiB8PgogIGRwbHlyOjpiaW5kX2NvbHMoCiAgICB0aWJibGU6OnRpYmJsZShlZHVjX2hhdCA9IGZpdHRlZChtb2RlbF9lZHVjKSkKICApCgppdiA8LSBsbShsb2cod2FnZSkgfiBleHBlciArIEkoZXhwZXJeMikgKyBlZHVjX2hhdCwgZGF0YSA9IG1yb3opCgpzdW1tYXJ5KGl2KQpgYGAKCiMjIyBNw6l0b2RvIElJOiBFc3RpbWHDp8OjbyB1c2FuZG8gQUVSOjppdnJlZwoKYGBge3J9Cml2IDwtIEFFUjo6aXZyZWcobG9nKHdhZ2UpIH4gZXhwZXIgKyBJKGV4cGVyXjIpICsgZWR1YyB8IGV4cGVyICsgSShleHBlcl4yKSArIG1vdGhlZHVjLCBkYXRhID0gbXJveikKCnN1bW1hcnkoaXYpCmBgYAoKIyMjIEVzdGltYcOnw6NvIHBvciAyU0xTCgotIGV4w7NnZW5hczogYGV4cGVyYCwgYGV4cGVyXjJgCi0gZW5kw7NnZW5hOiBgZWR1Y2AKLSBpbnN0cnVtZW50bzogYG1vdGhlZHVjYCwgYGZhdGhlZHVjYCwgYGh1c2VkdWNgCgpgYGB7cn0KaXYgPC0gQUVSOjppdnJlZyhsb2cod2FnZSkgfiBleHBlciArIEkoZXhwZXJeMikgKyBlZHVjIHwgZXhwZXIgKyBJKGV4cGVyXjIpICsgbW90aGVkdWMgKyBmYXRoZWR1YyArIGh1c2VkdWMsIGRhdGEgPSBtcm96KQoKc3VtbWFyeShpdikKCiMgb2JzOiAyU0xTIChjLyAxIGluc3RydW1lbnRvKSA9IFZJCmBgYAoKTyBlZmVpdG8gcGFyY2lhbCBkYSBlZHVjYcOnw6NvIGVzdGltYWRvIHBlbG8gbW9kZWxvIGRlIDJTTFMgw6kgZGlmZXJlbnRlIGRvIGRlIElWIGRldmlkbyBhbyBmYXRvIGRhIGZvcm1hIHJlZHV6aWRhIGRvIG1vZGVsbyBJViBkbyBtb2RlbG8gc29mcmVyIGRvIHZpw6lzIGRlIHZhcmnDoXZlbCBvbWl0aWRhIGFvIG7Do28gbGV2YXIgZW0gY29uc2lkZXJhw6fDo28gbWFpcyB2YXJpw6F2ZWlzIHJlbGV2YW50ZXMgcXVlIGV4cGxpcXVlbSBvIGNvbXBvcnRhbWVudG8gZGUgYGVkdWNgLgoK</div>
 
 
 
@@ -1977,7 +2185,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("aula_9.Rmd");
+  window.initializeSourceEmbed("aula_11.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>

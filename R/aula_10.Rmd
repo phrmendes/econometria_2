@@ -1,5 +1,5 @@
 ---
-title: "Aula 19"
+title: "Aula 10"
 output: html_notebook
 ---
 
@@ -9,6 +9,8 @@ Objetivos:
 
 1.	Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
 2.	Estimação e Interpretação dos Modelos com dados em Painel: Estimador de Efeitos Aleatórios.
+
+Material de apoio:
 
 1.  Wooldridge J.M. (2012) "Introductory Econometrics", p. 435
 2.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R".
@@ -41,9 +43,11 @@ head(wagepan)
 ### Modelo
 
 ```{r}
+eq <- lwage ~ educ + black + hisp + exper + expersq + married + union + d81 + d82 + d83 + d84 + d85 + d86 + d87
+
 cat("\n ===== MODELO 1 - RANDOM ===== \n")
 model_1 <- plm::plm(
-  lwage ~ educ + black + hisp + exper + expersq + married + union + d81 + d82 + d83 + d84 + d85 + d86 + d87, 
+  eq, 
   data = wagepan, 
   effect = "individual", 
   model = "random", 
@@ -54,7 +58,7 @@ summary(model_1)
 
 cat("\n ===== MODELO 2 - POOLED ===== \n")
 model_2 <- plm::plm(
-  lwage ~ educ + black + hisp + exper + expersq + married + union + d81 + d82 + d83 + d84 + d85 + d86 + d87, 
+  eq, 
   data = wagepan, 
   effect = "individual", 
   model = "pooling", 
@@ -65,7 +69,7 @@ summary(model_2)
 
 cat("\n ===== MODELO 3 - FIXED ===== \n")
 model_3 <- plm::plm(
-  lwage ~ educ + black + hisp + exper + expersq + married + union + d81 + d82 + d83 + d84 + d85 + d86 + d87, 
+  eq, 
   data = wagepan, 
   effect = "individual", 
   model = "within", 
@@ -77,6 +81,14 @@ summary(model_3)
 
 ### Decidindo entre modelo de efeitos fixos ou aleatórios
 
+H~0~: Cov(x~lit~, a~i~) = 0 $\to$ Modelo de efeitos aleatórios
+
+H~1~: Cov(x~lit~, a~i~) $\ne$ 0 $\to$ Modelo de efeitos fixos
+
+- $l = 1, \dots, k$
+- $i = 1, \dots, N$
+- $t = 1, \dots, T$
+
 ```{r}
-plm::phtest(model_1, model_2)
+plm::phtest(model_1, model_3)
 ```

@@ -1,0 +1,191 @@
+---
+title: "Aula 11"
+output: html_notebook
+---
+
+# AULA 11 - Econometria II
+
+Objetivos:
+
+1.  Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+2.  Teste de Hausman e Estimação por Variáveis Instrumentais/2SLS.
+
+Material de apoio:
+
+1. Wooldridge J.M. (2012) "Introductory Econometrics", p. 441.
+2. Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R".
+3. Croissant, Y. & Millo, G. (2019) "Panel Data Econometrics with R by".
+
+Sites que contém material auxiliar sobre a aula:
+
+-   <http://eclr.humanities.manchester.ac.uk/index.php/Panel_in_R>
+-   <https://justinmshea.github.io/wooldridge/articles/Introductory-Econometrics-Examples.html#chapter-13-pooling-cross-sections-across-time-simple-panel-data-methods>
+-   <https://justinmshea.github.io/wooldridge/index.html>
+
+## Bibliotecas
+
+```{r}
+source("R/libraries.R")
+```
+
+## The Sensitivity of an Empirical Model of Married Womens Hours of Work to Economic and Statistical Assumptions
+
+### Dados
+
+A dataframe with 753 observations on 22 variables:
+
+-   hours: hours worked, 1975
+-   kidslt6: - kids \< 6 years
+-   kidsge6: - kids 6-18
+-   age: woman's age in yrs
+-   educ: years of schooling
+-   wage: est. wage from earn, hrs
+-   hushrs: hours worked by husband, 1975
+-   husage: husband's age
+-   huseduc: husband's years of schooling
+-   huswage: husband's hourly wage, 1975
+-   motheduc: mother's years of schooling
+-   fatheduc: father's years of schooling
+-   unem: unem. rate in county of resid.
+-   exper: actual labor mkt exper
+-   lwage: log(wage)
+
+```{r}
+mroz <- tibble::as_tibble(wooldridge::mroz)
+
+head(mroz)
+```
+
+### Modelo
+
+-   $log(wage) = \beta_0 + \beta_1\ exper + \beta_1\ exper^2 + \beta_3\ educ + u$
+-   $Cov(u, educ) \ne 0$
+-   $educ = \delta_0 + \delta_1\ exper + \delta_2\ exper^2 + \theta\ mothereduc + u$
+
+### Teste de Hausman:
+
+Se utilizarmos IV em um modelo apenas com variáveis exógenas, embora IV seja consistente, ele será menos eficiente que OLS. Isto é, seus desvios-padrão serão muito elevados em comparação com OLS (Eficiente). Portanto, o interesse do pesquisador aplicado é avaliar se as variáveis explicativas que se supõe endógenas são realmente endógena ou não. Caso sejam exógenas, deve-se utilizar OLS ao invés de IV/2SLS. O Teste de Hausman-Wu avalia estatisticamente as hipóteses:
+
+H~0~: Regressores Exógenos vs. H~a~: Regressores Endógenos.
+
+Para aplicar o teste de Hausman-Wu são necessários alguns quesitos:
+
+1.  Identificar, a princípio, quais variáveis explicativas podem ser endógenas.
+2.  Possuir instrumentos (válidos) para cada uma dessas variáveis.
+
+Sob (1) e (2) o Teste de Hausman-Wu pode ser aplicado em 3 etapas:
+
+```{r}
+# etapa 1: estimar a equação na forma reduzida para a variável investigada
+model_educ <- lm(educ ~ exper + I(exper^2) + motheduc, data = mroz)
+
+# etapa 2: estimar a equação do teste de Hausman-Wu utilizando os resíduos estimados da etapa 1
+model_complete <- lm(log(wage) ~ educ + exper + I(exper^2) + model_educ$residuals, data = mroz)
+
+summary(model_complete)
+
+#' etapa 3: aplicar o teste F para avaliar a (nulidade da) diferença entre os modelos
+#' obs: no exemplo, se educ for endógena, a eq. da etapa 1 terá filtrado a parte
+#' de educ que é correlacionada. Assim, o resíduo de model_educ estará livre 
+#' dessa correlação e, se educ for realmente endógena, o resíduo deverá 
+#' ser estatisticamente relavante em model_complete
+
+car::linearHypothesis(
+  model = model_complete,
+  hypothesis.matrix = "model_educ$residuals = 0",
+  test = "F"
+)
+```
+
+Com uma significância de 5%, não se pode rejeitar H~0~. Porém, a uma significância de 10%, pode-se considerar a variável `educ` como endógena.
+
+### Método I: Estimação por VI
+
+- exógenas: `exper`, `exper^2`
+- endógena: `educ`
+- instrumento: `motheduc`
+
+1. Estimação Eq. Forma Reduzida (EFR)
+2. Estimação Eq. Instrumental (EI)
+3. Cálculo dos Parâmetros Populacionais Recursivamente
+
+```{r}
+# coeficientes da estimação da equação da forma reduzida
+par_efr <- purrr::map2_dfr(
+  .x = c(glue::glue("delta_{0:2}"), "theta"),
+  .y = purrr::map_dbl(1:4, ~ model_educ$coefficients[[.x]]),
+  ~ tibble::tibble(
+    coef = .x,
+    value_efr = .y
+  )
+)
+
+par_efr
+
+# coeficientes da estimação da equação da forma instrumental
+ei <- lm(log(wage) ~ exper + I(exper^2) + motheduc, data = mroz)
+
+par_eq_ins <- purrr::map2_dfr(
+  .x = c(glue::glue("alfa_{0:2}"), "lambda"),
+  .y = purrr::map_dbl(1:4, ~ ei$coefficients[[.x]]),
+  ~ tibble::tibble(
+    coef = .x,
+    value_ei = .y
+  )
+)
+
+par_eq_ins
+
+# estimativa dos parâmetros populacionais recursivamente
+beta_k <- par_eq_ins$value_ei[4] / par_efr$value_efr[4] # lambda / theta
+
+par_pop_rec <- purrr::map2_dfr(
+  .x = glue::glue("beta_{c('k', 0:2)}"),
+  .y = c(
+    beta_k,
+    par_eq_ins$value_ei[1:3] - beta_k * par_efr$value_efr[1:3]
+  ),
+  ~ tibble::tibble(
+    coef = .x,
+    value = .y
+  )
+)
+
+par_pop_rec
+
+# alternativamente, podemos estimar o modelo diretamente usando os valores previstos de par_efr
+
+mroz <- mroz |>
+  dplyr::bind_cols(
+    tibble::tibble(educ_hat = fitted(model_educ))
+  )
+
+iv <- lm(log(wage) ~ exper + I(exper^2) + educ_hat, data = mroz)
+
+summary(iv)
+```
+
+### Método II: Estimação usando AER::ivreg
+
+```{r}
+iv <- AER::ivreg(log(wage) ~ exper + I(exper^2) + educ | exper + I(exper^2) + motheduc, data = mroz)
+
+summary(iv)
+```
+
+### Estimação por 2SLS
+
+- exógenas: `exper`, `exper^2`
+- endógena: `educ`
+- instrumento: `motheduc`, `fatheduc`, `huseduc`
+
+```{r}
+iv <- AER::ivreg(log(wage) ~ exper + I(exper^2) + educ | exper + I(exper^2) + motheduc + fatheduc + huseduc, data = mroz)
+
+summary(iv)
+
+# obs: 2SLS (c/ 1 instrumento) = VI
+```
+
+O efeito parcial da educação estimado pelo modelo de 2SLS é diferente do de IV devido ao fato da forma reduzida do modelo IV do modelo sofrer do viés de variável omitida ao não levar em consideração mais variáveis relevantes que expliquem o comportamento de `educ`.
+

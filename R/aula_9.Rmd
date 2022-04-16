@@ -10,6 +10,8 @@ Objetivos:
 1.	Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
 2.	Estimação e Interpretação dos Modelos com dados em Painel: Estimador de Efeitos Fixos.
 
+Material de apoio:
+
 1.  Wooldridge J.M. (2012) "Introductory Econometrics", p. 435
 2.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R".
 3.  Croissant, Y. & Millo, G. (2019) "Panel Data Econometrics with R by".
