@@ -1,0 +1,132 @@
+---
+title: "Aula 13"
+output: html_notebook
+---
+
+# AULA 13 - Econometria II
+
+Objetivos:
+
+1.  Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+2.  Estimação e Análise dos Modelos para Variáveis Dependentes Limitadas: MPL, LOGIT e PROBIT.
+
+Material de apoio:
+
+1.  Wooldridge J.M. (2012) "Introductory Econometrics", p. 441.
+2.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R".
+3.  Croissant, Y. & Millo, G. (2019) "Panel Data Econometrics with R by".
+
+Sites que contém material auxiliar sobre a aula:
+
+-   <http://eclr.humanities.manchester.ac.uk/index.php/Panel_in_R>
+-   <https://justinmshea.github.io/wooldridge/articles/Introductory-Econometrics-Examples.html#chapter-13-pooling-cross-sections-across-time-simple-panel-data-methods>
+-   <https://justinmshea.github.io/wooldridge/index.html>
+
+## Bibliotecas
+
+```{r}
+source("R/libraries.R")
+```
+
+## Titanic
+
+Nesta aula, utilizaremos a base de dados "Titanic-Dataset(train.csv)" referente ao naufrágio do Titanic disponível em kaggle.com. Iremos estimar a Probabilidade de sobrevivência dos passageiros do Titanic em função de suas características, como sexo, classe em que viajava, etc.
+
+### Dados
+
+```{r}
+titanic <- readr::read_csv("data/titanic.csv")
+
+titanic |> 
+  dplyr::summarise(
+    dplyr::across(
+      dplyr::everything(),
+      ~ sum(is.na(.x))
+    )
+  ) |> 
+  tidyr::pivot_longer(
+    dplyr::everything(),
+    names_to = "variables",
+    values_to = "na"
+  ) |> 
+  dplyr::arrange(-na)
+
+#' pelos dados, percebemos que a variável Cabin possui muitos missing values e, portanto, iremos excluí-la.
+#' também iremos excluir a variável PassengerId, que é apenas um índice para cada passageiro.
+
+titanic <- titanic |> 
+  dplyr::select(-c(Cabin, PassengerId)) |> 
+  janitor::clean_names()
+
+# estratégia para completar dados faltantes
+
+titanic_mice <- mice::mice(
+  titanic,
+  method = "pmm", # predictive mean matching 
+  m = 1
+)
+
+titanic <- mice::complete(titanic_mice) |> 
+  dplyr::mutate(
+    dplyr::across(
+      c(sex, embarked, pclass),
+      forcats::as_factor
+    )
+  ) |> 
+  dplyr::filter(!is.na(embarked))
+
+titanic
+```
+
+### Estimação do MPL
+
+```{r}
+mpl_model <- lm(survived ~ pclass + sex + age + fare + embarked, data = titanic)
+
+summary(mpl_model)
+
+coef(mpl_model)
+```
+
+### Estimação do Logit
+
+```{r}
+logit_model <- glm(
+  survived ~ pclass + sex + age + fare + embarked,
+  family = binomial(link = "logit"),
+  data = titanic
+)
+
+summary(logit_model)
+
+exp(coef(logit_model)) # odds ratio
+
+margins::margins(logit_model) # efeitos marginais médios
+
+tibble::tibble(
+  data = titanic$survived,
+  model = round(fitted(logit_model))
+) |> 
+  dplyr::mutate(
+    acerto = dplyr::case_when(
+      data == model ~ 1,
+      TRUE ~ 0
+    )
+  ) |> 
+  dplyr::summarise(taxa_acerto = glue::glue("{100 * sum(acerto[acerto == 1]) / sum(acerto)}%"))
+```
+
+### Estimação do Probit
+
+```{r}
+probit_model <- glm(
+  survived ~ pclass + sex + age + fare + embarked,
+  family = binomial(link = "probit"),
+  data = titanic
+)
+
+summary(probit_model)
+```
+
+
+

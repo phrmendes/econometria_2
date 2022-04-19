@@ -1,0 +1,234 @@
+
+# Econometria II - Graduação Economia (UFABC) -  Prof. Guilherme Lima
+# Rotina para os Alunos - Aula 14
+
+# Objetivos:
+# 1.	Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis.
+# 2.	Estimação e Análise dos Modelos para Variáveis Dependentes Limitadas: MPL, LOGIT e PROBIT.
+
+# Referências:
+# Referências:
+# (1) Wooldridge J.M. (2012) "Introductory Econometrics", p.441.
+# (2) Gujarati (2004) "Basics Econometrics", p. 582.
+
+
+# Sites que contém material auxiliar:
+# https://www.kaggle.com/     # Site de banco de dados
+# https://www.r-bloggers.com/2015/09/how-to-perform-a-logistic-regression-in-r/     # Exemplo do TITANIC
+# https://stats.oarc.ucla.edu/r/dae/probit-regression/ 
+
+
+# Exemplo 1.
+
+# Nesta aula, utilizaremos a base de dados "Titanic-Dataset(train.csv)" referente ao naufrágio do Titanic
+# disponível em kaggle.com. Iremos estimar a Probabilidade de sobrevivência dos passageiros
+# do Titanic em função de suas características, como sexo, classe em que viajava, etc. 
+
+# Seguiremos os passos de https://www.r-bloggers.com/2015/09/how-to-perform-a-logistic-regression-in-r/
+
+
+# Obs: Arquivo Original "train.csv" foi renomeado para "Titanic.csv" e salvo no dir. trabalho.
+
+setwd("C:\\Temp\\EconometriaII")
+
+training.data.raw <- read.csv("Titanic.csv",header=T, na.strings=c(""), stringsAsFactors = TRUE)   # na.strings=c("") atribui "NA" para missing data; stringsAsFactors = TRUE  é usado para atribuir os dados das colunas colo fatores, necessário para dados "categóricos" ou binários. 
+training.data.raw
+
+################################################################################################################
+# 1. Limpeza dos Dados: 
+################################################################################################################
+
+# 1.1 Exclusão dos "missing data":
+
+sapply(training.data.raw,function(x) sum(is.na(x)))
+sapply(training.data.raw, function(x) length(unique(x)))
+
+## Visualização dos missing values utilizando o pacote {Amelia}
+
+install.packages("Amelia")
+library(Amelia)
+
+missmap(training.data.raw, main = "Missing values vs observed")
+
+# Pelo gráfico, percebemos que a variável Cabin possui muitos missing values e, portanto, iremos excluí-la.
+# Também iremos excluir a variável PassengerId, que é apenas um índice para cada passageiro.
+# Utilizando a função subset() selecionaremos apenas as colunas (variáveis) com informações relevantes.
+
+data <- subset(training.data.raw,select=c(2,3,5,6,7,8,10,12))
+
+View(data)
+head(data)
+
+## Outros missing data: estratégia: substituí-los pelo valor médio 
+
+data$Age
+data$Age[is.na(data$Age)]
+data$Age[is.na(data$Age)] <- mean(data$Age,na.rm=T)
+
+is.na(data$Embarked)
+data <- data[!is.na(data$Embarked),]
+rownames(data) <- NULL
+
+missmap(data, main = "Missing values vs observed")
+
+# 1.2 Tabela com dados "limpos":
+
+install.packages("tidyverse")   # Instala diveros Pacotes (instalei para trabalhar com operadores %>%)
+library(tidyverse)
+# help("tidyverse")
+
+install.packages("stargazer")
+library(stargazer)
+
+data %>% select(Survived, Pclass, Sex, Age, SibSp, Parch, Fare, Embarked) %>% stargazer(type="text")
+
+
+# 1.3 Verificação se os dados categóricos estão como fatores: considera variáveis qualitativas como binárias
+
+is.factor(data$Sex)
+contrasts(data$Sex)
+
+is.factor(data$Embarked)
+contrasts(data$Embarked)
+
+
+# 1.4 Existem sobreviventes male e female ou somente female?
+
+xtabs(~ Survived + Sex, data=data)  # Sim, existem sobreviventes M e F
+
+
+################################################################################################################
+# 2. Estimação do MPL
+################################################################################################################
+
+mpl <- lm(Survived ~ . ,data=data)
+summary(mpl)
+
+## Valores das Probabilidades Previstas para cada passageiro:
+
+p_mpl <- fitted(mpl)
+
+#ou
+
+p_mpl <- predict(mpl, type="response")
+
+
+## Efeitos Marginais (no MPL os EM´s são constantes e diretamente representados pelos par. estimados)
+
+coef(mpl)
+
+
+################################################################################################################
+# 3. Estimação do LOGIT
+################################################################################################################
+
+logit <- glm(Survived ~ . , family=binomial(link="logit"),data=data)
+summary(logit)
+
+# Valores das Probabilidades Previstas para cada passageiro:
+
+p_logit <- predict(logit, type="response")
+
+# ou: 
+
+p_logit <- fitted(logit)
+
+# Probabilidade do indivíduo ser um sobrevivente 
+
+exp(logit$coefficients)
+
+# Efeitos Marginais Médios (EMM):
+
+EMM_logit1 <- (mean(dlogis(predict(logit, type="link"))))*coef(logit)
+
+## Alternativamente, podemos usar o pacote {margins} que calcula os EMM:
+
+install.packages("margins")
+library(margins)
+
+EMM_logit2 <- margins(logit)
+
+# Porcentagem das Previsões Corretas (Compara valores previstos com reais)
+
+table(true = data$Survived, pred=round(fitted(logit)))
+
+################################################################################################################
+# 4. Estimação do PROBIT
+################################################################################################################
+
+probit <- glm(Survived ~ . , family=binomial(link="probit"),data=data)
+summary(probit)
+
+# Valores das Probabilidades Previstas para cada passageiro:
+
+p_probit <- predict(probit, type="response")
+
+# ou: 
+
+p_probit <- fitted(probit)
+
+# Efeitos Marginais Médios (EMM):
+
+EMM_probit1 <- (mean(dnorm(predict(probit, type="link"))))*coef(probit)
+
+## Alternativamente, podemos usar o pacote {margins} que calcula os EMM:
+
+EMM_probit2 <- margins(probit)
+
+# Porcentagem das Previsões Corretas (Compara valores previstos com reais)
+
+table(true = data$Survived, pred=round(fitted(probit)))
+
+(473+238)/(473+238+76+102)  # % de acertos totais, seja 1 ou 0
+
+table(true = data$Survived, pred=round(fitted(logit)))
+
+(474+238)/(474+238+75+102)  # % de acertos totais, seja 1 ou 0
+
+
+stargazer(mpl, logit, probit, type="text")
+
+##################################################################################################
+
+# Exemplo 2
+
+# T.A. Mroz (1987), "The Sensitivity of an Empirical Model of Married Women's Hours
+# of Work to Economic and Statistical Assumptions," Econometrica 55, 765-799. 
+
+# A data.frame with 753 observations on 22 variables
+
+# inlf: =1 if in lab frce, 1975
+# kidslt6: # kids < 6 years
+# kidsge6: # kids 6-18
+# age: woman's age in yrs
+# educ: years of schooling
+# exper: actual labor mkt exper
+# nwifeinc: (faminc - wage*hours)/1000    
+# expersq: exper^2
+
+data("mroz")
+attach(mroz)
+help(mroz)
+
+mroz.clean <- subset(mroz,select=c(inlf, kidslt6, kidsge6, age, educ, exper, expersq, nwifeinc))
+missmap(mroz.clean, main = "Missing values vs observed")
+
+#Estimação LOGIT:
+
+logit.2 <- glm(inlf ~ age + educ + exper + expersq + nwifeinc + kidslt6 + kidsge6, family = binomial (link="logit"))
+summary(logit.2)
+
+# Valores das Probabilidades Previstas para cada ind.:
+
+p_logit.2 <- predict(logit.2, type="response")
+
+# Efeitos Marginais Médios (EMM):
+
+margins(logit.2)
+
+# Porcentagem das Previsões Corretas (Compara valores previstos com reais)
+
+table(true = mroz.clean$inlf, pred=round(fitted(logit.2)))
+
+(207+347)/(207+118+81+347)
+

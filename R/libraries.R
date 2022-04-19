@@ -12,7 +12,6 @@ pacman::p_load(
   pbapply,
   knitr,
   wooldridge,
-  estimatr,
   collapse,
   markdown,
   rmarkdown,
@@ -24,5 +23,9 @@ pacman::p_load(
   lmtest,
   systemfit,
   AER,
+  plotROC,
+  janitor,
+  mice,
+  margins,
   install = F
 )

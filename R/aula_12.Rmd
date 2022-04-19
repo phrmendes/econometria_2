@@ -107,20 +107,3 @@ O efeito parcial da educação eleva significativamente para 25%. Porém, o desv
 **(vi)** Do you think the IV procedure from part (v) is convincing?
 
 IV não se mostrou adequado para o modelo em questão devido ao elevado desvio-padrão, que produz um IC muito amplo. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
