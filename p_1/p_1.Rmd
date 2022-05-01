@@ -7,7 +7,7 @@ title: |
   \Large
   
   P1 - Econometria III
-author: "Pedro Mendes [^1]"
+author: "Pedro Mendes"
 documentclass: scrartcl
 fontfamily: times
 fontsize: 12pt

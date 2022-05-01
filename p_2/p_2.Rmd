@@ -1,0 +1,241 @@
+---
+output:   
+  pdf_document:
+    fig_caption: yes
+    number_sections: no
+title: |
+  \Large
+  
+  P2 - Econometria III
+author: "Pedro Mendes"
+documentclass: scrartcl
+fontfamily: times
+fontsize: 12pt
+geometry:
+- top=1cm
+- bottom=1cm
+- left=1cm
+- right=1cm
+nocite: null
+lang: pt-BR
+header-includes:
+- \usepackage{setspace}
+- \usepackage{ragged2e}
+- \usepackage{indentfirst}
+- \usepackage{abstract}
+- \usepackage{microtype}
+- \usepackage{chngcntr}
+- \usepackage[justification=centering]{caption}
+- \usepackage{float}
+- \usepackage{booktabs}
+- \usepackage{multirow}
+- \usepackage{placeins}
+- \renewcommand{\abstractname}{Resumo}
+- \setkomafont{disposition}{\bfseries}
+---
+
+<!-- Parágrafos e espaçamento --->
+
+```{=tex}
+\onehalfspacing
+\justifying
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+\FloatBarrier
+```
+```{r message=FALSE, warning=FALSE, include=FALSE}
+source("R/libraries.R")
+```
+
+# 15, C2)
+
+**Os dados em `fertil2` incluem informações sobre o número de filhos, anos de escolaridade, idade, e variáveis de religião e status econômico de mulheres de Botsuana durante 1988.**
+
+```{r}
+fertil2 <- tibble::as_tibble(wooldridge::fertil2)
+
+fertil2 |> 
+  head()
+```
+
+## (i)
+
+**Estime o modelo** $$
+children = \beta_0 + \beta_1educ + \beta_2age + \beta_3age^2 + u 
+$$**por OLS e interprete as estimativas. Em particular, mantendo `age` fixo, qual é o efeito estimado de mais um ano de escolaridade em fertilidade? Se 100 mulheres completassem mais um ano de escolaridade, haveria uma diminuição na quantidade de filhos (representados pela variável `children`)?**
+
+```{r}
+ols_model <- fertil2 |> 
+  fixest::feols(children ~ educ + age + I(age^2))
+
+summary(ols_model)
+```
+
+-   Caso haja um aumento de um ano na educação de 100 mulheres, em média, ocorreria uma diminuição em 9 na quantidade de filhos.
+
+-   O aumento de um ano na idade leva a um aumento de 33 na quantidade de filhos.
+
+-   Aparentemente existe um efeito não linear significativo na idade, o que pode expressar a questão da tendência decrescente da fertilidade das mulheres com o passar dos anos, o que mostra que o efeito do aumento da idade na quantidade de filhos não é o mesmo para todas as idades.
+
+## (ii)
+
+**A variável `frsthalf` é uma variável *dummy* igual a um, caso a mulher tenha nascido durante os primeiros seis meses do ano. Presumindo que `frsthalf` não seja correlacionada com o termo de erro do item (i), mostre que `frsthalf` é um candidato VI razoável a `educ` (Dica: é preciso fazer uma regressão).**
+
+```{r}
+forma_reduzida <- fertil2 |> 
+  fixest::feols(educ ~ age + I(age^2) + frsthalf)
+
+summary(forma_reduzida)
+
+theta <- forma_reduzida$coefficients['frsthalf']
+r <- residuals(forma_reduzida)
+z <- fertil2$frsthalf
+age <- fertil2$age
+
+cov_r_z <- cov(r, z)
+```
+
+1.  $cov(u, z) = 0$ por suposição do item (ii)
+2.  $\theta \ne 0 \to$ `r theta`
+3.  $cov(r, z) \approx 0 \to$ `r cov_r_z`
+4.  $cov(r, x_j), j = 1,2\approx 0 \to$ rodando a regressão $r = \delta_0 + \delta_1age + \delta_2age^2 + e$, percebe-se que todos os coeficientes são aproximadamente iguais a 0, além de nenhuma ser significante.
+
+```{r}
+model_r <- fertil2 |> 
+  dplyr::bind_cols(r = r) |> 
+  fixest::feols(r ~ age + I(age^2))
+
+summary(model_r)
+```
+
+Logo, `frsthalf` é um candidato IV razoavel para `age`.
+
+## (iii)
+
+**Estime o modelo do item (i) usando `frsthalf` como IV para `educ`. Compare o efeito estimado de educação com a estimativa OLS do item (i).**
+
+```{r}
+iv_model <- AER::ivreg(
+  children ~ age + I(age^2) + educ | age + I(age^2) + frsthalf, 
+  data = fertil2
+)
+
+summary(iv_model)
+```
+
+O efeito da educação sobre o número de filhos é maior quando estimado pelo modelo de variável instrumental usando a variável `frsthalf`, já que em tal modelo, o efeito de um ano adicional de educação sobre o número de filhos é `r round(-0.1714989/-0.090575, 2)` vezes maior.
+
+## (iv)
+
+**Adicione as variáveis binárias `electric`, `tv` e `bicycle` ao modelo e presuma que elas sejam exógenas. Estime a equação por OLS e 2SLS e compare os coeficientes estimados em `educ`. Interprete o coeficiente em `tv` e explique por que a posse de televisão tem efeito negativo sobre a fertilidade.**
+
+```{r}
+ols_model_2 <- fertil2 |> 
+  fixest::feols(children ~ age + I(age^2) + electric + tv + bicycle + educ)
+
+summary(ols_model_2)
+```
+
+```{r}
+iv_model_2 <- AER::ivreg(
+  children ~ age + I(age^2) + electric + tv + bicycle + educ | age + I(age^2) + electric + tv + bicycle + frsthalf,
+  data = fertil2
+)
+
+summary(iv_model_2)
+```
+
+Porque ter tv te faz transar menos.
+
+# Cap. 17, C8)
+
+**O arquivo `jtrain2` contém dados sobre um experimento de treinamento profissional para um grupo de homens. O programa começaria em janeiro de 1976 e se estenderia até meados de 1977. O programa acabou em dezembro de 1977. A ideia é testar se a participação no programa de treinamento profissional teve um efeito nas probabilidades de desemprego e rendimentos de 1978.**
+
+```{r}
+jtrain2 <- tibble::as_tibble(wooldridge::jtrain2)
+
+jtrain2 |> head()
+```
+
+## (ii)
+
+**Estabeleça uma regressão linear de treino em muitas variáveis demográficas e pré-treino: `unem74`, `unem75`, `age`, `educ`, `black`, `hisp` e `married`. Essas variáveis são significativas conjuntamente ao nível de 5%?**
+
+```{r}
+ols_model_train <- lm(train ~ unem74 + unem75 + age + educ + black + hisp + married, data = jtrain2)
+
+summary(ols_model_train)
+```
+
+As variáveis não são conjuntamente significantes ao nível de 5% (p-valor = 0,1915).
+
+## (iii)
+
+**Estime uma versão probit do modelo linear do item (ii). Calcule o teste de razão de verossimilhança para a significância conjunta de todas as variáveis. O que você conclui?**
+
+```{r}
+probit_model_train <- glm(
+  train ~ unem74 + unem75 + age + educ + black + hisp + married,
+  family = binomial(link = "probit"),
+  data = jtrain2
+)
+
+summary(probit_model_train)
+
+lmtest::lrtest(probit_model_train)
+```
+
+As variáveis não são conjuntamente significantes ao nível de 5%.
+
+## (iv)
+
+**Com base em suas respostas aos itens (ii) e (iii), parece-lhe que a participação em treinamento profissional possa ser tratada como exógena como forma de explicar o status de desemprego de 1978? Explique.**
+
+Sim, pois a variável não apresenta correlação relevante em relação às demais variáveis do modelo, ou seja, a variável não apresenta endogeneidade.
+
+## (v)
+
+**Estabeleça uma regressão simples de `unem78` em `train` e reporte os resultados em forma de equação. Qual é o efeito estimado de participar do programa de treina-mento na probabilidade de estar desempregado em 1978? Isso é estatisticamente significante?**
+
+```{r}
+ols_model_unem78 <- lm(unem78 ~ train, data = jtrain2)
+
+summary(ols_model_unem78)
+```
+
+$$
+unem78 = -0.11\cdot train
+$$
+
+## (vi)
+
+**Estabeleça um probit de `unem78` em `train`. Faz sentido comparar o coeficiente probit em `train` com o coeficiente obtido do modelo linear do item (v)?**
+
+```{r}
+probit_model_unem78 <- glm(unem78 ~ train, data = jtrain2, family = binomial(link = "probit"))
+
+summary(probit_model_unem78)
+```
+
+Não, pois a interpretação do efeito marginal dado pelo coeficiente do modelo probit depende dos valores de nível da variável independente em questão, nesse caso, `train`.
+
+## (vii)
+
+**Encontre as probabilidades apropriadas dos itens (v) e (vi). Explique por que elas são idênticas. Qual abordagem você usaria para medir o efeito e a significância estatística do programa de treinamento profissional?**
+
+```{r}
+cat("=== COEFICIENTES PROBIT ===\n")
+pnorm(probit_model_unem78$coefficients)
+cat("\n=== VALORES AJUSTADOS PROBIT (train) ===\n")
+predict.glm(probit_model_unem78, type = "response") |>
+  dplyr::as_tibble() |> 
+  dplyr::distinct(value) |> 
+  purrr::flatten_dbl()
+cat("\n=== COEFICIENTES OLS ===\n")
+ols_model_unem78$coefficients
+cat("\n=== VALORES AJUSTADOS OLS (train) ===\n")
+predict(ols_model_unem78, type = "response") |> 
+  dplyr::as_tibble() |> 
+  dplyr::distinct(value) |> 
+  purrr::flatten_dbl()
+```
