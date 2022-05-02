@@ -47,7 +47,7 @@ header-includes:
 source("R/libraries.R")
 ```
 
-# 15, C2)
+# Cap. 15, C2)
 
 **Os dados em `fertil2` incluem informações sobre o número de filhos, anos de escolaridade, idade, e variáveis de religião e status econômico de mulheres de Botsuana durante 1988.**
 
