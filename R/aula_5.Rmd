@@ -8,7 +8,10 @@ output: html_notebook
 Graduação Economia (UFABC) - Prof. Guilherme Lima\
 Tema: Aula prática
 
-Objetivos: 1. Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis. 2. Identificação, estimação e inferência sob hipótese de autocorrelação.
+Objetivos: 
+
+1. Dar continuidade à Introdução ao Software Estatístico R e pacotes econométricos disponíveis. 
+2. Identificação, estimação e inferência sob hipótese de autocorrelação.
 
 Referências:
 

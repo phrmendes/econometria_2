@@ -12,9 +12,9 @@ Objetivos:
 
 Material de apoio:
 
-1. Wooldridge J.M. (2012) "Introductory Econometrics", p. 441.
-2. Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R".
-3. Croissant, Y. & Millo, G. (2019) "Panel Data Econometrics with R by".
+1.  Wooldridge J.M. (2012) "Introductory Econometrics", p. 441.
+2.  Kleiber, C. & Zeileis, A. (2008) "Applied Econometrics with R".
+3.  Croissant, Y. & Millo, G. (2019) "Panel Data Econometrics with R by".
 
 Sites que contém material auxiliar sobre a aula:
 
@@ -34,21 +34,21 @@ source("R/libraries.R")
 
 A dataframe with 753 observations on 22 variables:
 
--   hours: hours worked, 1975
--   kidslt6: - kids \< 6 years
--   kidsge6: - kids 6-18
--   age: woman's age in yrs
--   educ: years of schooling
--   wage: est. wage from earn, hrs
--   hushrs: hours worked by husband, 1975
--   husage: husband's age
--   huseduc: husband's years of schooling
--   huswage: husband's hourly wage, 1975
--   motheduc: mother's years of schooling
--   fatheduc: father's years of schooling
--   unem: unem. rate in county of resid.
--   exper: actual labor mkt exper
--   lwage: log(wage)
+-   `hours`: hours worked, 1975
+-   `kidslt6`: - kids \< 6 years
+-   `kidsge6`: - kids 6-18
+-   `age`: woman's age in yrs
+-   `educ`: years of schooling
+-   `wage`: est. wage from earn, hrs
+-   `hushrs`: hours worked by husband, 1975
+-   `husage`: husband's age
+-   `huseduc`: husband's years of schooling
+-   `huswage`: husband's hourly wage, 1975
+-   `motheduc`: mother's years of schooling
+-   `fatheduc`: father's years of schooling
+-   `unem`: unem. rate in county of resid.
+-   `exper`: actual labor mkt exper
+-   `lwage`: log(wage)
 
 ```{r}
 mroz <- tibble::as_tibble(wooldridge::mroz)
@@ -101,13 +101,13 @@ Com uma significância de 5%, não se pode rejeitar H~0~. Porém, a uma signific
 
 ### Método I: Estimação por VI
 
-- exógenas: `exper`, `exper^2`
-- endógena: `educ`
-- instrumento: `motheduc`
+-   exógenas: `exper`, `exper^2`
+-   endógena: `educ`
+-   instrumento: `motheduc`
 
-1. Estimação Eq. Forma Reduzida (EFR)
-2. Estimação Eq. Instrumental (EI)
-3. Cálculo dos Parâmetros Populacionais Recursivamente
+1.  Estimação Eq. Forma Reduzida (EFR)
+2.  Estimação Eq. Instrumental (EI)
+3.  Cálculo dos Parâmetros Populacionais Recursivamente
 
 ```{r}
 # coeficientes da estimação da equação da forma reduzida
@@ -175,9 +175,9 @@ summary(iv)
 
 ### Estimação por 2SLS
 
-- exógenas: `exper`, `exper^2`
-- endógena: `educ`
-- instrumento: `motheduc`, `fatheduc`, `huseduc`
+-   exógenas: `exper`, `exper^2`
+-   endógena: `educ`
+-   instrumento: `motheduc`, `fatheduc`, `huseduc`
 
 ```{r}
 iv <- AER::ivreg(log(wage) ~ exper + I(exper^2) + educ | exper + I(exper^2) + motheduc + fatheduc + huseduc, data = mroz)
@@ -188,4 +188,3 @@ summary(iv)
 ```
 
 O efeito parcial da educação estimado pelo modelo de 2SLS é diferente do de IV devido ao fato da forma reduzida do modelo IV do modelo sofrer do viés de variável omitida ao não levar em consideração mais variáveis relevantes que expliquem o comportamento de `educ`.
-

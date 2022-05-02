@@ -34,23 +34,23 @@ source("R/libraries.R")
 
 A dataframe with 753 observations on 22 variables:
 
-- lwage: log of hourly wage, 1991
-- educ: highest grade completed by 1991
-- ne: =1 if in northeast, 1991
-- nc: =1 if in nrthcntrl, 1991
-- west: =1 if in west, 1991
-- south: =1 if in south, 1991
-- exper: potential experience
-- urban: =1 if in urban area, 1991
-- ne18: =1 if in NE, age 18
-- nc18: =1 if in NC, age 18
-- south18: =1 if in south, age 18
-- west18: =1 if in west, age 18
-- urban18: =1 if in urban area, age 18
-- tuit17: college tuition, age 17
-- tuit18: college tuition, age 18
-- expersq: exper^2
-- ctuit: tuit18 - tuit17
+-   lwage: log of hourly wage, 1991
+-   educ: highest grade completed by 1991
+-   ne: =1 if in northeast, 1991
+-   nc: =1 if in nrthcntrl, 1991
+-   west: =1 if in west, 1991
+-   south: =1 if in south, 1991
+-   exper: potential experience
+-   urban: =1 if in urban area, 1991
+-   ne18: =1 if in NE, age 18
+-   nc18: =1 if in NC, age 18
+-   south18: =1 if in south, age 18
+-   west18: =1 if in west, age 18
+-   urban18: =1 if in urban area, age 18
+-   tuit17: college tuition, age 17
+-   tuit18: college tuition, age 18
+-   expersq: exper\^2
+-   ctuit: tuit18 - tuit17
 
 ```{r}
 htv <- tibble::as_tibble(wooldridge::htv)
@@ -77,7 +77,7 @@ c(
 summary(lm(educ ~ ctuit, data = htv))
 ```
 
-Neste caso, mesmo que `ctuit` seja exógena, ela não é correlacionada com `educ` e, portanto, não cumpre as condições para ser variável instrumental para `educ`. 
+Neste caso, mesmo que `ctuit` seja exógena, ela não é correlacionada com `educ` e, portanto, não cumpre as condições para ser variável instrumental para `educ`.
 
 **(iii)** Now, add to the simple regression model in part (i) a quadratic in experience and a full set of regional dummy variables for current residence and residence at age 18. Also include the urban indicators for current and age 18 residences. What is the estimated return to a year of education?
 
@@ -87,7 +87,7 @@ efr_educ <- lm(educ ~ ctuit + exper + I(exper^2) + ne + nc + west + urban + ne18
 summary(efr_educ)
 ```
 
-A variável `ctuit` passa a ser est. significante. Um aumento de US$ 1.000,00 reduz os anos de estudo, em média, em 0.1652 anos.
+A variável `ctuit` passa a ser est. significante. Um aumento de US\$ 1.000,00 reduz os anos de estudo, em média, em 0.1652 anos.
 
 **(v)** Estimate the model from part (iii) by IV, using `ctuit` as an IV for `educ`. How does the confidence interval for the return to education compare with the OLS CI from part (iii)?
 
@@ -106,4 +106,4 @@ O efeito parcial da educação eleva significativamente para 25%. Porém, o desv
 
 **(vi)** Do you think the IV procedure from part (v) is convincing?
 
-IV não se mostrou adequado para o modelo em questão devido ao elevado desvio-padrão, que produz um IC muito amplo. 
+IV não se mostrou adequado para o modelo em questão devido ao elevado desvio-padrão, que produz um IC muito amplo.
