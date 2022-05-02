@@ -106,22 +106,3 @@ model_2_fgls <- prais::prais_winsten(
 
 summary(model_2_fgls)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

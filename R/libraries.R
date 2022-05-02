@@ -1,15 +1,13 @@
-if (!require("pacman")) install.packages("pacman")
+if (!require("pacman")) {
+  install.packages("pacman")
+  require("pacman")
+}
 
 pacman::p_load(
   tidyverse,
   data.table,
   styler,
-  tabulator,
   fixest,
-  vroom,
-  knitr,
-  Hmisc,
-  pbapply,
   knitr,
   wooldridge,
   collapse,
@@ -17,15 +15,14 @@ pacman::p_load(
   rmarkdown,
   car,
   olsrr,
-  equatiomatic,
   flightsbr,
   plm,
   lmtest,
-  systemfit,
   AER,
-  plotROC,
   janitor,
   mice,
   margins,
-  install = F
+  prais,
+  AER,
+  install = TRUE
 )
